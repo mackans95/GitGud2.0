@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GitGud | THE website for games</title>
+    <link rel="stylesheet" href="/css/index/index.css" />
+    <script defer src="/js/index/index.js"></script>
+  </head>
+  <body>
+    <header>
+      <span class="logo">GitGud</span>
+    </header>
+
+    <main class="main-holder">
+      <h1 class="login-header">Welcome to <span>GitGud</span>!</h1>
+
+      <p>Log in to start playing games...</p>
+
+      <form class="login-form">
+        <input
+          type="text"
+          name="username"
+          id="username-field"
+          class="login-form-field"
+          placeholder="Username"
+        />
+        <input
+          type="password"
+          name="password"
+          id="password-field"
+          class="login-form-field"
+          placeholder="Password"
+        />
+        <input type="submit" value="Login" class="login-form-submit" />
+      </form>
+      <input type="button" value="Create Account" class="create-btn" />
+
+      <p>Or play as a guest!</p>
+      <form class="login-form-guest">
+        <input type="submit" value="Guest" class="guest-form-submit" />
+      </form>
+    </main>
+
+    <div class="form-holder hide">
+      <form class="create">
+        <div class="input-wrapper">
+          <label
+            >Username:
+            <input name="username" />
+          </label>
+        </div>
+        <div class="input-wrapper">
+          <label
+            >Password:
+            <input name="password" type="password" />
+          </label>
+        </div>
+        <input type="submit" value="Register" class="register-btn" />
+        <input type="button" value="Back to Login" class="return" />
+        <div class="create-success"></div>
+      </form>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,127 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato&display=swap");
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  font-family: "Lato", sans-serif;
+  display: grid;
+  grid-template-rows: 10% 90%;
+  justify-items: center;
+  align-items: center;
+  background-image: url(/images/background.jpg);
+  background-size: cover;
+}
+
+.main-holder,
+.form-holder {
+  width: 50%;
+  height: 70%;
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  justify-content: center;
+  background-color: #34495e;
+  border-radius: 7px;
+  box-shadow: 0 0 5px 2px black;
+  opacity: 90%;
+  color: #fff;
+}
+
+.logo {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  color: #fff;
+  font-size: 3.5em;
+  font-weight: bold;
+  font-family: "Courier New", Courier, monospace;
+  background-color: #34495e;
+  opacity: 0.9;
+  border-radius: 10px;
+  padding: 0 5px;
+}
+
+@media only screen and (max-width: 800px) {
+  #logo {
+    position: relative;
+  }
+}
+
+.login-header {
+  margin: 0;
+}
+
+.login-header span {
+  color: cadetblue;
+}
+
+.main-holder p {
+  margin: 0;
+  font-style: italic;
+}
+
+.login-form {
+  align-self: flex-start;
+  display: grid;
+  justify-items: center;
+  align-items: center;
+}
+
+.login-form-guest {
+  width: 50%;
+}
+
+.login-form-field::placeholder {
+  color: #3a3a3a;
+}
+
+.login-form-field {
+  border: 1px solid black;
+  border-bottom: 1px solid #3a3a3a;
+  margin-bottom: 10px;
+  border-radius: 3px;
+  outline: none;
+  padding: 0 0 5px 5px;
+}
+
+.login-form-submit,
+.guest-form-submit,
+.create-btn,
+.register-btn,
+.return {
+  width: 100%;
+  padding: 7px;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  background-color: #3a3a3a;
+  cursor: pointer;
+  outline: none;
+}
+
+input.create-btn {
+  width: 50%;
+}
+
+input.register-btn {
+  margin-bottom: 6px;
+}
+
+div.form-holder {
+  height: 50%;
+}
+
+div.input-wrapper {
+  padding: 2px;
+  margin: 0 0 10px 0;
+}
+
+.hide {
+  display: none;
+  visibility: hidden;
+}

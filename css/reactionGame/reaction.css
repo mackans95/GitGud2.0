@@ -1,0 +1,128 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: "Lato", sans-serif;
+}
+
+.game-container {
+  display: flex;
+  /* flex-wrap: wrap; */
+  /* width: 100vw; */
+}
+.scores {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #333333;
+  width: 800px;
+  height: 50px;
+  margin: auto;
+}
+.canvas {
+  background-color: #3498db;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: #ffffff;
+  width: 800px;
+  height: 600px;
+  margin: auto;
+
+}
+
+.top-score {
+  font-size: 40px;
+}
+
+.ingame-text-one {
+  font-size: 60px;
+  padding-bottom: 30px;
+}
+
+.ingame-text-two {
+  font-size: 30px;
+}
+
+.bottom {
+  text-align: center;
+  margin-top: 1em;
+}
+
+.btn {
+  width: 300px;
+  height: 50px;
+  font-size: 20px;
+  border: 0;
+  background-color: #2980b9;
+  padding: 0.5rem;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 0 10px 0 10px;
+}
+.btn:hover {
+  background-color: #3498db;
+}
+
+/*      Instructions       */
+.about-game {
+  display: flex;
+  justify-content: space-evenly;
+  margin: 80px 0 30px 0;
+  font-size: 1.5em;
+  color: #333333;
+}
+.about-game h2 {
+  margin-bottom: 10px;
+}
+.about-game p {
+  line-height: 1.5em;
+}
+
+/*      Instructions    END   */
+
+/*      HIGHSCORE TABLE        */
+.highscore-table {
+  width: 600px;
+  border-collapse: collapse;
+  margin: 50px auto;
+  font-size: 1.2em;
+
+  border-radius: 5px 5px 0 0;
+  overflow: hidden;
+}
+
+.highscore-table caption {
+  background-color: #2980b9;
+  color: #ffffff;
+  font-weight: bold;
+  padding: 12px 15px;
+}
+
+.highscore-table td {
+  padding: 12px 15px;
+  text-align: center;
+}
+
+.highscore-table tbody tr {
+  border-bottom: 1px solid lightgray;
+
+}
+.highscore-table tbody tr:nth-of-type(even) {
+  background-color: #ecf0f1;
+}
+.highscore-table tbody tr:last-of-type {
+  border-bottom: 2px solid #2980b9;
+}
+
+.leaderboards-container{
+  display: flex;
+  justify-content: space-evenly;
+}
+
+/*      HIGHSCORE TABLE    END    */

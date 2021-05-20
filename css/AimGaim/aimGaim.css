@@ -1,0 +1,248 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato&display=swap");
+
+body {
+  font-family: "Lato", sans-serif;
+}
+
+.aimGaimMainWindow {
+  position: relative;
+  background-color: #3498db;
+  /* border: 1px solid black; */
+  width: 800px;
+  height: 600px;
+  min-width: 800px;
+  min-height: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.enemy {
+  position: relative;
+  /* border: 1px solid red; */
+  width: 20px;
+  height: 50px;
+  box-sizing: border-box;
+}
+.enemyHead {
+  position: relative;
+  /* border: 1px solid red; */
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+}
+.gameContainer {
+  display: flex;
+}
+.gameInfoContainer {
+  width: 15%;
+  display: flex;
+  flex-direction: column;
+}
+.rightColumn {
+  width: 15%;
+}
+.gameInfo {
+  border: 1px solid black;
+  width: auto;
+  height: 2em;
+}
+
+/* Settings */
+.gameSettings {
+  border: 1px solid black;
+  background-color: white;
+  position: relative;
+  width: 400px;
+  height: 400px;
+  top: 100px;
+  left: 200px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.gameSettings .settingsScreen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.gameSettings .resultScreen {
+  position: relative;
+  /* display: flex; */
+  display: none;
+  flex-direction: column;
+  align-items: center;
+}
+.gameSettings .resultScreen h2 {
+  margin: 15px;
+}
+.gameSettings .resultScreen #resultScore {
+  font-size: 2em;
+}
+.gameSettings button {
+  width: 100px;
+  height: 40px;
+  margin: 40px;
+  background-color: #3498db;
+}
+.gameSettings #buttonReturn {
+  margin-top: 10px;
+}
+.gameSettings #buttonRestart {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+.gameSettings h2 {
+  text-align: center;
+  margin: 40px;
+}
+.gameSettings select {
+  margin: 5px;
+}
+.gameSettings label {
+  margin-top: 10px;
+}
+.countDown {
+  display: none;
+  position: relative;
+  text-align: center;
+  top: 150px;
+  font-size: 5em;
+}
+/* #buttonStart {
+    background-color: #3498db;
+} */
+
+.resultScreen {
+  display: none;
+}
+/* Settings end */
+
+/* CURRENT HIGHSCORE AND STYLE FROM REACTION GAME */
+
+/* @import url("https://fonts.googleapis.com/css2?family=Lato&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: "Lato", sans-serif;
+} */
+.scores {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #333333;
+  width: 800px;
+  height: 50px;
+  margin: auto;
+}
+.canvas {
+  background-color: #3498db;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: #ffffff;
+  width: 800px;
+  height: 600px;
+  margin: auto;
+}
+
+.top-score {
+  font-size: 40px;
+}
+
+.ingame-text-one {
+  font-size: 60px;
+  padding-bottom: 30px;
+}
+
+.ingame-text-two {
+  font-size: 30px;
+}
+
+.bottom {
+  text-align: center;
+  margin-top: 1em;
+}
+
+.btn {
+  width: 300px;
+  height: 50px;
+  font-size: 20px;
+  border: 0;
+  background-color: #2980b9;
+  padding: 0.5rem;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 0 10px 0 10px;
+}
+.btn:hover {
+  background-color: #3498db;
+}
+/*      Instructions       */
+.about-game {
+  display: flex;
+  justify-content: space-evenly;
+  margin: 80px 0 30px 0;
+  font-size: 1.5em;
+  color: #333333;
+}
+.about-game h2 {
+  margin-bottom: 10px;
+}
+.about-game p {
+  line-height: 1.5em;
+}
+.instructions {
+  width: 40%;
+}
+.game-info {
+  width: 40%;
+}
+/*      Instructions    END   */
+
+/*      HIGHSCORE TABLE        */
+.highscore-table {
+  width: 600px;
+  border-collapse: collapse;
+  margin: 50px auto;
+  font-size: 1.2em;
+
+  border-radius: 5px 5px 0 0;
+  overflow: hidden;
+}
+
+.highscore-table caption {
+  background-color: #2980b9;
+  color: #ffffff;
+  font-weight: bold;
+  padding: 12px 15px;
+}
+
+.highscore-table td {
+  padding: 12px 15px;
+  text-align: center;
+}
+
+.highscore-table tbody tr {
+  border-bottom: 1px solid lightgray;
+}
+.highscore-table tbody tr:nth-of-type(even) {
+  background-color: #ecf0f1;
+}
+.highscore-table tbody tr:last-of-type {
+  border-bottom: 2px solid #2980b9;
+}
+
+.leaderboards-container {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+/*      HIGHSCORE TABLE    END    */

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./css/reactionGame/reaction.css" />
+    <title>Test your reaction!</title>
+    <script defer src="./js/reactionGameJs/reaction.js" type="module"></script>
+  </head>
+  <body>
+    <header></header>
+    <div class="game-container">
+      
+      <div class="canvas">
+        <span class="ingame-text-one">Reaction Game</span>
+
+        <span class="ingame-text-two"
+          >When the red box turns green, click as quickly as you can.</span
+        >
+      </div>
+    </div>
+
+
+    <div class="scores">
+      <span class="top-score">Current highscore: 0 ms</span>
+    </div>
+
+
+    <div class="bottom">
+      <button class="start btn" type="button">Start Game</button>
+      <button class="postHighscores btn" type="button">Submit Highscore</button>
+    </div>
+    <div class="about-game">
+      <div class="instructions">
+        <h2>Instructions</h2>
+        <p>
+          1. Press start game to begin.<br />2. When the box turns green, click
+          on the box.
+        </p>
+      </div>
+      <div class="game-info">
+        <h2>Game info</h2>
+        <p>The goal of this game is to test your reaction.<br /></p>
+        It takes about 100 ms to blink... stay focused.
+      </div>
+    </div>
+
+  
+    <div class="leaderboards-container">
+
+      <div>
+        <table class="highscore-table global">
+          <caption>Global leaderboard</caption>
+          <tbody>
+        <!-- global data could optionally be included here -->
+         </tbody>
+       </table>
+      </div>
+         
+      <div>
+        <table class="highscore-table personal">
+          <caption>Personal leaderboard</caption>
+        <tbody>
+          <!-- personal data could optionally be included here -->
+        </tbody>
+      </table>
+      </div>
+      
+    </div>
+    
+
+    <template id="highscore-row">
+      <tr>
+        <td class="name"></td>
+        <td class="score"></td>
+      </tr>
+    </template>
+    <footer></footer>
+  </body>
+</html>
