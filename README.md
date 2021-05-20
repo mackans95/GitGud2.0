@@ -1,6 +1,8 @@
-# GitGud 
+# GitGud 2.0
 
-Grupparbete Javascript
+Grupparbete för Agil Systemutveckling
 
-Google docs:
-https://docs.google.com/document/d/152Ae0ZkvT3eO0ypwUqYBAzRhd0TibhZ63INqp-6sQrw/edit
+## Beskrivning
+
+En fortsättning på vårt projekt i JavaScript-kursen, där vi man nu kan lägga till vänner och och skicka utmaningar etc,
+admin kan banna/ta bort spelare och backend har byggts ut med Node och Express
