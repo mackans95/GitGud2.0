@@ -1,3 +1,4 @@
+console.log("test");
 const mainElement = document.querySelector("main");
 const loginForm = document.querySelector(".login-form");
 const loginGuestForm = document.querySelector(".login-form-guest");
@@ -19,7 +20,7 @@ loginForm.addEventListener("submit", function (e) {
   };
 
   if (userExists(user)) {
-    window.location.href = "gamePage.html";
+    window.location.href = "GamePage";
     sessionStorage.setItem("loggedInUser", loginForm.username.value);
   } else {
     alert("no user found");
@@ -39,7 +40,7 @@ loginGuestForm.addEventListener("submit", function (e) {
     addUser(guest);
   }
   sessionStorage.setItem("loggedInUser", guest.username);
-  window.location.href = "gamePage.html";
+  window.location.href = "GamePage";
 });
 
 createAccountButton.addEventListener("click", function () {

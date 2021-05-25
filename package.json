@@ -1,0 +1,26 @@
+{
+  "name": "GitGud2.0",
+  "version": "1.0.0",
+  "description": "Grupparbete för Agil Systemutveckling",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/server.js -e js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mackans95/GitGud2.0.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mackans95/GitGud2.0/issues"
+  },
+  "homepage": "https://github.com/mackans95/GitGud2.0#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.7"
+  },
+  "devDependencies": {}
+}
