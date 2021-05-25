@@ -16,11 +16,13 @@ const gamesArray = [
   {
     name: "AimGaim",
     url: "AimGaim.html",
+    route: "AimGaim",
     description: "Test your aiming skills!",
   },
   {
     name: "Reactions",
     url: "reaction.html",
+    route: "ReactionGame",
     description: "Check your reaction time!",
   },
 ];
@@ -73,7 +75,7 @@ logoutBtn.addEventListener("click", function (e) {
 
   sessionStorage.setItem("loggedInUser", "");
 
-  window.location.href = "index.html";
+  window.location.href = "";
 });
 
 // ---- FUNCTIONS ----
@@ -121,9 +123,9 @@ function displayNewMessageToUser() {
 function loadGameCards() {
   gamesArray.forEach((game) => {
     const html = `
-    <a href="${game.url}" class="anchor-container">
+    <a href="${game.route}" class="anchor-container">
         <div class="card-container">
-          <img src="/images/${game.name}.jpg" alt="Avatar" />
+          <img src="./images/${game.name}.jpg" alt="Avatar" />
           <h4><b>${game.name}</b></h4>
           <p>${game.description}</p>
         </div>

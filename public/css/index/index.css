@@ -12,7 +12,7 @@ body {
   grid-template-rows: 10% 90%;
   justify-items: center;
   align-items: center;
-  background-image: url(/images/background.jpg);
+  background-image: url(../../images/background.jpg);
   background-size: cover;
 }
 
