@@ -1,32 +1,32 @@
-// TODO: implement server and routing with node/express
+//IMPORTS
 const path = require('path');
 const express = require('express');
-
+const mongoose = require('mongoose');
+require('dotenv/config');
+// const bodyParser = require('body-parser');
 const app = express();
 const publicDirectoryPath = path.join(__dirname, '../public');
+//import Routes
+const mainRoutes = require('./routes/mainRoutes');
+const aimGaimRoutes = require('./routes/aimGaimRoutes');
+//END IMPORTS
 
-app.use(express.static(publicDirectoryPath))
+app.use(express.static(publicDirectoryPath));
 
+//Middleware
+app.use(express.json());
+//END Middleware
 
-app.get('/about', (req, res) => {
-    res.send('Created by Calle, Christian and Marcus')
-    // res.sendFile(publicDirectoryPath +  '/reaction.html');
-})
+app.use('/', mainRoutes);
+app.use('/', aimGaimRoutes);
 
-app.get('/GamePage', (req, res) => {
-    res.sendFile(publicDirectoryPath +  '/gamePage.html');
-    console.log("GamePage route");
-})
-
-app.get('/ReactionGame', (req, res) => {
-    res.sendFile(publicDirectoryPath +  '/reaction.html');
-    console.log("reactionGameRoute");
-})
-
-app.get('/AimGaim', (req, res) => {
-    res.sendFile(publicDirectoryPath +  '/AimGaim.html');
-    console.log("AimGameRoute");
-})
+//Conntect to DB
+//'mongodb+srv://gitgudadmin:skollosenord@cluster0.k5q5v.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+mongoose.connect(process.env.DB_CONNECTION, 
+    { useUnifiedTopology: true }, 
+    ()=>{
+        console.log('connected to db!');
+    });
 
 app.listen(3000, () => {
     console.log('Server is up on port 3000.');
