@@ -21,7 +21,7 @@ app.use('/', mainRoutes);
 app.use('/', aimGaimRoutes);
 
 //Conntect to DB
-//'mongodb+srv://gitgudadmin:skollosenord@cluster0.k5q5v.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+//'mongodb+srv://gitgudadmin:skollosenord@cluster0.k5q5v.mongodb.net/GitGudDB?retryWrites=true&w=majority'
 mongoose.connect(process.env.DB_CONNECTION, 
     { useUnifiedTopology: true }, 
     ()=>{
