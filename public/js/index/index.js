@@ -1,71 +1,21 @@
-console.log("test");
-const mainElement = document.querySelector("main");
-const loginForm = document.querySelector(".login-form");
-const loginGuestForm = document.querySelector(".login-form-guest");
+// QUERYSELECTORS
+const loginFormButton = document.querySelector(".login-form-submit");
+const loginFormUsername = document.querySelector("#username-field");
+const loginFormPassword = document.querySelector("#password-field");
 const createAccountButton = document.querySelector(".create-btn");
 const formHolderDiv = document.querySelector("div.form-holder");
-const createForm = document.querySelector("form.create");
+const mainElement = document.querySelector("main");
 const returnToLoginBtn = document.querySelector(".return");
-//tom storage-item för att ha koll på vem som är inloggad
-sessionStorage.setItem("loggedInUser", "");
 
-window.addEventListener("load", getJsonUsers);
-
-loginForm.addEventListener("submit", function (e) {
-  e.preventDefault();
-
-  const user = {
-    username: loginForm.username.value,
-    password: loginForm.password.value,
-  };
-
-  if (userExists(user)) {
-    window.location.href = "GamePage";
-    sessionStorage.setItem("loggedInUser", loginForm.username.value);
-  } else {
-    alert("no user found");
-    loginForm.reset();
-  }
+// Tömma input fält
+loginFormButton.addEventListener("click", () => {
+  loginFormUsername.value = loginFormPassword.value = "";
 });
 
-loginGuestForm.addEventListener("submit", function (e) {
-  e.preventDefault();
-
-  const guest = {
-    username: `GUEST#${Math.trunc(Math.random() * 1000)}`,
-    password: "",
-  };
-
-  if (!userExists(guest)) {
-    addUser(guest);
-  }
-  sessionStorage.setItem("loggedInUser", guest.username);
-  window.location.href = "GamePage";
-});
-
+// göm / visa olika vyer
 createAccountButton.addEventListener("click", function () {
   formHolderDiv.classList.remove("hide");
   mainElement.classList.add("hide");
-});
-
-createForm.addEventListener("submit", function (e) {
-  e.preventDefault();
-
-  const user = {
-    username: createForm.username.value,
-    password: createForm.password.value,
-  };
-
-  try {
-    addUser(user);
-    alert("Registered! Have Fun!");
-    formHolderDiv.classList.add("hide");
-    mainElement.classList.remove("hide");
-  } catch (err) {
-    alert(err.message);
-  }
-
-  createForm.reset();
 });
 
 returnToLoginBtn.addEventListener("click", function () {
@@ -73,39 +23,51 @@ returnToLoginBtn.addEventListener("click", function () {
   mainElement.classList.remove("hide");
 });
 
-function getJsonUsers() {
-  const usersArray = fetchUsers();
-  fetch("users.json")
-    .then((response) => response.json())
-    .then((users) => {
-      users.forEach((user) => {
-        if (!userExists(user)) {
-          usersArray.push(user);
-        }
-      });
+// function getJsonUsers() {
+//   const usersArray = fetchUsers();
+//   fetch("users.json")
+//     .then((response) => response.json())
+//     .then((users) => {
+//       users.forEach((user) => {
+//         if (!userExists(user)) {
+//           usersArray.push(user);
+//         }
+//       });
 
-      const serializedUsers = JSON.stringify(usersArray);
+//       const serializedUsers = JSON.stringify(usersArray);
 
-      localStorage.setItem("users", serializedUsers);
-    });
-}
+//       localStorage.setItem("users", serializedUsers);
+//     });
+// }
 
-function userExists(user) {
-  const users = fetchUsers();
-  return users.some((u) => u.username === user.username);
-}
+// async function userExists(user) {
+//   // const users = await fetchUsers();
+//   // return users.some((u) => u.username === user.username);
+//   // const findUser = await User.findOne({ _id: user._id });
+//   // if (findUser) return true;
+//   // return false;
+// }
 
-function fetchUsers() {
-  const serializedUsers = localStorage.getItem("users");
-  return JSON.parse(serializedUsers) ?? [];
-}
+// async function fetchUsers() {
+//   // const serializedUsers = localStorage.getItem("users");
+//   // return JSON.parse(serializedUsers) ?? [];
+//   // const users = await User.find();
+//   // return JSON.parse(users);
+// }
 
-function addUser(user) {
-  if (userExists(user)) {
-    throw new Error("Username already exists!");
-  }
-  const users = fetchUsers();
-  users.push(user);
-  const serializeUsers = JSON.stringify(users);
-  localStorage.setItem("users", serializeUsers);
-}
+// async function addUser(user) {
+//   if (await userExists(user)) {
+//     throw new Error("Username already exists!");
+//   }
+
+//   // const newUser = await User.create({
+//   //   username: req.body.username,
+//   //   password: req.body.password,
+//   // });
+
+//   //
+//   //
+//   // const users = await fetchUsers();
+//   // const serializeUsers = JSON.stringify(users);
+//   // localStorage.setItem("users", serializeUsers);
+// }

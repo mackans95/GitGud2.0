@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GitGud | THE website for games</title>
     <link rel="stylesheet" href="./css/index/index.css" />
-    <script defer src="./js/index/index.js"></script>
+    <script defer src="./js/index/index.js" type="module"></script>
   </head>
   <body>
     <header>
@@ -17,7 +17,8 @@
 
       <p>Log in to start playing games...</p>
 
-      <form class="login-form">
+      <form class="login-form" method="POST" action="/">
+        <input type="text" hidden value="Login" name="IndexForm" />
         <input
           type="text"
           name="username"
@@ -43,7 +44,8 @@
     </main>
 
     <div class="form-holder hide">
-      <form class="create">
+      <form class="create" method="POST" action="/">
+        <input type="text" hidden value="Signup" name="IndexForm" />
         <div class="input-wrapper">
           <label
             >Username:

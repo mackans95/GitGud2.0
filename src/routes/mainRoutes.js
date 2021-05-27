@@ -1,28 +1,46 @@
-const express = require('express');
-const path = require('path');
+const express = require("express");
+const path = require("path");
 const router = express.Router();
-const Highscore = require('../models/highscores');
-const User = require('../models/users');
+const Highscore = require("../models/highscores");
+const User = require("../models/users");
 
-const publicDirectoryPath = path.join(__dirname, '../../public');
+const publicDirectoryPath = path.join(__dirname, "../../public");
 router.use(express.static(publicDirectoryPath));
 
+router.post("/", (req, res) => {
+  if (req.body.IndexForm === "Login") {
+    // skapa Login-funktion
+    console.log("Hi from Login");
+  }
+
+  if (req.body.IndexForm === "Signup") {
+    // skapa Signup-funktion
+    console.log("Hi from Create");
+
+    // hämta värde från body
+
+    // skapa ny User i databas
+
+    // skicka tillbaks till samma sida
+    res.sendFile(publicDirectoryPath + "/index.html");
+  }
+});
+
 //get routes
-router.get('/about', (req, res) => {
-    res.send('Created by Calle, Christian and Marcus')
-    // res.sendFile(publicDirectoryPath +  '/reaction.html');
-})
+router.get("/about", (req, res) => {
+  res.send("Created by Calle, Christian and Marcus");
+  // res.sendFile(publicDirectoryPath +  '/reaction.html');
+});
 
-router.get('/GamePage', (req, res) => {
-    res.sendFile(publicDirectoryPath +  '/gamePage.html');
-    console.log("GamePage route");
-})
+router.get("/GamePage", (req, res) => {
+  res.sendFile(publicDirectoryPath + "/gamePage.html");
+  console.log("GamePage route");
+});
 
-router.get('/ReactionGame', (req, res) => {
-    res.sendFile(publicDirectoryPath +  '/reaction.html');
-    console.log("reactionGameRoute");
-})
-
+router.get("/ReactionGame", (req, res) => {
+  res.sendFile(publicDirectoryPath + "/reaction.html");
+  console.log("reactionGameRoute");
+});
 
 // router.get('/AimGaim', (req, res) => {
 //     res.sendFile(publicDirectoryPath +  '/AimGaim.html');
