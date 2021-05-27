@@ -1,25 +1,38 @@
 const express = require("express");
 const path = require("path");
+const jwt = require("jsonwebtoken");
 const router = express.Router();
 const Highscore = require("../models/highscores");
 const User = require("../models/users");
-
+const { protect } = require("../controllers/authController");
 const publicDirectoryPath = path.join(__dirname, "../../public");
 router.use(express.static(publicDirectoryPath));
 
-router.post("/", (req, res) => {
+router.post("/", async (req, res, next) => {
   if (req.body.IndexForm === "Login") {
-    // skapa Login-funktion
-    console.log("Hi from Login");
+    //kontrollera att användaren finns
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.send("Missing username or password");
+    }
+
+    const user = await User.findOne({ username });
+
+    if (!user || user.password !== password) {
+      return res.send("Incorrect username or password");
+    }
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SIGNINGKEY);
+    // skicka till nästa sida (gamePage)
+    res
+      .setHeader("Authorization", `Bearer ${token}`)
+      .sendFile(publicDirectoryPath + "/gamePage.html");
   }
 
   if (req.body.IndexForm === "Signup") {
-    // skapa Signup-funktion
-    console.log("Hi from Create");
-
-    // hämta värde från body
-
-    // skapa ny User i databas
+    // hämta värde från body och skapa ny User i databas
+    await User.create(req.body);
 
     // skicka tillbaks till samma sida
     res.sendFile(publicDirectoryPath + "/index.html");
@@ -32,7 +45,7 @@ router.get("/about", (req, res) => {
   // res.sendFile(publicDirectoryPath +  '/reaction.html');
 });
 
-router.get("/GamePage", (req, res) => {
+router.get("/GamePage", protect, (req, res) => {
   res.sendFile(publicDirectoryPath + "/gamePage.html");
   console.log("GamePage route");
 });

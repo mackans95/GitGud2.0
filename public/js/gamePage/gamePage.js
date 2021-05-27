@@ -10,7 +10,7 @@ const messageInput = document.querySelector("#message");
 const messagesOurs = document.querySelector(".messages li.ours");
 const messagesTheirs = document.querySelector(".messages li");
 
-userSpan.textContent = sessionStorage.getItem("loggedInUser");
+// userSpan.textContent = sessionStorage.getItem("loggedInUser");
 
 const gamesArray = [
   {
@@ -54,9 +54,9 @@ function postUserRequest(e) {
 // ---- EVENT HANDLERS ----
 
 window.addEventListener("load", loadGameCards);
-window.addEventListener("load", loadMessagers);
-window.addEventListener("load", sendToLoginPageIfNoUser);
-window.addEventListener("load", displayNewMessageToUser);
+// window.addEventListener("load", loadMessagers);
+// window.addEventListener("load", sendToLoginPageIfNoUser);
+// window.addEventListener("load", displayNewMessageToUser);
 
 document.addEventListener("click", MakeLiBlocksClickable, false);
 
@@ -86,39 +86,39 @@ function MakeLiBlocksClickable(e) {
   }
 }
 
-function sendToLoginPageIfNoUser() {
-  if (userSpan.textContent === "") {
-    window.location.href = "/";
-  }
-}
+// function sendToLoginPageIfNoUser() {
+//   if (userSpan.textContent === "") {
+//     window.location.href = "/";
+//   }
+// }
 
-function displayNewMessageToUser() {
-  const currentUser = fetchCurrentUser();
+// function displayNewMessageToUser() {
+//   const currentUser = fetchCurrentUser();
 
-  const users = fetchUsers();
+//   const users = fetchUsers();
 
-  const messagesCorrected = users
-    .filter((user) => user.conversation)
-    .flatMap((m) => m.conversation);
+//   const messagesCorrected = users
+//     .filter((user) => user.conversation)
+//     .flatMap((m) => m.conversation);
 
-  const msgsUnread = messagesCorrected.filter((msg) => msg.read === false);
+//   const msgsUnread = messagesCorrected.filter((msg) => msg.read === false);
 
-  msgsUnread.forEach((msg) => {
-    if (msg.read === false && msg.recipient === currentUser.username) {
-      const msgLiBox = [...document.querySelectorAll("li.user")];
+//   msgsUnread.forEach((msg) => {
+//     if (msg.read === false && msg.recipient === currentUser.username) {
+//       const msgLiBox = [...document.querySelectorAll("li.user")];
 
-      msgLiBox.forEach((li) => {
-        if (li.textContent.trim() === msg.sender) {
-          li.style.backgroundColor = "yellow";
-          const test = document.createElement("span");
-          test.textContent = "NEW!";
-          // test.style.paddingLeft = "60px";
-          li.append(test);
-        }
-      });
-    }
-  });
-}
+//       msgLiBox.forEach((li) => {
+//         if (li.textContent.trim() === msg.sender) {
+//           li.style.backgroundColor = "yellow";
+//           const test = document.createElement("span");
+//           test.textContent = "NEW!";
+//           // test.style.paddingLeft = "60px";
+//           li.append(test);
+//         }
+//       });
+//     }
+//   });
+// }
 
 function loadGameCards() {
   gamesArray.forEach((game) => {
@@ -136,20 +136,20 @@ function loadGameCards() {
   });
 }
 
-function loadMessagers() {
-  const users = fetchUsers();
+// function loadMessagers() {
+//   const users = fetchUsers();
 
-  users.forEach((user) => {
-    if (user.username !== sessionStorage.getItem("loggedInUser")) {
-      const html = `
-      <li class="user">${user.username}
-      </li>
-      `;
+//   users.forEach((user) => {
+//     if (user.username !== sessionStorage.getItem("loggedInUser")) {
+//       const html = `
+//       <li class="user">${user.username}
+//       </li>
+//       `;
 
-      olMessagers.insertAdjacentHTML("afterbegin", html);
-    }
-  });
-}
+//       olMessagers.insertAdjacentHTML("afterbegin", html);
+//     }
+//   });
+// }
 
 function showMessagesAndAddButton(target) {
   olMessagers.classList.add("hide");
@@ -201,142 +201,140 @@ function hasClass(elem, className) {
   return elem.className.split(" ").indexOf(className) > -1;
 }
 
-function userExists(user) {
-  const users = fetchUsers();
-  return users.some((u) => u.username === user.username);
-}
+// function userExists(user) {
+//   const users = fetchUsers();
+//   return users.some((u) => u.username === user.username);
+// }
 
-function fetchUsers() {
-  const serializedUsers = localStorage.getItem("users");
-  return JSON.parse(serializedUsers) ?? [];
-}
+// function fetchUsers() {
+//   const serializedUsers = localStorage.getItem("users");
+//   return JSON.parse(serializedUsers) ?? [];
+// }
 
-function fetchCurrentUser() {
-  return fetchUsers().find((user) => user.username === userSpan.textContent);
-}
+// function fetchCurrentUser() {
+//   return fetchUsers().find((user) => user.username === userSpan.textContent);
+// }
 
-function updateUsersMessage() {
-  const users = fetchUsers();
+// function updateUsersMessage() {
+//   const users = fetchUsers();
 
-  const currentUser = users.find(
-    (user) => user.username === sessionStorage.getItem("loggedInUser")
-  );
+//   const currentUser = users.find(
+//     (user) => user.username === sessionStorage.getItem("loggedInUser")
+//   );
 
-  !currentUser.hasOwnProperty("conversation")
-    ? (currentUser.conversation = [])
-    : "";
+//   !currentUser.hasOwnProperty("conversation") ? (currentUser.conversation = []) : "";
 
-  const message = {
-    sender: currentUser.username,
-    recipient: messageHeadSpan.textContent.trim(),
-    message: messageInput.value,
-    timeStamp: Math.floor(Date.now() / 1000),
-    read: false,
-  };
+//   const message = {
+//     sender: currentUser.username,
+//     recipient: messageHeadSpan.textContent.trim(),
+//     message: messageInput.value,
+//     timeStamp: Math.floor(Date.now() / 1000),
+//     read: false,
+//   };
 
-  currentUser.conversation.push(message);
+//   currentUser.conversation.push(message);
 
-  const serializeUsers = JSON.stringify(users);
-  localStorage.setItem("users", serializeUsers);
-}
+//   const serializeUsers = JSON.stringify(users);
+//   localStorage.setItem("users", serializeUsers);
+// }
 
-function displayMessages(target) {
-  const messages = getAllMessages(target); //getMessagesHTML();
+// function displayMessages(target) {
+//   const messages = getAllMessages(target); //getMessagesHTML();
 
-  if (messages) {
-    olMessages.insertAdjacentHTML("beforeend", messages.join(""));
-  }
-}
+//   if (messages) {
+//     olMessages.insertAdjacentHTML("beforeend", messages.join(""));
+//   }
+// }
 
-function displayMessageFromInputField() {
-  const messages = getMessagesFromUs();
+// function displayMessageFromInputField() {
+//   const messages = getMessagesFromUs();
 
-  if (messages) {
-    olMessages.insertAdjacentHTML("beforeend", messages[messages.length - 1]);
-  }
-}
+//   if (messages) {
+//     olMessages.insertAdjacentHTML("beforeend", messages[messages.length - 1]);
+//   }
+// }
 
-function getMessagesFromUs() {
-  const currentUser = fetchUsers().find(
-    (user) => user.username === userSpan.textContent
-  );
+// function getMessagesFromUs() {
+//   const currentUser = fetchUsers().find(
+//     (user) => user.username === userSpan.textContent
+//   );
 
-  const messages = currentUser?.conversation
-    ?.filter((conv) => conv.recipient === messageHeadSpan.textContent.trim())
-    .map((conv) => {
-      return `<li class="ours">${conv.message}</li>`.trim();
-    });
+//   const messages = currentUser?.conversation
+//     ?.filter((conv) => conv.recipient === messageHeadSpan.textContent.trim())
+//     .map((conv) => {
+//       return `<li class="ours">${conv.message}</li>`.trim();
+//     });
 
-  return messages;
-}
+//   return messages;
+// }
 
-function getAllMessages(target) {
-  const currentUser = fetchUsers().find(
-    (user) => user.username === userSpan.textContent
-  );
+// function getAllMessages(target) {
+//   const currentUser = fetchUsers().find(
+//     (user) => user.username === userSpan.textContent
+//   );
 
-  const users = fetchUsers();
+//   const users = fetchUsers();
 
-  const messagesCorrected = users
-    .filter((user) => user.conversation)
-    .flatMap((m) => m.conversation)
-    .filter(
-      (m) =>
-        (m.recipient === currentUser.username &&
-          m.sender === target.textContent.trim()) ||
-        (m.sender === currentUser.username &&
-          m.recipient === target.textContent.trim())
-    )
-    .sort(compare);
+//   const messagesCorrected = users
+//     .filter((user) => user.conversation)
+//     .flatMap((m) => m.conversation)
+//     .filter(
+//       (m) =>
+//         (m.recipient === currentUser.username &&
+//           m.sender === target.textContent.trim()) ||
+//         (m.sender === currentUser.username &&
+//           m.recipient === target.textContent.trim())
+//     )
+//     .sort(compare);
 
-  function compare(message1, message2) {
-    if (message1.timeStamp < message2.timeStamp) {
-      return -1;
-    }
-    if (message1.timeStamp > message2.timeStamp) {
-      return 1;
-    }
-  }
+//   function compare(message1, message2) {
+//     if (message1.timeStamp < message2.timeStamp) {
+//       return -1;
+//     }
+//     if (message1.timeStamp > message2.timeStamp) {
+//       return 1;
+//     }
+//   }
 
-  const finalMessages = messagesCorrected.map((conv) => {
-    if (conv.sender !== currentUser.username) {
-      return `<li>${conv.message}</li>`.trim();
-    } else {
-      return `<li class="ours">${conv.message}</li>`.trim();
-    }
-  });
+//   const finalMessages = messagesCorrected.map((conv) => {
+//     if (conv.sender !== currentUser.username) {
+//       return `<li>${conv.message}</li>`.trim();
+//     } else {
+//       return `<li class="ours">${conv.message}</li>`.trim();
+//     }
+//   });
 
-  return finalMessages;
-}
+//   return finalMessages;
+// }
 
-function setMessagesToRead(target) {
-  const currentUser = fetchUsers().find(
-    (user) => user.username === userSpan.textContent
-  );
+// function setMessagesToRead(target) {
+//   const currentUser = fetchUsers().find(
+//     (user) => user.username === userSpan.textContent
+//   );
 
-  const users = fetchUsers();
+//   const users = fetchUsers();
 
-  const messagesToUser = users
-    .filter((user) => user.conversation)
-    .flatMap((m) => m.conversation)
-    .filter(
-      (m) =>
-        (m.recipient === currentUser.username &&
-          m.sender === target.textContent.trim()) ||
-        (m.sender === currentUser.username &&
-          m.recipient === target.textContent.trim())
-    );
+//   const messagesToUser = users
+//     .filter((user) => user.conversation)
+//     .flatMap((m) => m.conversation)
+//     .filter(
+//       (m) =>
+//         (m.recipient === currentUser.username &&
+//           m.sender === target.textContent.trim()) ||
+//         (m.sender === currentUser.username &&
+//           m.recipient === target.textContent.trim())
+//     );
 
-  messagesToUser.forEach((msg) => {
-    if (
-      msg.read === false &&
-      currentUser.username !== target.username &&
-      msg.sender !== currentUser.username
-    ) {
-      msg.read = true;
+//   messagesToUser.forEach((msg) => {
+//     if (
+//       msg.read === false &&
+//       currentUser.username !== target.username &&
+//       msg.sender !== currentUser.username
+//     ) {
+//       msg.read = true;
 
-      const serializeUsers = JSON.stringify(users);
-      localStorage.setItem("users", serializeUsers);
-    }
-  });
-}
+//       const serializeUsers = JSON.stringify(users);
+//       localStorage.setItem("users", serializeUsers);
+//     }
+//   });
+// }
