@@ -9,6 +9,7 @@ const publicDirectoryPath = path.join(__dirname, '../public');
 //import Routes
 const mainRoutes = require('./routes/mainRoutes');
 const aimGaimRoutes = require('./routes/aimGaimRoutes');
+const reactionGameRoute = require('./routes/reactionGameRoutes')
 //END IMPORTS
 
 app.use(express.static(publicDirectoryPath));
@@ -19,6 +20,7 @@ app.use(express.json());
 
 app.use('/', mainRoutes);
 app.use('/', aimGaimRoutes);
+app.use(reactionGameRoute);
 
 //Conntect to DB
 //'mongodb+srv://gitgudadmin:skollosenord@cluster0.k5q5v.mongodb.net/GitGudDB?retryWrites=true&w=majority'
