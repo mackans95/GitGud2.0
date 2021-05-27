@@ -6,6 +6,7 @@ const createAccountButton = document.querySelector(".create-btn");
 const formHolderDiv = document.querySelector("div.form-holder");
 const mainElement = document.querySelector("main");
 const returnToLoginBtn = document.querySelector(".return");
+const loginGuestForm = document.querySelector(".login-form-guest");
 
 // göm / visa olika vyer
 createAccountButton.addEventListener("click", function () {

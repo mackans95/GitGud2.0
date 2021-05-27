@@ -9,9 +9,6 @@ const messageHeadSpan = document.querySelector(".messager-head span");
 const messageInput = document.querySelector("#message");
 const messagesOurs = document.querySelector(".messages li.ours");
 const messagesTheirs = document.querySelector(".messages li");
-
-// userSpan.textContent = sessionStorage.getItem("loggedInUser");
-
 const gamesArray = [
   {
     name: "AimGaim",
@@ -27,35 +24,20 @@ const gamesArray = [
   },
 ];
 
-// ---- POST Event: unhandled ----
-const postBtn = document.querySelector(".post-user");
-
-postBtn.addEventListener("click", postUserRequest);
-
-function postUserRequest(e) {
-  e.preventDefault();
-
-  const currentUser = fetchCurrentUser();
-
-  const user = {
-    username: currentUser.username,
-    password: currentUser.password,
-  };
-
-  fetch("/api/users", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(user),
-  }).then((resp) => console.log(resp.status));
-}
+// ---- Sets current user ----
+const setLoggedInName = () => {
+  return document.cookie
+    .split(";")
+    .filter((S) => S.includes("username"))
+    .toString()
+    .split("=")[1];
+};
+userSpan.textContent = setLoggedInName();
 
 // ---- EVENT HANDLERS ----
-
 window.addEventListener("load", loadGameCards);
+window.addEventListener("load", sendToLoginPageIfNoUser);
 // window.addEventListener("load", loadMessagers);
-// window.addEventListener("load", sendToLoginPageIfNoUser);
 // window.addEventListener("load", displayNewMessageToUser);
 
 document.addEventListener("click", MakeLiBlocksClickable, false);
@@ -71,11 +53,9 @@ messageInput.addEventListener("keypress", function (e) {
 });
 
 logoutBtn.addEventListener("click", function (e) {
-  e.preventDefault();
-
-  sessionStorage.setItem("loggedInUser", "");
-
-  window.location.href = "";
+  document.cookie = "username=; path=/;";
+  document.cookie = "jwt=; path=/;";
+  window.location.href = "/";
 });
 
 // ---- FUNCTIONS ----
@@ -86,39 +66,11 @@ function MakeLiBlocksClickable(e) {
   }
 }
 
-// function sendToLoginPageIfNoUser() {
-//   if (userSpan.textContent === "") {
-//     window.location.href = "/";
-//   }
-// }
-
-// function displayNewMessageToUser() {
-//   const currentUser = fetchCurrentUser();
-
-//   const users = fetchUsers();
-
-//   const messagesCorrected = users
-//     .filter((user) => user.conversation)
-//     .flatMap((m) => m.conversation);
-
-//   const msgsUnread = messagesCorrected.filter((msg) => msg.read === false);
-
-//   msgsUnread.forEach((msg) => {
-//     if (msg.read === false && msg.recipient === currentUser.username) {
-//       const msgLiBox = [...document.querySelectorAll("li.user")];
-
-//       msgLiBox.forEach((li) => {
-//         if (li.textContent.trim() === msg.sender) {
-//           li.style.backgroundColor = "yellow";
-//           const test = document.createElement("span");
-//           test.textContent = "NEW!";
-//           // test.style.paddingLeft = "60px";
-//           li.append(test);
-//         }
-//       });
-//     }
-//   });
-// }
+function sendToLoginPageIfNoUser() {
+  if (userSpan.textContent === "") {
+    window.location.href = "/";
+  }
+}
 
 function loadGameCards() {
   gamesArray.forEach((game) => {
@@ -135,21 +87,6 @@ function loadGameCards() {
     cardHolder.insertAdjacentHTML("afterbegin", html);
   });
 }
-
-// function loadMessagers() {
-//   const users = fetchUsers();
-
-//   users.forEach((user) => {
-//     if (user.username !== sessionStorage.getItem("loggedInUser")) {
-//       const html = `
-//       <li class="user">${user.username}
-//       </li>
-//       `;
-
-//       olMessagers.insertAdjacentHTML("afterbegin", html);
-//     }
-//   });
-// }
 
 function showMessagesAndAddButton(target) {
   olMessagers.classList.add("hide");
@@ -201,140 +138,189 @@ function hasClass(elem, className) {
   return elem.className.split(" ").indexOf(className) > -1;
 }
 
-// function userExists(user) {
-//   const users = fetchUsers();
-//   return users.some((u) => u.username === user.username);
-// }
+// FUNKAR INTE JUST NU
+// --------------------------------------------------------
 
-// function fetchUsers() {
-//   const serializedUsers = localStorage.getItem("users");
-//   return JSON.parse(serializedUsers) ?? [];
-// }
+/*
+function displayNewMessageToUser() {
+  const currentUser = fetchCurrentUser();
 
-// function fetchCurrentUser() {
-//   return fetchUsers().find((user) => user.username === userSpan.textContent);
-// }
+  const users = fetchUsers();
 
-// function updateUsersMessage() {
-//   const users = fetchUsers();
+  const messagesCorrected = users
+    .filter((user) => user.conversation)
+    .flatMap((m) => m.conversation);
 
-//   const currentUser = users.find(
-//     (user) => user.username === sessionStorage.getItem("loggedInUser")
-//   );
+  const msgsUnread = messagesCorrected.filter((msg) => msg.read === false);
 
-//   !currentUser.hasOwnProperty("conversation") ? (currentUser.conversation = []) : "";
+  msgsUnread.forEach((msg) => {
+    if (msg.read === false && msg.recipient === currentUser.username) {
+      const msgLiBox = [...document.querySelectorAll("li.user")];
 
-//   const message = {
-//     sender: currentUser.username,
-//     recipient: messageHeadSpan.textContent.trim(),
-//     message: messageInput.value,
-//     timeStamp: Math.floor(Date.now() / 1000),
-//     read: false,
-//   };
+      msgLiBox.forEach((li) => {
+        if (li.textContent.trim() === msg.sender) {
+          li.style.backgroundColor = "yellow";
+          const test = document.createElement("span");
+          test.textContent = "NEW!";
+          // test.style.paddingLeft = "60px";
+          li.append(test);
+        }
+      });
+    }
+  });
+}
+*/
 
-//   currentUser.conversation.push(message);
+/*
+function loadMessagers() {
+  const users = fetchUsers();
 
-//   const serializeUsers = JSON.stringify(users);
-//   localStorage.setItem("users", serializeUsers);
-// }
+  users.forEach((user) => {
+    if (user.username !== sessionStorage.getItem("loggedInUser")) {
+      const html = `
+      <li class="user">${user.username}
+      </li>
+      `;
 
-// function displayMessages(target) {
-//   const messages = getAllMessages(target); //getMessagesHTML();
+      olMessagers.insertAdjacentHTML("afterbegin", html);
+    }
+  });
+}
+*/
 
-//   if (messages) {
-//     olMessages.insertAdjacentHTML("beforeend", messages.join(""));
-//   }
-// }
+/*
+function updateUsersMessage() {
+  const users = fetchUsers();
 
-// function displayMessageFromInputField() {
-//   const messages = getMessagesFromUs();
+  const currentUser = users.find(
+    (user) => user.username === sessionStorage.getItem("loggedInUser")
+  );
 
-//   if (messages) {
-//     olMessages.insertAdjacentHTML("beforeend", messages[messages.length - 1]);
-//   }
-// }
+  !currentUser.hasOwnProperty("conversation") ? (currentUser.conversation = []) : "";
 
-// function getMessagesFromUs() {
-//   const currentUser = fetchUsers().find(
-//     (user) => user.username === userSpan.textContent
-//   );
+  const message = {
+    sender: currentUser.username,
+    recipient: messageHeadSpan.textContent.trim(),
+    message: messageInput.value,
+    timeStamp: Math.floor(Date.now() / 1000),
+    read: false,
+  };
 
-//   const messages = currentUser?.conversation
-//     ?.filter((conv) => conv.recipient === messageHeadSpan.textContent.trim())
-//     .map((conv) => {
-//       return `<li class="ours">${conv.message}</li>`.trim();
-//     });
+  currentUser.conversation.push(message);
 
-//   return messages;
-// }
+  const serializeUsers = JSON.stringify(users);
+  localStorage.setItem("users", serializeUsers);
+}
+*/
 
-// function getAllMessages(target) {
-//   const currentUser = fetchUsers().find(
-//     (user) => user.username === userSpan.textContent
-//   );
+/*
+function displayMessages(target) {
+  const messages = getAllMessages(target); //getMessagesHTML();
 
-//   const users = fetchUsers();
+  if (messages) {
+    olMessages.insertAdjacentHTML("beforeend", messages.join(""));
+  }
+}
+*/
 
-//   const messagesCorrected = users
-//     .filter((user) => user.conversation)
-//     .flatMap((m) => m.conversation)
-//     .filter(
-//       (m) =>
-//         (m.recipient === currentUser.username &&
-//           m.sender === target.textContent.trim()) ||
-//         (m.sender === currentUser.username &&
-//           m.recipient === target.textContent.trim())
-//     )
-//     .sort(compare);
+/*
+function displayMessageFromInputField() {
+  const messages = getMessagesFromUs();
 
-//   function compare(message1, message2) {
-//     if (message1.timeStamp < message2.timeStamp) {
-//       return -1;
-//     }
-//     if (message1.timeStamp > message2.timeStamp) {
-//       return 1;
-//     }
-//   }
+  if (messages) {
+    olMessages.insertAdjacentHTML("beforeend", messages[messages.length - 1]);
+  }
+}
+*/
 
-//   const finalMessages = messagesCorrected.map((conv) => {
-//     if (conv.sender !== currentUser.username) {
-//       return `<li>${conv.message}</li>`.trim();
-//     } else {
-//       return `<li class="ours">${conv.message}</li>`.trim();
-//     }
-//   });
+/*
+function getMessagesFromUs() {
+  const currentUser = fetchUsers().find(
+    (user) => user.username === userSpan.textContent
+  );
 
-//   return finalMessages;
-// }
+  const messages = currentUser?.conversation
+    ?.filter((conv) => conv.recipient === messageHeadSpan.textContent.trim())
+    .map((conv) => {
+      return `<li class="ours">${conv.message}</li>`.trim();
+    });
 
-// function setMessagesToRead(target) {
-//   const currentUser = fetchUsers().find(
-//     (user) => user.username === userSpan.textContent
-//   );
+  return messages;
+}
+*/
 
-//   const users = fetchUsers();
+/*
+function getAllMessages(target) {
+  const currentUser = fetchUsers().find(
+    (user) => user.username === userSpan.textContent
+  );
 
-//   const messagesToUser = users
-//     .filter((user) => user.conversation)
-//     .flatMap((m) => m.conversation)
-//     .filter(
-//       (m) =>
-//         (m.recipient === currentUser.username &&
-//           m.sender === target.textContent.trim()) ||
-//         (m.sender === currentUser.username &&
-//           m.recipient === target.textContent.trim())
-//     );
+  const users = fetchUsers();
 
-//   messagesToUser.forEach((msg) => {
-//     if (
-//       msg.read === false &&
-//       currentUser.username !== target.username &&
-//       msg.sender !== currentUser.username
-//     ) {
-//       msg.read = true;
+  const messagesCorrected = users
+    .filter((user) => user.conversation)
+    .flatMap((m) => m.conversation)
+    .filter(
+      (m) =>
+        (m.recipient === currentUser.username &&
+          m.sender === target.textContent.trim()) ||
+        (m.sender === currentUser.username &&
+          m.recipient === target.textContent.trim())
+    )
+    .sort(compare);
 
-//       const serializeUsers = JSON.stringify(users);
-//       localStorage.setItem("users", serializeUsers);
-//     }
-//   });
-// }
+  function compare(message1, message2) {
+    if (message1.timeStamp < message2.timeStamp) {
+      return -1;
+    }
+    if (message1.timeStamp > message2.timeStamp) {
+      return 1;
+    }
+  }
+
+  const finalMessages = messagesCorrected.map((conv) => {
+    if (conv.sender !== currentUser.username) {
+      return `<li>${conv.message}</li>`.trim();
+    } else {
+      return `<li class="ours">${conv.message}</li>`.trim();
+    }
+  });
+
+  return finalMessages;
+}
+*/
+
+/*
+function setMessagesToRead(target) {
+  const currentUser = fetchUsers().find(
+    (user) => user.username === userSpan.textContent
+  );
+
+  const users = fetchUsers();
+
+  const messagesToUser = users
+    .filter((user) => user.conversation)
+    .flatMap((m) => m.conversation)
+    .filter(
+      (m) =>
+        (m.recipient === currentUser.username &&
+          m.sender === target.textContent.trim()) ||
+        (m.sender === currentUser.username &&
+          m.recipient === target.textContent.trim())
+    );
+
+  messagesToUser.forEach((msg) => {
+    if (
+      msg.read === false &&
+      currentUser.username !== target.username &&
+      msg.sender !== currentUser.username
+    ) {
+      msg.read = true;
+
+      const serializeUsers = JSON.stringify(users);
+      localStorage.setItem("users", serializeUsers);
+    }
+  });
+}
+
+*/

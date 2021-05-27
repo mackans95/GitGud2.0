@@ -38,7 +38,12 @@
       <input type="button" value="Create Account" class="create-btn" />
 
       <p>Or play as a guest!</p>
-      <form class="login-form-guest">
+      <p>
+        Psst.. Returning guests can login with their name and password:
+        <b>password</b>
+      </p>
+      <form class="login-form-guest" method="POST" action="/">
+        <input type="text" hidden value="Guest" name="IndexForm" />
         <input type="submit" value="Guest" class="guest-form-submit" />
       </form>
     </main>

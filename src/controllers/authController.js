@@ -1,27 +1,31 @@
-exports.protect = async (req, _res, next) => {
-  // Getting token and check if its there
-  let token;
+const jwt = require("jsonwebtoken");
+const User = require("../models/users");
+const path = require("path");
+const publicDirectoryPath = path.join(__dirname, "../../public");
 
-  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
-    token = req.headers.authorization.split(" ")[1];
+exports.login = async (req, res) => {
+  const { username, password } = req.body;
+
+  // har matat in namn och lösen
+  if (!username || !password) {
+    return res.send("Missing username or password");
   }
 
-  if (!token) {
-    return next(Error("Not Validated"));
+  // kolla så användare finns
+  const user = await User.findOne({ username });
+
+  if (!user || user.password !== password) {
+    return res.send("Incorrect username or password");
   }
 
-  // Validate the token (Verification)
-  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SIGNINGKEY);
+  //skapa token
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SIGNINGKEY);
 
-  // Check if user still exists
-  const currentUser = await User.findById(decoded.id);
-  if (!currentUser)
-    return next(
-      new AppError("The user this token belongs to no longer exists", 401)
-    );
+  // sätt header + cookies
+  res.set("Authorization", "Bearer " + token);
+  res.cookie("jwt", token);
+  res.cookie("username", user.username);
 
-  console.log(currentUser);
-  // Grant access to protected route
-  req.user = currentUser;
-  next();
+  // skicka till nästa sida (gamePage)
+  res.sendFile(publicDirectoryPath + "/gamePage.html");
 };
