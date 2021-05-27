@@ -609,13 +609,33 @@ const submitScoreBtn = document.querySelector(".postHighscores");
 let leaderBoardHandler1 = new leaderboardHandler;
 
 // submit highscore
-submitScoreBtn.addEventListener("click", function (e) {
+submitScoreBtn.addEventListener("click", async function (e) {
 
-  let updatedHighscoreOnLoggedInUser = leaderBoardHandler1.setHighscoreToLoggedInUser("highscoreaimgaim", currentHighScore, true);
+  // let updatedHighscoreOnLoggedInUser = leaderBoardHandler1.setHighscoreToLoggedInUser("highscoreaimgaim", currentHighScore, true);
 
-  let serializedUsers = JSON.stringify(updatedHighscoreOnLoggedInUser);
+  // let serializedUsers = JSON.stringify(updatedHighscoreOnLoggedInUser);
 
-  localStorage.setItem("users", serializedUsers);
+  // localStorage.setItem("users", serializedUsers);
+
+  // location.reload();
+  if(gameRunning){return;}
+  //SEND POST USING FETCH
+  const response = await fetch("http://localhost:3000/aimgaim", {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: `{
+      "gamename": "AimGaim",
+      "username": "ohboy",
+      "score": ${currentHighScore}
+      }`
+  });
+
+  response.json().then(data => {
+    console.log(data);
+  });
 
   location.reload();
 });

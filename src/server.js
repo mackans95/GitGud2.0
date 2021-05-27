@@ -28,11 +28,11 @@ app.use(express.json());
 app.use("/", mainRoutes);
 app.use("/", aimGaimRoutes);
 
-//Conntect to DB
+//Connect to DB
 // mongodb+srv://gitgudadmin:skollosenord@cluster0.k5q5v.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
 
 // Bara för att stoppa deprecationmeddelande
-mongoose.set("useCreateIndex", true);
+// mongoose.set("useCreateIndex", true);
 
 mongoose.connect(
   process.env.DB_CONNECTION,
@@ -41,6 +41,7 @@ mongoose.connect(
     console.log("connected to db!");
   }
 );
+
 
 app.listen(3000, () => {
   console.log("Server is up on port 3000.");
