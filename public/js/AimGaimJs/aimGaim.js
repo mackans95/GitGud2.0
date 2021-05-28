@@ -628,7 +628,7 @@ submitScoreBtn.addEventListener("click", async function (e) {
     },
     body: `{
       "gamename": "AimGaim",
-      "username": "ohboy",
+      "username": "temporary",
       "score": ${currentHighScore}
       }`
   });

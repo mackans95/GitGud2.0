@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/users");
 const path = require("path");
+const { model } = require("mongoose");
 const publicDirectoryPath = path.join(__dirname, "../../public");
 
 exports.login = async (req, res) => {
@@ -22,7 +23,7 @@ exports.login = async (req, res) => {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SIGNINGKEY);
 
   // sätt header + cookies
-  res.set("Authorization", "Bearer " + token);
+  // res.set("Authorization", "Bearer " + token);
   res.cookie("jwt", token);
   res.cookie("username", user.username);
 

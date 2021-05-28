@@ -5,6 +5,10 @@ const Highscore = require("../models/highscores");
 const User = require("../models/users");
 const { login } = require("../controllers/authController");
 const publicDirectoryPath = path.join(__dirname, "../../public");
+const jwt = require('jsonwebtoken');
+const e = require("express");
+const { send } = require("process");
+const authTokenMiddleware = require("../controllers/userAuth");
 router.use(express.static(publicDirectoryPath));
 
 // AUTH
@@ -33,13 +37,13 @@ router.post("/", async (req, res) => {
 });
 
 //get routes
-router.get("/about", (req, res) => {
+router.get("/about", authTokenMiddleware, (req, res) => {
   res.send("Created by Calle, Christian and Marcus");
   // res.sendFile(publicDirectoryPath +  '/reaction.html');
 });
 
 
-router.get("/GamePage", (req, res) => {
+router.get("/GamePage", authTokenMiddleware, (req, res) => {
   res.sendFile(publicDirectoryPath + "/gamePage.html");
   console.log("GamePage route");
 });
