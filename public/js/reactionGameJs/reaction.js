@@ -130,11 +130,25 @@ const submitScoreBtn = document.querySelector(".postHighscores");
 // submit highscore
 submitScoreBtn.addEventListener("click", function (e) {
 
-  let updatedHighscoreOnLoggedInUser = leaderboardHandlerOne.setHighscoreToLoggedInUser("highscorereactiongame", currentHighScore, false);
+  // let updatedHighscoreOnLoggedInUser = leaderboardHandlerOne.setHighscoreToLoggedInUser("highscorereactiongame", currentHighScore, false);
 
-  let serializedUsers = JSON.stringify(updatedHighscoreOnLoggedInUser);
+  // let serializedUsers = JSON.stringify(updatedHighscoreOnLoggedInUser);
 
-  localStorage.setItem("users", serializedUsers);
+  // localStorage.setItem("users", serializedUsers);
+
+  fetch('http://localhost:3000/ReactionGame', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-type': 'application/json; charset=UTF-8',
+    },
+    body: JSON.stringify({
+      gamename: "ReGame",
+      username: "Mr. Postfrom Clint",
+      score: currentHighScore,
+  })
+  }).then(response => response.json())
+    .then(data => console.log(data))
 
   location.reload();
 });

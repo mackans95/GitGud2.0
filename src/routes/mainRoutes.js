@@ -18,10 +18,6 @@ router.get('/GamePage', (req, res) => {
     console.log("GamePage route");
 })
 
-router.get('/ReactionGame', (req, res) => {
-    res.sendFile(publicDirectoryPath +  '/reaction.html');
-    console.log("reactionGameRoute");
-})
 
 
 // router.get('/AimGaim', (req, res) => {
