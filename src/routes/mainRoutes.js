@@ -38,6 +38,7 @@ router.get("/about", (req, res) => {
   // res.sendFile(publicDirectoryPath +  '/reaction.html');
 });
 
+
 router.get("/GamePage", (req, res) => {
   res.sendFile(publicDirectoryPath + "/gamePage.html");
   console.log("GamePage route");

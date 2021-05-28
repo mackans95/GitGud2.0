@@ -7,8 +7,10 @@ const bodyParser = require("body-parser");
 const app = express();
 const publicDirectoryPath = path.join(__dirname, "../public");
 //import Routes
-const mainRoutes = require("./routes/mainRoutes");
-const aimGaimRoutes = require("./routes/aimGaimRoutes");
+const mainRoutes = require('./routes/mainRoutes');
+const aimGaimRoutes = require('./routes/aimGaimRoutes');
+const reactionGameRoute = require('./routes/reactionGameRoutes')
+
 //END IMPORTS
 
 app.use(express.static(publicDirectoryPath));
@@ -25,8 +27,10 @@ app.use(
 app.use(express.json());
 //END Middleware
 
+
 app.use("/", mainRoutes);
 app.use("/", aimGaimRoutes);
+app.use(reactionGameRoute);
 
 //Connect to DB
 // mongodb+srv://gitgudadmin:skollosenord@cluster0.k5q5v.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
