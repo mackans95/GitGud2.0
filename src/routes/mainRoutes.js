@@ -1,23 +1,48 @@
-const express = require('express');
-const path = require('path');
+const express = require("express");
+const path = require("path");
 const router = express.Router();
-const Highscore = require('../models/highscores');
-const User = require('../models/users');
-
-const publicDirectoryPath = path.join(__dirname, '../../public');
+const Highscore = require("../models/highscores");
+const User = require("../models/users");
+const { login } = require("../controllers/authController");
+const publicDirectoryPath = path.join(__dirname, "../../public");
 router.use(express.static(publicDirectoryPath));
 
+// AUTH
+router.post("/", async (req, res) => {
+  if (req.body.IndexForm === "Login") {
+    await login(req, res);
+  }
+
+  if (req.body.IndexForm === "Signup") {
+    await User.create(req.body);
+
+    res.sendFile(publicDirectoryPath + "/index.html");
+  }
+
+  if (req.body.IndexForm === "Guest") {
+    const user = await User.create({
+      username: `GUEST${Math.trunc(Math.random() * 1000)}`,
+      password: "password",
+    });
+
+    req.body.username = user.username;
+    req.body.password = user.password;
+
+    await login(req, res);
+  }
+});
+
 //get routes
-router.get('/about', (req, res) => {
-    res.send('Created by Calle, Christian and Marcus')
-    // res.sendFile(publicDirectoryPath +  '/reaction.html');
-})
+router.get("/about", (req, res) => {
+  res.send("Created by Calle, Christian and Marcus");
+  // res.sendFile(publicDirectoryPath +  '/reaction.html');
+});
 
-router.get('/GamePage', (req, res) => {
-    res.sendFile(publicDirectoryPath +  '/gamePage.html');
-    console.log("GamePage route");
-})
 
+router.get("/GamePage", (req, res) => {
+  res.sendFile(publicDirectoryPath + "/gamePage.html");
+  console.log("GamePage route");
+});
 
 
 // router.get('/AimGaim', (req, res) => {

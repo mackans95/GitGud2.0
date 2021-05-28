@@ -9,9 +9,6 @@ const messageHeadSpan = document.querySelector(".messager-head span");
 const messageInput = document.querySelector("#message");
 const messagesOurs = document.querySelector(".messages li.ours");
 const messagesTheirs = document.querySelector(".messages li");
-
-userSpan.textContent = sessionStorage.getItem("loggedInUser");
-
 const gamesArray = [
   {
     name: "AimGaim",
@@ -27,36 +24,21 @@ const gamesArray = [
   },
 ];
 
-// ---- POST Event: unhandled ----
-const postBtn = document.querySelector(".post-user");
-
-postBtn.addEventListener("click", postUserRequest);
-
-function postUserRequest(e) {
-  e.preventDefault();
-
-  const currentUser = fetchCurrentUser();
-
-  const user = {
-    username: currentUser.username,
-    password: currentUser.password,
-  };
-
-  fetch("/api/users", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(user),
-  }).then((resp) => console.log(resp.status));
-}
+// ---- Sets current user ----
+const setLoggedInName = () => {
+  return document.cookie
+    .split(";")
+    .filter((S) => S.includes("username"))
+    .toString()
+    .split("=")[1];
+};
+userSpan.textContent = setLoggedInName();
 
 // ---- EVENT HANDLERS ----
-
 window.addEventListener("load", loadGameCards);
-window.addEventListener("load", loadMessagers);
 window.addEventListener("load", sendToLoginPageIfNoUser);
-window.addEventListener("load", displayNewMessageToUser);
+// window.addEventListener("load", loadMessagers);
+// window.addEventListener("load", displayNewMessageToUser);
 
 document.addEventListener("click", MakeLiBlocksClickable, false);
 
@@ -71,11 +53,9 @@ messageInput.addEventListener("keypress", function (e) {
 });
 
 logoutBtn.addEventListener("click", function (e) {
-  e.preventDefault();
-
-  sessionStorage.setItem("loggedInUser", "");
-
-  window.location.href = "";
+  document.cookie = "username=; path=/;";
+  document.cookie = "jwt=; path=/;";
+  window.location.href = "/";
 });
 
 // ---- FUNCTIONS ----
@@ -92,34 +72,6 @@ function sendToLoginPageIfNoUser() {
   }
 }
 
-function displayNewMessageToUser() {
-  const currentUser = fetchCurrentUser();
-
-  const users = fetchUsers();
-
-  const messagesCorrected = users
-    .filter((user) => user.conversation)
-    .flatMap((m) => m.conversation);
-
-  const msgsUnread = messagesCorrected.filter((msg) => msg.read === false);
-
-  msgsUnread.forEach((msg) => {
-    if (msg.read === false && msg.recipient === currentUser.username) {
-      const msgLiBox = [...document.querySelectorAll("li.user")];
-
-      msgLiBox.forEach((li) => {
-        if (li.textContent.trim() === msg.sender) {
-          li.style.backgroundColor = "yellow";
-          const test = document.createElement("span");
-          test.textContent = "NEW!";
-          // test.style.paddingLeft = "60px";
-          li.append(test);
-        }
-      });
-    }
-  });
-}
-
 function loadGameCards() {
   gamesArray.forEach((game) => {
     const html = `
@@ -133,21 +85,6 @@ function loadGameCards() {
       `;
 
     cardHolder.insertAdjacentHTML("afterbegin", html);
-  });
-}
-
-function loadMessagers() {
-  const users = fetchUsers();
-
-  users.forEach((user) => {
-    if (user.username !== sessionStorage.getItem("loggedInUser")) {
-      const html = `
-      <li class="user">${user.username}
-      </li>
-      `;
-
-      olMessagers.insertAdjacentHTML("afterbegin", html);
-    }
   });
 }
 
@@ -201,20 +138,57 @@ function hasClass(elem, className) {
   return elem.className.split(" ").indexOf(className) > -1;
 }
 
-function userExists(user) {
+// FUNKAR INTE JUST NU
+// --------------------------------------------------------
+
+/*
+function displayNewMessageToUser() {
+  const currentUser = fetchCurrentUser();
+
   const users = fetchUsers();
-  return users.some((u) => u.username === user.username);
-}
 
-function fetchUsers() {
-  const serializedUsers = localStorage.getItem("users");
-  return JSON.parse(serializedUsers) ?? [];
-}
+  const messagesCorrected = users
+    .filter((user) => user.conversation)
+    .flatMap((m) => m.conversation);
 
-function fetchCurrentUser() {
-  return fetchUsers().find((user) => user.username === userSpan.textContent);
-}
+  const msgsUnread = messagesCorrected.filter((msg) => msg.read === false);
 
+  msgsUnread.forEach((msg) => {
+    if (msg.read === false && msg.recipient === currentUser.username) {
+      const msgLiBox = [...document.querySelectorAll("li.user")];
+
+      msgLiBox.forEach((li) => {
+        if (li.textContent.trim() === msg.sender) {
+          li.style.backgroundColor = "yellow";
+          const test = document.createElement("span");
+          test.textContent = "NEW!";
+          // test.style.paddingLeft = "60px";
+          li.append(test);
+        }
+      });
+    }
+  });
+}
+*/
+
+/*
+function loadMessagers() {
+  const users = fetchUsers();
+
+  users.forEach((user) => {
+    if (user.username !== sessionStorage.getItem("loggedInUser")) {
+      const html = `
+      <li class="user">${user.username}
+      </li>
+      `;
+
+      olMessagers.insertAdjacentHTML("afterbegin", html);
+    }
+  });
+}
+*/
+
+/*
 function updateUsersMessage() {
   const users = fetchUsers();
 
@@ -222,9 +196,7 @@ function updateUsersMessage() {
     (user) => user.username === sessionStorage.getItem("loggedInUser")
   );
 
-  !currentUser.hasOwnProperty("conversation")
-    ? (currentUser.conversation = [])
-    : "";
+  !currentUser.hasOwnProperty("conversation") ? (currentUser.conversation = []) : "";
 
   const message = {
     sender: currentUser.username,
@@ -239,7 +211,9 @@ function updateUsersMessage() {
   const serializeUsers = JSON.stringify(users);
   localStorage.setItem("users", serializeUsers);
 }
+*/
 
+/*
 function displayMessages(target) {
   const messages = getAllMessages(target); //getMessagesHTML();
 
@@ -247,7 +221,9 @@ function displayMessages(target) {
     olMessages.insertAdjacentHTML("beforeend", messages.join(""));
   }
 }
+*/
 
+/*
 function displayMessageFromInputField() {
   const messages = getMessagesFromUs();
 
@@ -255,7 +231,9 @@ function displayMessageFromInputField() {
     olMessages.insertAdjacentHTML("beforeend", messages[messages.length - 1]);
   }
 }
+*/
 
+/*
 function getMessagesFromUs() {
   const currentUser = fetchUsers().find(
     (user) => user.username === userSpan.textContent
@@ -269,7 +247,9 @@ function getMessagesFromUs() {
 
   return messages;
 }
+*/
 
+/*
 function getAllMessages(target) {
   const currentUser = fetchUsers().find(
     (user) => user.username === userSpan.textContent
@@ -308,7 +288,9 @@ function getAllMessages(target) {
 
   return finalMessages;
 }
+*/
 
+/*
 function setMessagesToRead(target) {
   const currentUser = fetchUsers().find(
     (user) => user.username === userSpan.textContent
@@ -340,3 +322,5 @@ function setMessagesToRead(target) {
     }
   });
 }
+
+*/
