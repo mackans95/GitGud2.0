@@ -1,6 +1,7 @@
 //IMPORTS
 const path = require("path");
 const express = require("express");
+const cookieParser = require('cookie-parser');
 const mongoose = require("mongoose");
 require("dotenv/config");
 const bodyParser = require("body-parser");
@@ -15,6 +16,9 @@ const reactionGameRoute = require('./routes/reactionGameRoutes')
 
 app.use(express.static(publicDirectoryPath));
 
+
+// Middlewares
+app.use(cookieParser());
 app.use(
   bodyParser.urlencoded({
     limit: "5000mb",
@@ -22,8 +26,6 @@ app.use(
     parameterLimit: 100000000000,
   })
 );
-
-//Middleware
 app.use(express.json());
 //END Middleware
 

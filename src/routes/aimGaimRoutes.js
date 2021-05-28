@@ -7,15 +7,16 @@ router.use(express.static(publicDirectoryPath));
 
 const Highscore = require('../models/highscores');
 const User = require('../models/users');
+const authTokenMiddleware = require("../controllers/userAuth");
 
 //ROUTES /AimGaim
-router.get('/AimGaim', (req, res) => {
+router.get('/AimGaim', authTokenMiddleware, (req, res) => {
     res.sendFile(publicDirectoryPath +  '/AimGaim.html');
     console.log("AimGameRoute");
 })
 
 //post routes
-router.post('/AimGaim', async (req, res)=>{
+router.post('/AimGaim', authTokenMiddleware, async (req, res)=>{
     // console.log(req.body);
 
     // const highscore = new Highscore({
@@ -25,8 +26,6 @@ router.post('/AimGaim', async (req, res)=>{
     //     date: Date.now()
     // })
 
-    // console.log(highscore);
-
     // highscore.save()
     //     .then(data => {
     //         console.log('saved object to db');
@@ -35,6 +34,18 @@ router.post('/AimGaim', async (req, res)=>{
     //     .catch(err => {
     //         res.status(404);
     //     });
+
+    if(!req.user){
+      return res.status(400).send('No logged in user');
+    }
+    const userId = req.user.id;
+    const user = await User.findOne({ '_id': userId});
+    if(!user){
+      return res.status(400).send('No logged in user');
+    }
+    const userName = user.username;
+    // console.log(req.body);
+    req.body.username = userName;
 
     const highscore2 = await Highscore.create(req.body);
     res.status(201).json({
