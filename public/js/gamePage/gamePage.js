@@ -36,7 +36,6 @@ userSpan.textContent = setLoggedInName();
 
 // ---- EVENT HANDLERS ----
 window.addEventListener("load", loadGameCards);
-window.addEventListener("load", sendToLoginPageIfNoUser);
 // window.addEventListener("load", loadMessagers);
 // window.addEventListener("load", displayNewMessageToUser);
 
@@ -63,12 +62,6 @@ function MakeLiBlocksClickable(e) {
   if (hasClass(e.target, "user")) {
     removeNewMessageSpan(e.target);
     showMessagesAndAddButton(e.target);
-  }
-}
-
-function sendToLoginPageIfNoUser() {
-  if (userSpan.textContent === "") {
-    window.location.href = "/";
   }
 }
 
