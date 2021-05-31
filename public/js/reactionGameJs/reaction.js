@@ -135,6 +135,8 @@ submitScoreBtn.addEventListener("click", function (e) {
   // let serializedUsers = JSON.stringify(updatedHighscoreOnLoggedInUser);
 
   // localStorage.setItem("users", serializedUsers);
+  
+  if(currentHighScore < 1) return;
 
   fetch('http://localhost:3000/ReactionGame', {
     method: 'POST',
@@ -143,14 +145,15 @@ submitScoreBtn.addEventListener("click", function (e) {
       'Content-type': 'application/json; charset=UTF-8',
     },
     body: JSON.stringify({
-      gamename: "ReGame",
-      username: "Mr. Postfrom Clint",
+      // gamename: "ReactionGame",
+      // username: "Mr. Postfrom Clint",
       score: currentHighScore,
   })
   }).then(response => response.json())
     .then(data => console.log(data))
 
   location.reload();
+  
 });
 
 // function setHighscoreToLoggedInUser() {
