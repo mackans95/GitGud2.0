@@ -80,7 +80,9 @@ class leaderboardHandler {
     const template = document.querySelector("#highscore-row");
 
     const theGuyThatIsLoggedIn = sessionStorage.getItem("loggedInUser");
+
     console.log(theGuyThatIsLoggedIn);
+    
     users.forEach(function (user) {
       if (
         user.username === theGuyThatIsLoggedIn &&

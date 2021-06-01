@@ -606,7 +606,7 @@ document.addEventListener("mousemove", function (e) {
 // get elements
 const submitScoreBtn = document.querySelector(".postHighscores");
 
-let leaderBoardHandler1 = new leaderboardHandler;
+// let leaderBoardHandler1 = new leaderboardHandler;
 
 // submit highscore
 submitScoreBtn.addEventListener("click", async function (e) {
@@ -642,9 +642,88 @@ submitScoreBtn.addEventListener("click", async function (e) {
 
 // SUBMIT PERSONAL LEADERBOARD END -----------------------------------------------
 
-leaderBoardHandler1.LoadPersonalLeaderboard("highscoreaimgaim", true);
+// leaderBoardHandler1.LoadPersonalLeaderboard("highscoreaimgaim", true);
 
+getLeaderboards();
 
+async function getLeaderboards(){
+  const response = await fetch("http://localhost:3000/aimgaim/personalHighscores", {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+  });
+  const personalLeaderboard = await response.json();
+
+  const response2 = await fetch("http://localhost:3000/aimgaim/globalHighscores", {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+  });
+  const globalLeaderboard = await response2.json();
+
+  showLeaderboards(personalLeaderboard, globalLeaderboard);
+  // console.log(response);
+}
+
+function showLeaderboards(personalHighscores, globalHighscores){
+
+  const tbodyPersonal = document.querySelector(".personal tbody");
+  const tbodyGlobal = document.querySelector(".global tbody");
+  const template = document.querySelector("#highscore-row");
+
+  // personalHighscores = [].slice.call(personalHighscores);
+  personalHighscores = Object.values(personalHighscores); //makes objects into an array, so it can be sorted
+  //Personal leaderboard
+  //change sort() if lower hs is better than higher
+  personalHighscores.sort((a, b) => {return a - b;});
+
+  personalHighscores.forEach(highscore => {
+    let tr = template.content.cloneNode(true);
+
+    let tdName = tr.querySelector("td.name");
+    let tdScore = tr.querySelector("td.score");
+
+    tdName.textContent = highscore.username;
+    if(highscore.gamename == 'reactiongame'){
+      tdScore.textContent = highscore.score + "ms";
+    }
+    else{
+      tdScore.textContent = highscore.score;
+    }
+
+    tbodyPersonal.appendChild(tr);
+  }) 
+  //END Personal leaderboard
+
+  if(!globalHighscores){
+    return;
+  }
+  globalHighscores = Object.values(globalHighscores);
+  //Global leaderboard
+  //change sort() if lower hs is better than higher
+  globalHighscores.sort((a, b) => {return a - b;});
+  globalHighscores.forEach(highscore => {
+    let tr = template.content.cloneNode(true);
+
+    let tdName = tr.querySelector("td.name");
+    let tdScore = tr.querySelector("td.score");
+
+    tdName.textContent = highscore.username;
+      if(highscore.gamename == "reactiongame"){
+        tdScore.textContent = highscore.score + "ms";
+      }
+      else{
+        tdScore.textContent = highscore.score;
+      }
+
+      tbodyGlobal.appendChild(tr);
+  })
+  //END Global leaderboard
+}
 
 
 //TESTING AREA
