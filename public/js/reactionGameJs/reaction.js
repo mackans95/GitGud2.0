@@ -1,6 +1,6 @@
-import leaderboardHandler from "/js/general/LeaderboardHandler.js";
+// import leaderboardHandler from "/js/general/LeaderboardHandler.js";
 
-let leaderboardHandlerOne = new leaderboardHandler;
+// let leaderboardHandlerOne = new leaderboardHandler;
 
 // Get elemtens
 let canvasEl = document.querySelector(".canvas");
@@ -262,4 +262,81 @@ submitScoreBtn.addEventListener("click", function (e) {
 // }
 
 // LoadPersonalLeaderboard();
-leaderboardHandlerOne.LoadPersonalLeaderboard("highscorereactiongame", false);
+
+
+const response = await fetch("http://localhost:3000/ReactionGame/Leaderboards", {
+  method: 'GET',
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  },
+});
+const personalLeaderboard = await response.json();
+
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
+var c = getCookie('username');
+
+let LoggedInUserHighscores = personalLeaderboard.filter(hs => hs.username == c)
+
+showLeaderboards(LoggedInUserHighscores, personalLeaderboard)
+
+function showLeaderboards(personalHighscores, globalHighscores){
+
+  const tbodyPersonal = document.querySelector(".personal tbody");
+  const tbodyGlobal = document.querySelector(".global tbody");
+  const template = document.querySelector("#highscore-row");
+
+  // personalHighscores = [].slice.call(personalHighscores);
+  //Personal leaderboard
+  //change sort() if lower hs is better than higher
+  personalHighscores.sort((a, b) => {return a.score - b.score;});
+
+  personalHighscores.forEach(highscore => {
+    let tr = template.content.cloneNode(true);
+
+    let tdName = tr.querySelector("td.name");
+    let tdScore = tr.querySelector("td.score");
+
+    tdName.textContent = highscore.username;
+    if(highscore.gamename == 'reactiongame'){
+      tdScore.textContent = highscore.score + "ms";
+    }
+    else{
+      tdScore.textContent = highscore.score;
+    }
+
+    tbodyPersonal.appendChild(tr);
+  }) 
+  //END Personal leaderboard
+
+  if(!globalHighscores){
+    return;
+  }
+  //Global leaderboard
+  //change sort() if lower hs is better than higher
+  globalHighscores.sort((a, b) => {return a.score - b.score;});
+  const topFive = globalHighscores.slice(0,5);
+  topFive.forEach(highscore => {
+    let tr = template.content.cloneNode(true);
+
+    let tdName = tr.querySelector("td.name");
+    let tdScore = tr.querySelector("td.score");
+
+    tdName.textContent = highscore.username;
+      if(highscore.gamename == "reactiongame"){
+        tdScore.textContent = highscore.score + "ms";
+      }
+      else{
+        tdScore.textContent = highscore.score;
+      }
+
+      tbodyGlobal.appendChild(tr);
+  })
+  //END Global leaderboard
+}
+
+// leaderboardHandlerOne.LoadPersonalLeaderboard("highscorereactiongame", false);
