@@ -2,8 +2,6 @@ include('./js/AimGaimJs/vector2D.js');
 setTimeout(function(){},200);
 include('./js/AimGaimJs/aimGaim.js');
 
-console.log('works?');
-
 function include(file) { 
   
     var script  = document.createElement('script'); 
