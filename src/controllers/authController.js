@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/users");
 const path = require("path");
-const { model } = require("mongoose");
 const publicDirectoryPath = path.join(__dirname, "../../public");
 
 exports.login = async (req, res) => {

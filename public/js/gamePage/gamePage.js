@@ -37,10 +37,9 @@ userSpan.textContent = setLoggedInName();
 
 // ---- EVENT HANDLERS ----
 window.addEventListener("load", loadGameCards);
-window.addEventListener("load", getUsersAndDisplay);
-window.addEventListener("load", getCurrentUser);
 window.addEventListener("load", loadMessagers);
 window.addEventListener("load", displayNewMessageToUser);
+window.addEventListener("load", getUsersAndDisplay);
 
 document.addEventListener("click", MakeLiBlocksClickable, false);
 document.addEventListener("click", makeAddUserButtonsClickable, false);
@@ -62,43 +61,50 @@ logoutBtn.addEventListener("click", function (e) {
 });
 
 // ---- FUNCTIONS ----
+
 async function getCurrentUser() {
-  const username = document.cookie.split(";")[0].split("=")[1];
-
-  const response = await fetch(`http://localhost:3000/users/${username}`, {
-    method: "GET",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-  });
-
-  const data = await response.json();
-  const userArr = Object.values(data);
   let user;
-  userArr.forEach((el) => {
-    user = el;
-  });
+  try {
+    const username = document.cookie.split(";")[0].split("=")[1];
 
+    const response = await fetch(`http://localhost:3000/users/${username}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await response.json();
+    const userArr = Object.values(data);
+    userArr.forEach((el) => {
+      user = el;
+    });
+  } catch (error) {
+    console.log(error);
+  }
   return user;
 }
 
 async function getAllUsers() {
-  const response = await fetch("http://localhost:3000/users", {
-    method: "GET",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-  });
-
-  const users = await response.json();
-  const usersArr = Object.values(users);
   let userList;
-  usersArr.forEach((user) => {
-    userList = user;
-  });
+  try {
+    const response = await fetch("http://localhost:3000/users", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
 
+    const users = await response.json();
+    const usersArr = Object.values(users);
+    usersArr.forEach((user) => {
+      userList = user;
+    });
+  } catch (error) {
+    console.log(error);
+  }
   return userList;
 }
 
@@ -123,10 +129,10 @@ async function getUsersAndDisplay() {
 
   userListFilterFriends.forEach((user) => {
     const html = `
-    <li class="db-user">${user.username}
-    <button class="add-friend-btn">Add</button>
-    </li>
-    `;
+      <li class="db-user">${user.username}
+      <button class="add-friend-btn">Add</button>
+      </li>
+      `;
 
     showUsersList.insertAdjacentHTML("afterbegin", html);
   });
@@ -162,7 +168,6 @@ async function makeAddUserButtonsClickable(e) {
 
       updatedUser.friends.forEach((friend) => {
         if (friend.username === username) {
-          console.log("hi");
           const liList = document.querySelectorAll(".db-user");
 
           liList.forEach((li) => {
@@ -172,6 +177,18 @@ async function makeAddUserButtonsClickable(e) {
           });
         }
       });
+    });
+
+    const secondResponse = await fetch("http://localhost:3000/addSelfToFriend", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    secondResponse.json().then((data) => {
+      console.log(data);
     });
   }
 }
@@ -407,6 +424,7 @@ async function setMessagesToRead(target) {
 
       // const serializeUsers = JSON.stringify(users);
       // localStorage.setItem("users", serializeUsers);
+
       // TODO: skicka en update fetch, så den sätter read till true
     }
   });

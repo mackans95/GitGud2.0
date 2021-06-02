@@ -13,6 +13,7 @@ router.use(express.static(publicDirectoryPath));
 
 // AUTH
 router.post("/", async (req, res) => {
+  console.log("reached this");
   if (req.body.IndexForm === "Login") {
     await login(req, res);
   }
