@@ -3,6 +3,7 @@ const path = require("path");
 const router = express.Router();
 const Highscore = require("../models/highscores");
 const User = require("../models/users");
+const Contest = require("../models/contest");
 const { login } = require("../controllers/authController");
 const publicDirectoryPath = path.join(__dirname, "../../public");
 const jwt = require('jsonwebtoken');
@@ -48,6 +49,15 @@ router.get("/GamePage", authTokenMiddleware, (req, res) => {
   console.log("GamePage route");
 });
 
+//contest route
+router.post('/contests', authTokenMiddleware, async (req, res) => {
+  console.log('contests posted to!');
+  console.log(req.body);
+
+  const contest = await Contest.create(req.body);
+  console.log(contest);
+  res.status(200).send('OK');
+});
 
 // router.get('/AimGaim', (req, res) => {
 //     res.sendFile(publicDirectoryPath +  '/AimGaim.html');
