@@ -9,6 +9,7 @@ const messageHeadSpan = document.querySelector(".messager-head span");
 const messageInput = document.querySelector("#message");
 const messagesOurs = document.querySelector(".messages li.ours");
 const messagesTheirs = document.querySelector(".messages li");
+const showUsersList = document.querySelector(".user-list");
 const gamesArray = [
   {
     name: "AimGaim",
@@ -36,16 +37,19 @@ userSpan.textContent = setLoggedInName();
 
 // ---- EVENT HANDLERS ----
 window.addEventListener("load", loadGameCards);
-// window.addEventListener("load", loadMessagers);
-// window.addEventListener("load", displayNewMessageToUser);
+window.addEventListener("load", getUsersAndDisplay);
+window.addEventListener("load", getCurrentUser);
+window.addEventListener("load", loadMessagers);
+window.addEventListener("load", displayNewMessageToUser);
 
 document.addEventListener("click", MakeLiBlocksClickable, false);
+document.addEventListener("click", makeAddUserButtonsClickable, false);
 
-messageInput.addEventListener("keypress", function (e) {
+messageInput.addEventListener("keypress", async function (e) {
   if (e.key === "Enter") {
-    updateUsersMessage();
+    await updateUsersMessage();
 
-    displayMessageFromInputField();
+    await displayMessageFromInputField();
 
     messageInput.value = "";
   }
@@ -58,10 +62,117 @@ logoutBtn.addEventListener("click", function (e) {
 });
 
 // ---- FUNCTIONS ----
+async function getCurrentUser() {
+  const username = document.cookie.split(";")[0].split("=")[1];
+
+  const response = await fetch(`http://localhost:3000/users/${username}`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  });
+
+  const data = await response.json();
+  const userArr = Object.values(data);
+  let user;
+  userArr.forEach((el) => {
+    user = el;
+  });
+
+  return user;
+}
+
+async function getAllUsers() {
+  const response = await fetch("http://localhost:3000/users", {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  });
+
+  const users = await response.json();
+  const usersArr = Object.values(users);
+  let userList;
+  usersArr.forEach((user) => {
+    userList = user;
+  });
+
+  return userList;
+}
+
+async function getUsersAndDisplay() {
+  const currentUser = await getCurrentUser();
+
+  const userList = await getAllUsers();
+
+  const friendsToNotRender = currentUser.friends;
+
+  const userListFilterCurrentUser = userList.filter(
+    (user) => user.username !== currentUser.username
+  );
+
+  const userListFilterFriends = userListFilterCurrentUser.filter(function (elOne) {
+    return (
+      friendsToNotRender.filter(function (elTwo) {
+        return elTwo.username == elOne.username;
+      }).length == 0
+    );
+  });
+
+  userListFilterFriends.forEach((user) => {
+    const html = `
+    <li class="db-user">${user.username}
+    <button class="add-friend-btn">Add</button>
+    </li>
+    `;
+
+    showUsersList.insertAdjacentHTML("afterbegin", html);
+  });
+}
+
 function MakeLiBlocksClickable(e) {
   if (hasClass(e.target, "user")) {
     removeNewMessageSpan(e.target);
     showMessagesAndAddButton(e.target);
+  }
+}
+
+async function makeAddUserButtonsClickable(e) {
+  if (hasClass(e.target, "add-friend-btn")) {
+    const username = e.target.closest("li").innerText.split("\n")[0];
+
+    const data = {
+      username,
+    };
+
+    const response = await fetch("http://localhost:3000/addFriend", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    response.json().then((data) => {
+      const data1 = Object.values(data)[1];
+      const data2 = Object.values(data1);
+      const updatedUser = data2.pop();
+
+      updatedUser.friends.forEach((friend) => {
+        if (friend.username === username) {
+          console.log("hi");
+          const liList = document.querySelectorAll(".db-user");
+
+          liList.forEach((li) => {
+            if (li.innerHTML.startsWith(username)) {
+              li.remove();
+            }
+          });
+        }
+      });
+    });
   }
 }
 
@@ -133,14 +244,13 @@ function hasClass(elem, className) {
 
 // FUNKAR INTE JUST NU
 // --------------------------------------------------------
+//borde funka
+async function displayNewMessageToUser() {
+  const currentUser = await getCurrentUser();
 
-/*
-function displayNewMessageToUser() {
-  const currentUser = fetchCurrentUser();
+  const friends = currentUser.friends;
 
-  const users = fetchUsers();
-
-  const messagesCorrected = users
+  const messagesCorrected = friends
     .filter((user) => user.conversation)
     .flatMap((m) => m.conversation);
 
@@ -155,41 +265,32 @@ function displayNewMessageToUser() {
           li.style.backgroundColor = "yellow";
           const test = document.createElement("span");
           test.textContent = "NEW!";
-          // test.style.paddingLeft = "60px";
           li.append(test);
         }
       });
     }
   });
 }
-*/
 
-/*
-function loadMessagers() {
-  const users = fetchUsers();
+async function loadMessagers() {
+  const users = await getCurrentUser();
 
-  users.forEach((user) => {
-    if (user.username !== sessionStorage.getItem("loggedInUser")) {
-      const html = `
-      <li class="user">${user.username}
+  const friends = users.friends;
+
+  friends.forEach((friend) => {
+    const html = `
+      <li class="user">${friend.username}
       </li>
       `;
 
-      olMessagers.insertAdjacentHTML("afterbegin", html);
-    }
+    olMessagers.insertAdjacentHTML("afterbegin", html);
   });
 }
-*/
 
-/*
-function updateUsersMessage() {
-  const users = fetchUsers();
+async function updateUsersMessage() {
+  const currentUser = await getCurrentUser();
 
-  const currentUser = users.find(
-    (user) => user.username === sessionStorage.getItem("loggedInUser")
-  );
-
-  !currentUser.hasOwnProperty("conversation") ? (currentUser.conversation = []) : "";
+  // !currentUser.hasOwnProperty("conversation") ? (currentUser.conversation = []) : "";
 
   const message = {
     sender: currentUser.username,
@@ -199,38 +300,39 @@ function updateUsersMessage() {
     read: false,
   };
 
-  currentUser.conversation.push(message);
+  const response = await fetch("http://localhost:3000/conversations", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(message),
+  });
 
-  const serializeUsers = JSON.stringify(users);
-  localStorage.setItem("users", serializeUsers);
+  // TODO: skicka till databas och uppdatera
+
+  // currentUser.conversation.push(message);
+  // const serializeUsers = JSON.stringify(users);
+  // localStorage.setItem("users", serializeUsers);
 }
-*/
 
-/*
-function displayMessages(target) {
-  const messages = getAllMessages(target); //getMessagesHTML();
+async function displayMessages(target) {
+  const messages = await getAllMessages(target);
 
   if (messages) {
     olMessages.insertAdjacentHTML("beforeend", messages.join(""));
   }
 }
-*/
 
-/*
-function displayMessageFromInputField() {
-  const messages = getMessagesFromUs();
+async function displayMessageFromInputField() {
+  const messages = await getMessagesFromUs();
 
   if (messages) {
     olMessages.insertAdjacentHTML("beforeend", messages[messages.length - 1]);
   }
 }
-*/
 
-/*
-function getMessagesFromUs() {
-  const currentUser = fetchUsers().find(
-    (user) => user.username === userSpan.textContent
-  );
+async function getMessagesFromUs() {
+  const currentUser = await getCurrentUser();
 
   const messages = currentUser?.conversation
     ?.filter((conv) => conv.recipient === messageHeadSpan.textContent.trim())
@@ -240,17 +342,14 @@ function getMessagesFromUs() {
 
   return messages;
 }
-*/
 
-/*
-function getAllMessages(target) {
-  const currentUser = fetchUsers().find(
-    (user) => user.username === userSpan.textContent
-  );
+// borde funka
+async function getAllMessages(target) {
+  const currentUser = await getCurrentUser();
 
-  const users = fetchUsers();
+  const friends = currentUser.friends;
 
-  const messagesCorrected = users
+  const messagesCorrected = friends
     .filter((user) => user.conversation)
     .flatMap((m) => m.conversation)
     .filter(
@@ -281,17 +380,13 @@ function getAllMessages(target) {
 
   return finalMessages;
 }
-*/
 
-/*
-function setMessagesToRead(target) {
-  const currentUser = fetchUsers().find(
-    (user) => user.username === userSpan.textContent
-  );
+async function setMessagesToRead(target) {
+  const currentUser = await getCurrentUser();
 
-  const users = fetchUsers();
+  const friends = currentUser.friends;
 
-  const messagesToUser = users
+  const messagesToUser = friends
     .filter((user) => user.conversation)
     .flatMap((m) => m.conversation)
     .filter(
@@ -310,10 +405,9 @@ function setMessagesToRead(target) {
     ) {
       msg.read = true;
 
-      const serializeUsers = JSON.stringify(users);
-      localStorage.setItem("users", serializeUsers);
+      // const serializeUsers = JSON.stringify(users);
+      // localStorage.setItem("users", serializeUsers);
+      // TODO: skicka en update fetch, så den sätter read till true
     }
   });
 }
-
-*/

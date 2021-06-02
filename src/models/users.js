@@ -12,9 +12,26 @@ const userSchema = mongoose.Schema({
   },
   friends: [
     {
-      type: String,
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+      unique: [true, "You can only add a friend once!"],
     },
   ],
+  conversation: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: "Conversation",
+    },
+  ],
+});
+
+userSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: "friends",
+    select: "-__v -password",
+  });
+
+  next();
 });
 
 const User = mongoose.model("User", userSchema);
