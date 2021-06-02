@@ -131,6 +131,59 @@ function hasClass(elem, className) {
   return elem.className.split(" ").indexOf(className) > -1;
 }
 
+//****************************** */
+//Create Contest section
+//****************************** */
+const createContestBtn = document.querySelector('.createContest');
+const closeWindowContestBtn = document.querySelector('[data-close-button]');
+const popupWindowContest = document.querySelector('.popupWindow');
+const overlay = document.querySelector('#overlay');
+const dateStartPicker = document.querySelector('#dateStartInput');
+const dateEndPicker = document.querySelector('#dateEndInput');
+const dateStartElem = document.querySelector('.dateStart');
+const dateEndElem = document.querySelector('.dateEnd');
+
+createContestBtn.addEventListener('click', () => {
+  popupWindowContest.classList.add('active');
+  overlay.classList.add('active');
+
+
+
+  //settings starting date. By default an Hour from now
+  let dateStart = new Date();
+  dateStart.setHours(dateStart.getHours() + 1);
+  dateStartElem.textContent = dateStart.toISOString().slice(0, 10) + " : " + ("0" + dateStart.getHours()).slice(-2) + ":" + ("0" + dateStart.getMinutes()).slice(-2);
+
+  let dateEnd = new Date(); //.setFullYear(new Date().getFullYear() + 1)
+  dateEnd.setDate(dateEnd.getDate() + 1); //set the day after by default
+  dateEnd.setHours(dateStart.getHours());
+  dateEndElem.textContent = dateEnd.toISOString().slice(0, 10) + " : " + ("0" + dateEnd.getHours()).slice(-2) + ":" + ("0" + dateEnd.getMinutes()).slice(-2);
+})
+
+closeWindowContestBtn.addEventListener('click', () => {
+  popupWindowContest.classList.remove('active');
+  overlay.classList.remove('active');
+})
+
+dateStartPicker.addEventListener('change', ()=>{
+  let date = new Date(dateStartPicker.value);
+  dateStartElem.textContent = date.toISOString().slice(0, 10) + " : " + ("0" + date.getHours()).slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2);
+})
+dateEndPicker.addEventListener('change', ()=>{
+  let date = new Date(dateEndPicker.value);
+  dateEndElem.textContent = date.toISOString().slice(0, 10) + " : " + ("0" + date.getHours()).slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2);
+})
+
+
+//****************************** */
+//END Create Contest section
+//****************************** */
+
+
+
+
+
+
 // FUNKAR INTE JUST NU
 // --------------------------------------------------------
 

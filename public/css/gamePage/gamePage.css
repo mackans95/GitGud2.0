@@ -182,3 +182,152 @@ ol.messagers {
   right: 20px;
   bottom: 20px;
 }
+
+
+/* Contest styling */
+.createContest {
+  background-color: #34495e;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: center;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.popupWindow {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  
+  background-color: #34495e;
+  color: white;
+  border-radius: 10px;
+  z-index: 10;
+  padding: 10px;
+  width: 800px;
+  max-width: 80%;
+  height: 500px;
+  max-height: 80%;
+  overflow: hidden;
+}
+.popupWindow.active{
+  transform: translate(-50%, -50%) scale(1);
+  transition: 120ms ease-in;
+}
+
+.popupHeader {
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid black;
+}
+.popupHeader .popupTitle {
+  font-size: 1.25rem;
+  /* font-weight: bold; */
+}
+.popupHeader .closeButton {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background: none;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: white;
+}
+.popupBody {
+  padding: 10px 15px;
+}
+.popupBody .popupBodyHeader{
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed black;
+}
+.popupBody .invitationButton {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  bottom: 10px;
+  left: 50%;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.popupBody .popupBodyHeader .dateEnd, .popupBody .popupBodyHeader .dateStart,  .popupBody .popupBodyHeader .gameName{
+  margin: 10px;
+}
+.popupBody .popupBodyBody {
+  display: flex;
+  justify-content: space-between;
+  height: 200px;
+  overflow-y: hidden;
+}
+.popupBody .contestFriendList {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  min-width: 150px;
+  overflow-y: auto;
+  height: 150px;
+  /* max-height: 40%; */
+}
+.popupBody .contestFriendList .friendInList {
+  margin: 5px;
+}
+*::-webkit-scrollbar-track {
+  /* background: orange; */
+}
+*::-webkit-scrollbar-thumb {
+  /* background-color: #34495e; */
+  background-color: white;
+  /* border-radius: 20px;
+  border: 3px solid orange; */
+}
+.popupBody .contestGame{
+  width: 200px;
+  padding: 10px;
+  /* border: 1px solid black; */
+}
+.popupBody .contestDateStart{
+  width: 200px;
+  /* text-align: center; */
+  padding: 10px;
+  /* border: 1px solid black; */
+}
+.popupBody #dateStartInput, .popupBody #dateEndInput {
+  max-width: 170px;
+}
+.popupBody .contestDateEnd{
+  width: 200px;
+  padding: 10px;
+  /* border: 1px solid black; */
+}
+.popupBody .contestPlayers{
+  padding: 10px;
+  /* border: 1px solid black; */
+}
+
+
+#overlay {
+  position: fixed;
+  opacity: 0;
+  transition: 150ms ease-in-out;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, .5);
+  pointer-events: none;
+}
+#overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
