@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const router = express.Router();
 // const Highscore = require("../models/highscores");
 const User = require("../models/users");
+const Contest = require("../models/contest");
 const { login } = require("../controllers/authController");
 const publicDirectoryPath = path.join(__dirname, "../../public");
 // const jwt = require("jsonwebtoken");
@@ -64,6 +65,16 @@ router.get("/users/:username", authTokenMiddleware, async (req, res) => {
 router.get("/GamePage", authTokenMiddleware, (req, res) => {
   res.sendFile(publicDirectoryPath + "/gamePage.html");
   console.log("GamePage route");
+});
+
+//contest route
+router.post('/contests', authTokenMiddleware, async (req, res) => {
+  console.log('contests posted to!');
+  console.log(req.body);
+
+  const contest = await Contest.create(req.body);
+  console.log(contest);
+  res.status(200).send('OK');
 });
 
 router.get("/alert", authTokenMiddleware, async (req, res) => {

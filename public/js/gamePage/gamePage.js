@@ -250,6 +250,126 @@ function hasClass(elem, className) {
   return elem.className.split(" ").indexOf(className) > -1;
 }
 
+//****************************** */
+//Create Contest section
+//****************************** */
+const createContestBtn = document.querySelector('.createContest');
+const closeWindowContestBtn = document.querySelector('[data-close-button]');
+const popupWindowContest = document.querySelector('.popupWindow');
+const overlay = document.querySelector('#overlay');
+const dateStartPicker = document.querySelector('#dateStartInput');
+const dateEndPicker = document.querySelector('#dateEndInput');
+const dateStartElem = document.querySelector('.dateStart');
+const dateEndElem = document.querySelector('.dateEnd');
+const gameSelect = document.querySelector('.gameName');
+const finishInvitationBtn = document.querySelector('.invitationButton');
+
+//populate select game
+gamesArray.forEach(game => {
+  const option = document.createElement('option');
+  option.textContent = game.route;
+  option.value = game.route;
+
+  gameSelect.appendChild(option);
+})
+
+createContestBtn.addEventListener('click', () => {
+  //open create contest popup
+  popupWindowContest.classList.add('active');
+  overlay.classList.add('active');
+  
+  //settings starting date. By default an Hour from now
+  let dateStart = new Date();
+  dateStart.setHours(dateStart.getHours() + 1);
+  dateStartElem.textContent = dateStart.toISOString().slice(0, 10) + " : " + ("0" + dateStart.getHours()).slice(-2) + ":" + ("0" + dateStart.getMinutes()).slice(-2);
+
+  let dateEnd = new Date(); //.setFullYear(new Date().getFullYear() + 1)
+  dateEnd.setDate(dateEnd.getDate() + 1); //set the day after by default
+  dateEnd.setHours(dateStart.getHours());
+  dateEndElem.textContent = dateEnd.toISOString().slice(0, 10) + " : " + ("0" + dateEnd.getHours()).slice(-2) + ":" + ("0" + dateEnd.getMinutes()).slice(-2);
+})
+
+closeWindowContestBtn.addEventListener('click', () => {
+  popupWindowContest.classList.remove('active');
+  overlay.classList.remove('active');
+})
+
+dateStartPicker.addEventListener('change', ()=>{
+  let date = new Date(dateStartPicker.value);
+  dateStartElem.textContent = date.toISOString().slice(0, 10) + " : " + ("0" + date.getHours()).slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2);
+})
+dateEndPicker.addEventListener('change', ()=>{
+  let date = new Date(dateEndPicker.value);
+  dateEndElem.textContent = date.toISOString().slice(0, 10) + " : " + ("0" + date.getHours()).slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2);
+})
+
+finishInvitationBtn.addEventListener('click', async () => {
+  //send invitation info to DB
+  const emptyArray = []; //${emptyArray}    ${new Date(dateStartElem.textContent)}    ${new Date(dateEndElem.textContent)}
+  //[{"gamename":"someGame""username":"someName","score":"100"}]
+  // console.log(jsonScoreArray);
+
+  // class Participant{
+  //   constructor(username,password){
+  //     this.username = username,
+  //     this.password = password
+  //   }
+  // }
+  class Score{
+    constructor(gamename, username, score, date){
+      this.gamename = gamename,
+      this.username = username,
+      this.score = score,
+      this.date = date
+    }
+  }
+
+  // const participant1 = new Participant('hejsan', 'hejda');
+  // console.log("participant1: " + JSON.stringify(participant1));
+  const score1 = new Score("AimGaim", 'hejda', 1001, new Date());
+  const nameArray = ["david1", "jacob2"];
+
+  let startingDate = new Date(dateStartElem.textContent);
+  let endingDate = new Date(dateEndElem.textContent);
+
+  const data = { gamename: gameSelect.value,
+    creator: userSpan.textContent,
+    participants: nameArray,
+    scores: score1,
+    startDate : new Date(startingDate.getTime() - (startingDate.getTimezoneOffset() * 60000)), //dateStartPicker.value dateStartElem.textContent
+    endDate : new Date(endingDate.getTime() - (endingDate.getTimezoneOffset() * 60000)),
+    state : "invitation" }
+
+  // console.log(JSON.stringify(data));
+
+  const response = await fetch("http://localhost:3000/contests", {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+
+  console.log("sent!");
+
+  // response.json().then(data => {
+  //   console.log(data);
+  // });
+
+  popupWindowContest.classList.remove('active');
+  overlay.classList.remove('active');
+})
+
+//****************************** */
+//END Create Contest section
+//****************************** */
+
+
+
+
+
+
 // FUNKAR INTE JUST NU
 // --------------------------------------------------------
 //borde funka
