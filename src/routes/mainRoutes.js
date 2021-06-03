@@ -68,18 +68,28 @@ router.get("/GamePage", authTokenMiddleware, (req, res) => {
 });
 
 //contest route
-router.post('/contests', authTokenMiddleware, async (req, res) => {
-  console.log('contests posted to!');
+router.post("/contests", authTokenMiddleware, async (req, res) => {
+  console.log("contests posted to!");
   console.log(req.body);
 
   const contest = await Contest.create(req.body);
   console.log(contest);
-  res.status(200).send('OK');
+  res.status(200).send("OK");
 });
 
 router.get("/alert", authTokenMiddleware, async (req, res) => {
   const user = await User.findOne({ _id: req.user.id });
   res.json(user.alert);
+});
+
+router.get("/conversations", authTokenMiddleware, async (req, res) => {
+  const user = await User.findOne({ _id: req.user.id });
+
+  const username = user.username;
+
+  const convos = await Conversation.find({ participants: username });
+
+  res.json(convos);
 });
 
 //POSTS
@@ -109,14 +119,20 @@ router.post("/conversations", authTokenMiddleware, async (req, res) => {
   // plocka ut participants kolla efter convo
   const participants = req.body.participants;
 
-  const convo = await Conversation.find(
-    { participants: participants[0] },
-    { participants: participants[1] }
-  );
+  const convo = await Conversation.find({
+    participants: [participants[0], participants[1]],
+  });
+
+  const convo2 = await Conversation.find({
+    participants: [participants[1], participants[0]],
+  });
+
+  console.log(convo);
+  console.log(convo2);
 
   //är där ingen, skapa ny konvo
   let conv;
-  if (convo.length < 1) {
+  if (convo.length < 1 && convo2.length < 1) {
     console.log("reached this 🐶");
     conv = await Conversation.create(req.body);
   } else {
@@ -136,7 +152,17 @@ router.post("/conversations", authTokenMiddleware, async (req, res) => {
     { upsert: true }
   );
 
-  res.send(conv);
+  res.json(req.body);
+});
+
+router.patch("/users", authTokenMiddleware, async (req, res) => {
+  const user = await User.findOneAndUpdate(
+    { _id: req.user.id },
+    { $set: { alert: false } },
+    { new: true }
+  );
+
+  res.json(user);
 });
 
 // router.get('/AimGaim', (req, res) => {

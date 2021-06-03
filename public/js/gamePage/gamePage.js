@@ -1,3 +1,4 @@
+// ---- SELECTORS ----
 const logoutBtn = document.querySelector(".log-out");
 const userSpan = document.querySelector(".user-name");
 const cardHolder = document.querySelector(".card-holder");
@@ -25,7 +26,27 @@ const gamesArray = [
   },
 ];
 
-// check for updated messages
+// ---- INITIALIZATION ----
+const setLoggedInName = () => {
+  return document.cookie
+    .split(";")
+    .filter((S) => S.includes("username"))
+    .toString()
+    .split("=")[1];
+};
+let currentUser;
+async function init() {
+  userSpan.textContent = setLoggedInName();
+  currentUser = await getCurrentUser();
+  getUsersAndDisplay();
+  loadMessagers();
+  displayNewMessageToUser();
+  loadGameCards();
+}
+init();
+
+// scan to see if a new request for conversations is needed
+let currentConvos = getConversations();
 setInterval(async () => {
   const response = await fetch("http://localhost:3000/alert", {
     method: "GET",
@@ -36,40 +57,19 @@ setInterval(async () => {
   });
 
   const JsonResponse = await response.json();
-}, 5000);
 
-// ---- INITIALIZATION ----
-const setLoggedInName = () => {
-  return document.cookie
-    .split(";")
-    .filter((S) => S.includes("username"))
-    .toString()
-    .split("=")[1];
-};
-
-let currentUser;
-async function init() {
-  userSpan.textContent = setLoggedInName();
-  currentUser = await getCurrentUser();
-  getUsersAndDisplay();
-  loadMessagers();
-  displayNewMessageToUser();
-  loadGameCards();
-}
-
-init();
+  if (JsonResponse) {
+    currentConvos = await getConversations();
+  }
+}, 1000);
 
 // ---- EVENT HANDLERS ----
-window.addEventListener("load", loadGameCards);
-
 document.addEventListener("click", MakeLiBlocksClickable, false);
 document.addEventListener("click", makeAddUserButtonsClickable, false);
 
 messageInput.addEventListener("keypress", async function (e) {
   if (e.key === "Enter") {
     await updateUsersMessage();
-
-    await displayMessageFromInputField();
 
     messageInput.value = "";
   }
@@ -82,6 +82,95 @@ logoutBtn.addEventListener("click", function (e) {
 });
 
 // ---- FUNCTIONS ----
+function loadGameCards() {
+  gamesArray.forEach((game) => {
+    const html = `
+    <a href="${game.route}" class="anchor-container">
+        <div class="card-container">
+          <img src="./images/${game.name}.jpg" alt="Avatar" />
+          <h4><b>${game.name}</b></h4>
+          <p>${game.description}</p>
+        </div>
+      </a>
+      `;
+
+    cardHolder.insertAdjacentHTML("afterbegin", html);
+  });
+}
+
+function showMessagesAndAddButton(target) {
+  olMessagers.classList.add("hide");
+  olMessages.classList.remove("hide");
+
+  const button = document.createElement("button");
+
+  button.textContent = "Back";
+  messageHead.appendChild(button);
+
+  button.addEventListener("click", function () {
+    olMessages.classList.add("hide");
+    olMessagers.classList.remove("hide");
+    button.classList.add("hide");
+    messageHeadSpan.textContent = "Chat";
+    const liElements = document.querySelectorAll(".messages li");
+    liElements.forEach((l) => l.remove());
+  });
+
+  messageHeadSpan.textContent = target.textContent;
+
+  displayMessages(target);
+
+  const msgLiBox = [...document.querySelectorAll("li.user")];
+
+  msgLiBox.forEach((l) => {
+    if (l.textContent.trim() === target.textContent.trim()) {
+      l.style.backgroundColor = "#5F9EA0";
+    }
+  });
+}
+
+function removeNewMessageSpan(target) {
+  const msgBoxLi = [...document.querySelectorAll("li.user")];
+
+  msgBoxLi.forEach((elem) => {
+    if (
+      elem.contains(document.querySelector("li.user span")) &&
+      target.textContent.trim() === elem.textContent.trim()
+    ) {
+      document.querySelector("li.user span").remove();
+    }
+  });
+}
+
+function hasClass(elem, className) {
+  return elem.className.split(" ").indexOf(className) > -1;
+}
+
+function displayNewlyMadeMessage(liElement) {
+  if (liElement) {
+    olMessages.insertAdjacentHTML("beforeend", liElement);
+  }
+}
+
+async function getConversations() {
+  const convoRes = await fetch("http://localhost:3000/conversations", {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  });
+
+  const JsonConvoRes = await convoRes.json();
+  const convoArr = Object.values(JsonConvoRes);
+  let convo;
+  convoArr.forEach((el) => {
+    convo = el;
+  });
+
+  return convo;
+}
+
 async function getCurrentUser() {
   let user;
   try {
@@ -94,7 +183,6 @@ async function getCurrentUser() {
         "Content-Type": "application/json",
       },
     });
-    console.log(response);
 
     const data = await response.json();
     const userArr = Object.values(data);
@@ -157,8 +245,10 @@ async function getUsersAndDisplay() {
   });
 }
 
-function MakeLiBlocksClickable(e) {
+async function MakeLiBlocksClickable(e) {
   if (hasClass(e.target, "user")) {
+    await getConversations();
+    await setUserAlertBackToFalse();
     removeNewMessageSpan(e.target);
     showMessagesAndAddButton(e.target);
   }
@@ -184,70 +274,139 @@ async function makeAddUserButtonsClickable(e) {
   }
 }
 
-function loadGameCards() {
-  gamesArray.forEach((game) => {
+async function setUserAlertBackToFalse() {
+  await fetch("http://localhost:3000/users", {
+    method: "PATCH",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  });
+}
+
+async function displayNewMessageToUser() {
+  const friends = currentUser.friends;
+
+  const messagesCorrected = friends
+    .filter((user) => user.conversation)
+    .flatMap((m) => m.conversation);
+
+  const msgsUnread = messagesCorrected.filter((msg) => msg.read === false);
+
+  msgsUnread.forEach((msg) => {
+    if (msg.read === false && msg.recipient === currentUser.username) {
+      const msgLiBox = [...document.querySelectorAll("li.user")];
+
+      msgLiBox.forEach((li) => {
+        if (li.textContent.trim() === msg.sender) {
+          li.style.backgroundColor = "yellow";
+          const test = document.createElement("span");
+          test.textContent = "NEW!";
+          li.append(test);
+        }
+      });
+    }
+  });
+}
+
+async function loadMessagers() {
+  const friends = currentUser.friends;
+
+  friends.forEach((friend) => {
     const html = `
-    <a href="${game.route}" class="anchor-container">
-        <div class="card-container">
-          <img src="./images/${game.name}.jpg" alt="Avatar" />
-          <h4><b>${game.name}</b></h4>
-          <p>${game.description}</p>
-        </div>
-      </a>
+      <li class="user">${friend.username}
+      </li>
       `;
 
-    cardHolder.insertAdjacentHTML("afterbegin", html);
+    olMessagers.insertAdjacentHTML("afterbegin", html);
   });
 }
 
-function showMessagesAndAddButton(target) {
-  olMessagers.classList.add("hide");
-  olMessages.classList.remove("hide");
+async function updateUsersMessage() {
+  const message = {
+    sender: currentUser.username,
+    recipient: messageHeadSpan.textContent.trim(),
+    message: messageInput.value,
+    timeStamp: Math.floor(Date.now() / 1000),
+    read: false,
+  };
 
-  const button = document.createElement("button");
+  const convo = {
+    participants: [currentUser.username, messageHeadSpan.textContent.trim()],
+    messages: [message],
+  };
 
-  button.textContent = "Back";
-  messageHead.appendChild(button);
-
-  button.addEventListener("click", function () {
-    olMessages.classList.add("hide");
-    olMessagers.classList.remove("hide");
-    button.classList.add("hide");
-    messageHeadSpan.textContent = "Chat";
-    const liElements = document.querySelectorAll(".messages li");
-    liElements.forEach((l) => l.remove());
+  const response = await fetch("http://localhost:3000/conversations", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(convo),
   });
 
-  messageHeadSpan.textContent = target.textContent;
+  const JsonConvoRes = await response.json();
+  const convoArr = Object.values(JsonConvoRes);
+  let conv;
+  convoArr.forEach((el) => {
+    conv = el;
+  });
 
-  displayMessages(target);
+  const li = await convertToLiElement(conv);
 
-  setMessagesToRead(target);
+  displayNewlyMadeMessage(li);
+}
 
-  const msgLiBox = [...document.querySelectorAll("li.user")];
+async function displayMessages() {
+  const messages = await getAllMessages();
 
-  msgLiBox.forEach((l) => {
-    if (l.textContent.trim() === target.textContent.trim()) {
-      l.style.backgroundColor = "#5F9EA0";
+  if (messages) {
+    olMessages.insertAdjacentHTML("beforeend", messages.join(""));
+  }
+}
+
+async function convertToLiElement(newMsgArr) {
+  const messages = newMsgArr
+    .filter((conv) => conv.recipient === messageHeadSpan.textContent.trim())
+    .map((conv) => {
+      return `<li class="ours">${conv.message}</li>`.trim();
+    });
+
+  return messages;
+}
+
+async function getAllMessages() {
+  const conversations = await currentConvos;
+
+  if (conversations) {
+    const messagesCorrected = conversations.messages
+      .filter(
+        (message) =>
+          (message.sender === messageHeadSpan.textContent.trim() &&
+            message.recipient === currentUser.username) ||
+          (message.sender === currentUser.username &&
+            message.recipient === messageHeadSpan.textContent.trim())
+      )
+      .sort(compare);
+
+    function compare(message1, message2) {
+      if (message1.timeStamp < message2.timeStamp) {
+        return -1;
+      }
+      if (message1.timeStamp > message2.timeStamp) {
+        return 1;
+      }
     }
-  });
-}
 
-function removeNewMessageSpan(target) {
-  const msgBoxLi = [...document.querySelectorAll("li.user")];
+    const finalMessages = messagesCorrected.map((conv) => {
+      if (conv.sender !== currentUser.username) {
+        return `<li>${conv.message}</li>`.trim();
+      } else {
+        return `<li class="ours">${conv.message}</li>`.trim();
+      }
+    });
 
-  msgBoxLi.forEach((elem) => {
-    if (
-      elem.contains(document.querySelector("li.user span")) &&
-      target.textContent.trim() === elem.textContent.trim()
-    ) {
-      document.querySelector("li.user span").remove();
-    }
-  });
-}
-
-function hasClass(elem, className) {
-  return elem.className.split(" ").indexOf(className) > -1;
+    return finalMessages;
+  }
 }
 
 //****************************** */
@@ -388,155 +547,3 @@ finishInvitationBtn.addEventListener("click", async () => {
 //****************************** */
 //END Create Contest section
 //****************************** */
-
-async function displayNewMessageToUser() {
-  const friends = currentUser.friends;
-
-  const messagesCorrected = friends
-    .filter((user) => user.conversation)
-    .flatMap((m) => m.conversation);
-
-  const msgsUnread = messagesCorrected.filter((msg) => msg.read === false);
-
-  msgsUnread.forEach((msg) => {
-    if (msg.read === false && msg.recipient === currentUser.username) {
-      const msgLiBox = [...document.querySelectorAll("li.user")];
-
-      msgLiBox.forEach((li) => {
-        if (li.textContent.trim() === msg.sender) {
-          li.style.backgroundColor = "yellow";
-          const test = document.createElement("span");
-          test.textContent = "NEW!";
-          li.append(test);
-        }
-      });
-    }
-  });
-}
-
-async function loadMessagers() {
-  const friends = currentUser.friends;
-
-  friends.forEach((friend) => {
-    const html = `
-      <li class="user">${friend.username}
-      </li>
-      `;
-
-    olMessagers.insertAdjacentHTML("afterbegin", html);
-  });
-}
-
-async function updateUsersMessage() {
-  const message = {
-    sender: currentUser.username,
-    message: messageInput.value,
-    timeStamp: Math.floor(Date.now() / 1000),
-    read: false,
-  };
-
-  const convo = {
-    participants: [currentUser.username, messageHeadSpan.textContent.trim()],
-    messages: [message],
-  };
-
-  const response = await fetch("http://localhost:3000/conversations", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(convo),
-  });
-}
-
-async function displayMessages(target) {
-  const messages = await getAllMessages(target);
-
-  if (messages) {
-    olMessages.insertAdjacentHTML("beforeend", messages.join(""));
-  }
-}
-
-async function displayMessageFromInputField() {
-  const messages = await getMessagesFromUs();
-
-  if (messages) {
-    olMessages.insertAdjacentHTML("beforeend", messages[messages.length - 1]);
-  }
-}
-
-async function getMessagesFromUs() {
-  const messages = currentUser?.conversation
-    ?.filter((conv) => conv.recipient === messageHeadSpan.textContent.trim())
-    .map((conv) => {
-      return `<li class="ours">${conv.message}</li>`.trim();
-    });
-
-  return messages;
-}
-
-// borde funka
-async function getAllMessages(target) {
-  const friends = currentUser.friends;
-
-  const messagesCorrected = friends
-    .filter((user) => user.conversation)
-    .flatMap((m) => m.conversation)
-    .filter(
-      (m) =>
-        (m.recipient === currentUser.username &&
-          m.sender === target.textContent.trim()) ||
-        (m.sender === currentUser.username &&
-          m.recipient === target.textContent.trim())
-    )
-    .sort(compare);
-
-  function compare(message1, message2) {
-    if (message1.timeStamp < message2.timeStamp) {
-      return -1;
-    }
-    if (message1.timeStamp > message2.timeStamp) {
-      return 1;
-    }
-  }
-
-  const finalMessages = messagesCorrected.map((conv) => {
-    if (conv.sender !== currentUser.username) {
-      return `<li>${conv.message}</li>`.trim();
-    } else {
-      return `<li class="ours">${conv.message}</li>`.trim();
-    }
-  });
-
-  return finalMessages;
-}
-
-async function setMessagesToRead(target) {
-  const friends = currentUser.friends;
-
-  const messagesToUser = friends
-    .filter((user) => user.conversation)
-    .flatMap((m) => m.conversation)
-    .filter(
-      (m) =>
-        (m.recipient === currentUser.username &&
-          m.sender === target.textContent.trim()) ||
-        (m.sender === currentUser.username &&
-          m.recipient === target.textContent.trim())
-    );
-
-  messagesToUser.forEach((msg) => {
-    if (
-      msg.read === false &&
-      currentUser.username !== target.username &&
-      msg.sender !== currentUser.username
-    ) {
-      msg.read = true;
-
-      // const serializeUsers = JSON.stringify(users);
-      // localStorage.setItem("users", serializeUsers);
-
-      // TODO: skicka en update fetch, så den sätter read till true
-    }
-  });
-}
