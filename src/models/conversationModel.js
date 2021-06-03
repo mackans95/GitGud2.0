@@ -1,14 +1,18 @@
 const mongoose = require("mongoose");
 
 const conversationSchema = mongoose.Schema({
-  sender: String,
-  recipient: String,
-  message: String,
-  read: Boolean,
-  timeStamp: {
-    type: Date,
-    default: Date.now(),
-  },
+  participants: [String],
+  messages: [
+    {
+      sender: String,
+      message: String,
+      timestamp: {
+        type: Date,
+        default: Date.now(),
+      },
+      read: false,
+    },
+  ],
 });
 
 const Conversation = mongoose.model("Conversation", conversationSchema);

@@ -25,6 +25,19 @@ const gamesArray = [
   },
 ];
 
+// check for updated messages
+setInterval(async () => {
+  const response = await fetch("http://localhost:3000/alert", {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  });
+
+  const JsonResponse = await response.json();
+}, 5000);
+
 // ---- Sets current user ----
 const setLoggedInName = () => {
   return document.cookie
@@ -34,12 +47,18 @@ const setLoggedInName = () => {
     .split("=")[1];
 };
 userSpan.textContent = setLoggedInName();
+let currentUser;
+
+async function getUserAndFriends() {
+  currentUser = await getCurrentUser();
+  getUsersAndDisplay();
+  loadMessagers();
+  displayNewMessageToUser();
+}
+getUserAndFriends();
 
 // ---- EVENT HANDLERS ----
 window.addEventListener("load", loadGameCards);
-window.addEventListener("load", loadMessagers);
-window.addEventListener("load", displayNewMessageToUser);
-window.addEventListener("load", getUsersAndDisplay);
 
 document.addEventListener("click", MakeLiBlocksClickable, false);
 document.addEventListener("click", makeAddUserButtonsClickable, false);
@@ -61,11 +80,10 @@ logoutBtn.addEventListener("click", function (e) {
 });
 
 // ---- FUNCTIONS ----
-
 async function getCurrentUser() {
   let user;
   try {
-    const username = document.cookie.split(";")[0].split("=")[1];
+    const username = setLoggedInName();
 
     const response = await fetch(`http://localhost:3000/users/${username}`, {
       method: "GET",
@@ -74,6 +92,7 @@ async function getCurrentUser() {
         "Content-Type": "application/json",
       },
     });
+    console.log(response);
 
     const data = await response.json();
     const userArr = Object.values(data);
@@ -109,7 +128,7 @@ async function getAllUsers() {
 }
 
 async function getUsersAndDisplay() {
-  const currentUser = await getCurrentUser();
+  // const currentUser = await getCurrentUser();
 
   const userList = await getAllUsers();
 
@@ -161,35 +180,7 @@ async function makeAddUserButtonsClickable(e) {
       body: JSON.stringify(data),
     });
 
-    response.json().then((data) => {
-      const data1 = Object.values(data)[1];
-      const data2 = Object.values(data1);
-      const updatedUser = data2.pop();
-
-      updatedUser.friends.forEach((friend) => {
-        if (friend.username === username) {
-          const liList = document.querySelectorAll(".db-user");
-
-          liList.forEach((li) => {
-            if (li.innerHTML.startsWith(username)) {
-              li.remove();
-            }
-          });
-        }
-      });
-    });
-
-    const secondResponse = await fetch("http://localhost:3000/addSelfToFriend", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    secondResponse.json().then((data) => {
-      console.log(data);
-    });
+    location.reload();
   }
 }
 
@@ -263,7 +254,7 @@ function hasClass(elem, className) {
 // --------------------------------------------------------
 //borde funka
 async function displayNewMessageToUser() {
-  const currentUser = await getCurrentUser();
+  // const currentUser = await getCurrentUser();
 
   const friends = currentUser.friends;
 
@@ -290,9 +281,7 @@ async function displayNewMessageToUser() {
 }
 
 async function loadMessagers() {
-  const users = await getCurrentUser();
-
-  const friends = users.friends;
+  const friends = currentUser.friends;
 
   friends.forEach((friend) => {
     const html = `
@@ -305,16 +294,20 @@ async function loadMessagers() {
 }
 
 async function updateUsersMessage() {
-  const currentUser = await getCurrentUser();
+  // const currentUser = await getCurrentUser();
 
   // !currentUser.hasOwnProperty("conversation") ? (currentUser.conversation = []) : "";
 
   const message = {
     sender: currentUser.username,
-    recipient: messageHeadSpan.textContent.trim(),
     message: messageInput.value,
     timeStamp: Math.floor(Date.now() / 1000),
     read: false,
+  };
+
+  const convo = {
+    participants: [currentUser.username, messageHeadSpan.textContent.trim()],
+    messages: [message],
   };
 
   const response = await fetch("http://localhost:3000/conversations", {
@@ -322,14 +315,8 @@ async function updateUsersMessage() {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(message),
+    body: JSON.stringify(convo),
   });
-
-  // TODO: skicka till databas och uppdatera
-
-  // currentUser.conversation.push(message);
-  // const serializeUsers = JSON.stringify(users);
-  // localStorage.setItem("users", serializeUsers);
 }
 
 async function displayMessages(target) {
@@ -349,7 +336,7 @@ async function displayMessageFromInputField() {
 }
 
 async function getMessagesFromUs() {
-  const currentUser = await getCurrentUser();
+  // const currentUser = await getCurrentUser();
 
   const messages = currentUser?.conversation
     ?.filter((conv) => conv.recipient === messageHeadSpan.textContent.trim())
@@ -362,7 +349,7 @@ async function getMessagesFromUs() {
 
 // borde funka
 async function getAllMessages(target) {
-  const currentUser = await getCurrentUser();
+  // const currentUser = await getCurrentUser();
 
   const friends = currentUser.friends;
 
@@ -399,7 +386,7 @@ async function getAllMessages(target) {
 }
 
 async function setMessagesToRead(target) {
-  const currentUser = await getCurrentUser();
+  // const currentUser = await getCurrentUser();
 
   const friends = currentUser.friends;
 

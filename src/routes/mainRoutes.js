@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const mongoose = require("mongoose");
 const router = express.Router();
 // const Highscore = require("../models/highscores");
 const User = require("../models/users");
@@ -9,6 +10,7 @@ const publicDirectoryPath = path.join(__dirname, "../../public");
 // const e = require("express");
 // const { send } = require("process");
 const authTokenMiddleware = require("../controllers/userAuth");
+const Conversation = require("../models/conversationModel");
 router.use(express.static(publicDirectoryPath));
 
 // AUTH
@@ -64,25 +66,66 @@ router.get("/GamePage", authTokenMiddleware, (req, res) => {
   console.log("GamePage route");
 });
 
+router.get("/alert", authTokenMiddleware, async (req, res) => {
+  const user = await User.findOne({ _id: req.user.id });
+  res.json(user.alert);
+});
+
 //POSTS
 router.post("/addFriend", authTokenMiddleware, async (req, res) => {
   console.log("---- Hi from post server ----");
-  const { username } = req.body;
+  const friendName = req.body.username;
 
-  const friend = await User.findOne({ username: username });
-
-  const newUser = await User.findByIdAndUpdate(
-    req.user.id,
-    { $addToSet: { friends: friend._id } },
-    { new: true, runValidators: true, useFindAndModify: true }
+  await User.updateOne(
+    { _id: req.user.id },
+    { $push: { friends: { username: friendName } } },
+    { upsert: true }
   );
 
-  res.status(200).json({
-    status: "success",
-    data: {
-      newUser,
-    },
-  });
+  const currentUser = await User.findOne({ _id: req.user.id });
+  const cUsername = currentUser.username;
+
+  await User.updateOne(
+    { username: friendName },
+    { $push: { friends: { username: cUsername } } },
+    { upsert: true }
+  );
+
+  res.send();
+});
+
+router.post("/conversations", authTokenMiddleware, async (req, res) => {
+  // plocka ut participants kolla efter convo
+  const participants = req.body.participants;
+
+  const convo = await Conversation.find(
+    { participants: participants[0] },
+    { participants: participants[1] }
+  );
+
+  //är där ingen, skapa ny konvo
+  let conv;
+  if (convo.length < 1) {
+    console.log("reached this 🐶");
+    conv = await Conversation.create(req.body);
+  } else {
+    // om den finns, lägg till i db-array
+
+    const filter = {
+      participants: participants[0],
+      participants: participants[1],
+    };
+
+    await Conversation.updateOne(filter, { $push: { messages: req.body.messages } });
+  }
+
+  await User.updateOne(
+    { username: participants[1] },
+    { $set: { alert: true } },
+    { upsert: true }
+  );
+
+  res.send(conv);
 });
 
 // router.get('/AimGaim', (req, res) => {
