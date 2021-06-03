@@ -38,7 +38,7 @@ setInterval(async () => {
   const JsonResponse = await response.json();
 }, 5000);
 
-// ---- Sets current user ----
+// ---- INITIALIZATION ----
 const setLoggedInName = () => {
   return document.cookie
     .split(";")
@@ -46,16 +46,18 @@ const setLoggedInName = () => {
     .toString()
     .split("=")[1];
 };
-userSpan.textContent = setLoggedInName();
-let currentUser;
 
-async function getUserAndFriends() {
+let currentUser;
+async function init() {
+  userSpan.textContent = setLoggedInName();
   currentUser = await getCurrentUser();
   getUsersAndDisplay();
   loadMessagers();
   displayNewMessageToUser();
+  loadGameCards();
 }
-getUserAndFriends();
+
+init();
 
 // ---- EVENT HANDLERS ----
 window.addEventListener("load", loadGameCards);
@@ -128,8 +130,6 @@ async function getAllUsers() {
 }
 
 async function getUsersAndDisplay() {
-  // const currentUser = await getCurrentUser();
-
   const userList = await getAllUsers();
 
   const friendsToNotRender = currentUser.friends;
@@ -253,57 +253,77 @@ function hasClass(elem, className) {
 //****************************** */
 //Create Contest section
 //****************************** */
-const createContestBtn = document.querySelector('.createContest');
-const closeWindowContestBtn = document.querySelector('[data-close-button]');
-const popupWindowContest = document.querySelector('.popupWindow');
-const overlay = document.querySelector('#overlay');
-const dateStartPicker = document.querySelector('#dateStartInput');
-const dateEndPicker = document.querySelector('#dateEndInput');
-const dateStartElem = document.querySelector('.dateStart');
-const dateEndElem = document.querySelector('.dateEnd');
-const gameSelect = document.querySelector('.gameName');
-const finishInvitationBtn = document.querySelector('.invitationButton');
+const createContestBtn = document.querySelector(".createContest");
+const closeWindowContestBtn = document.querySelector("[data-close-button]");
+const popupWindowContest = document.querySelector(".popupWindow");
+const overlay = document.querySelector("#overlay");
+const dateStartPicker = document.querySelector("#dateStartInput");
+const dateEndPicker = document.querySelector("#dateEndInput");
+const dateStartElem = document.querySelector(".dateStart");
+const dateEndElem = document.querySelector(".dateEnd");
+const gameSelect = document.querySelector(".gameName");
+const finishInvitationBtn = document.querySelector(".invitationButton");
 
 //populate select game
-gamesArray.forEach(game => {
-  const option = document.createElement('option');
+gamesArray.forEach((game) => {
+  const option = document.createElement("option");
   option.textContent = game.route;
   option.value = game.route;
 
   gameSelect.appendChild(option);
-})
+});
 
-createContestBtn.addEventListener('click', () => {
+createContestBtn.addEventListener("click", () => {
   //open create contest popup
-  popupWindowContest.classList.add('active');
-  overlay.classList.add('active');
-  
+  popupWindowContest.classList.add("active");
+  overlay.classList.add("active");
+
   //settings starting date. By default an Hour from now
   let dateStart = new Date();
   dateStart.setHours(dateStart.getHours() + 1);
-  dateStartElem.textContent = dateStart.toISOString().slice(0, 10) + " : " + ("0" + dateStart.getHours()).slice(-2) + ":" + ("0" + dateStart.getMinutes()).slice(-2);
+  dateStartElem.textContent =
+    dateStart.toISOString().slice(0, 10) +
+    " : " +
+    ("0" + dateStart.getHours()).slice(-2) +
+    ":" +
+    ("0" + dateStart.getMinutes()).slice(-2);
 
   let dateEnd = new Date(); //.setFullYear(new Date().getFullYear() + 1)
   dateEnd.setDate(dateEnd.getDate() + 1); //set the day after by default
   dateEnd.setHours(dateStart.getHours());
-  dateEndElem.textContent = dateEnd.toISOString().slice(0, 10) + " : " + ("0" + dateEnd.getHours()).slice(-2) + ":" + ("0" + dateEnd.getMinutes()).slice(-2);
-})
+  dateEndElem.textContent =
+    dateEnd.toISOString().slice(0, 10) +
+    " : " +
+    ("0" + dateEnd.getHours()).slice(-2) +
+    ":" +
+    ("0" + dateEnd.getMinutes()).slice(-2);
+});
 
-closeWindowContestBtn.addEventListener('click', () => {
-  popupWindowContest.classList.remove('active');
-  overlay.classList.remove('active');
-})
+closeWindowContestBtn.addEventListener("click", () => {
+  popupWindowContest.classList.remove("active");
+  overlay.classList.remove("active");
+});
 
-dateStartPicker.addEventListener('change', ()=>{
+dateStartPicker.addEventListener("change", () => {
   let date = new Date(dateStartPicker.value);
-  dateStartElem.textContent = date.toISOString().slice(0, 10) + " : " + ("0" + date.getHours()).slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2);
-})
-dateEndPicker.addEventListener('change', ()=>{
+  dateStartElem.textContent =
+    date.toISOString().slice(0, 10) +
+    " : " +
+    ("0" + date.getHours()).slice(-2) +
+    ":" +
+    ("0" + date.getMinutes()).slice(-2);
+});
+dateEndPicker.addEventListener("change", () => {
   let date = new Date(dateEndPicker.value);
-  dateEndElem.textContent = date.toISOString().slice(0, 10) + " : " + ("0" + date.getHours()).slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2);
-})
+  dateEndElem.textContent =
+    date.toISOString().slice(0, 10) +
+    " : " +
+    ("0" + date.getHours()).slice(-2) +
+    ":" +
+    ("0" + date.getMinutes()).slice(-2);
+});
 
-finishInvitationBtn.addEventListener('click', async () => {
+finishInvitationBtn.addEventListener("click", async () => {
   //send invitation info to DB
   const emptyArray = []; //${emptyArray}    ${new Date(dateStartElem.textContent)}    ${new Date(dateEndElem.textContent)}
   //[{"gamename":"someGame""username":"someName","score":"100"}]
@@ -315,40 +335,44 @@ finishInvitationBtn.addEventListener('click', async () => {
   //     this.password = password
   //   }
   // }
-  class Score{
-    constructor(gamename, username, score, date){
-      this.gamename = gamename,
-      this.username = username,
-      this.score = score,
-      this.date = date
+  class Score {
+    constructor(gamename, username, score, date) {
+      (this.gamename = gamename),
+        (this.username = username),
+        (this.score = score),
+        (this.date = date);
     }
   }
 
   // const participant1 = new Participant('hejsan', 'hejda');
   // console.log("participant1: " + JSON.stringify(participant1));
-  const score1 = new Score("AimGaim", 'hejda', 1001, new Date());
+  const score1 = new Score("AimGaim", "hejda", 1001, new Date());
   const nameArray = ["david1", "jacob2"];
 
   let startingDate = new Date(dateStartElem.textContent);
   let endingDate = new Date(dateEndElem.textContent);
 
-  const data = { gamename: gameSelect.value,
+  const data = {
+    gamename: gameSelect.value,
     creator: userSpan.textContent,
     participants: nameArray,
     scores: score1,
-    startDate : new Date(startingDate.getTime() - (startingDate.getTimezoneOffset() * 60000)), //dateStartPicker.value dateStartElem.textContent
-    endDate : new Date(endingDate.getTime() - (endingDate.getTimezoneOffset() * 60000)),
-    state : "invitation" }
+    startDate: new Date(
+      startingDate.getTime() - startingDate.getTimezoneOffset() * 60000
+    ), //dateStartPicker.value dateStartElem.textContent
+    endDate: new Date(endingDate.getTime() - endingDate.getTimezoneOffset() * 60000),
+    state: "invitation",
+  };
 
   // console.log(JSON.stringify(data));
 
   const response = await fetch("http://localhost:3000/contests", {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   });
 
   console.log("sent!");
@@ -357,25 +381,15 @@ finishInvitationBtn.addEventListener('click', async () => {
   //   console.log(data);
   // });
 
-  popupWindowContest.classList.remove('active');
-  overlay.classList.remove('active');
-})
+  popupWindowContest.classList.remove("active");
+  overlay.classList.remove("active");
+});
 
 //****************************** */
 //END Create Contest section
 //****************************** */
 
-
-
-
-
-
-// FUNKAR INTE JUST NU
-// --------------------------------------------------------
-//borde funka
 async function displayNewMessageToUser() {
-  // const currentUser = await getCurrentUser();
-
   const friends = currentUser.friends;
 
   const messagesCorrected = friends
@@ -414,10 +428,6 @@ async function loadMessagers() {
 }
 
 async function updateUsersMessage() {
-  // const currentUser = await getCurrentUser();
-
-  // !currentUser.hasOwnProperty("conversation") ? (currentUser.conversation = []) : "";
-
   const message = {
     sender: currentUser.username,
     message: messageInput.value,
@@ -456,8 +466,6 @@ async function displayMessageFromInputField() {
 }
 
 async function getMessagesFromUs() {
-  // const currentUser = await getCurrentUser();
-
   const messages = currentUser?.conversation
     ?.filter((conv) => conv.recipient === messageHeadSpan.textContent.trim())
     .map((conv) => {
@@ -469,8 +477,6 @@ async function getMessagesFromUs() {
 
 // borde funka
 async function getAllMessages(target) {
-  // const currentUser = await getCurrentUser();
-
   const friends = currentUser.friends;
 
   const messagesCorrected = friends
@@ -506,8 +512,6 @@ async function getAllMessages(target) {
 }
 
 async function setMessagesToRead(target) {
-  // const currentUser = await getCurrentUser();
-
   const friends = currentUser.friends;
 
   const messagesToUser = friends
