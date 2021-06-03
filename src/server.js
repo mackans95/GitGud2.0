@@ -1,21 +1,20 @@
 //IMPORTS
 const path = require("path");
 const express = require("express");
-const cookieParser = require('cookie-parser');
+const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 require("dotenv/config");
 const bodyParser = require("body-parser");
 const app = express();
 const publicDirectoryPath = path.join(__dirname, "../public");
 //import Routes
-const mainRoutes = require('./routes/mainRoutes');
-const aimGaimRoutes = require('./routes/aimGaimRoutes');
-const reactionGameRoute = require('./routes/reactionGameRoutes')
+const mainRoutes = require("./routes/mainRoutes");
+const aimGaimRoutes = require("./routes/aimGaimRoutes");
+const reactionGameRoute = require("./routes/reactionGameRoutes");
 
 //END IMPORTS
 
 app.use(express.static(publicDirectoryPath));
-
 
 // Middlewares
 app.use(cookieParser());
@@ -28,7 +27,6 @@ app.use(
 );
 app.use(express.json());
 //END Middleware
-
 
 app.use("/", mainRoutes);
 app.use("/", aimGaimRoutes);
@@ -47,7 +45,6 @@ mongoose.connect(
     console.log("connected to db!");
   }
 );
-
 
 app.listen(3000, () => {
   console.log("Server is up on port 3000.");

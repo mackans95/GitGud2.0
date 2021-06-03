@@ -10,11 +10,11 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  friends: [
-    {
-      type: String,
-    },
-  ],
+  friends: [{ username: String }],
+  alert: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const User = mongoose.model("User", userSchema);
