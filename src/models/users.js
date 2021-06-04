@@ -11,10 +11,14 @@ const userSchema = mongoose.Schema({
     required: true,
   },
   friends: [{ username: String }],
-  alert: {
-    type: Boolean,
-    default: false,
-  },
+  alert: [
+    {
+      new: {
+        type: Boolean,
+      },
+      sender: String,
+    },
+  ],
 });
 
 const User = mongoose.model("User", userSchema);

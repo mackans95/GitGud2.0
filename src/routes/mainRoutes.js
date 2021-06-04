@@ -68,18 +68,28 @@ router.get("/GamePage", authTokenMiddleware, (req, res) => {
 });
 
 //contest route
-router.post('/contests', authTokenMiddleware, async (req, res) => {
-  console.log('contests posted to!');
+router.post("/contests", authTokenMiddleware, async (req, res) => {
+  console.log("contests posted to!");
   console.log(req.body);
 
   const contest = await Contest.create(req.body);
   console.log(contest);
-  res.status(200).send('OK');
+  res.status(200).send("OK");
 });
 
 router.get("/alert", authTokenMiddleware, async (req, res) => {
   const user = await User.findOne({ _id: req.user.id });
   res.json(user.alert);
+});
+
+router.get("/conversations", authTokenMiddleware, async (req, res) => {
+  const user = await User.findOne({ _id: req.user.id });
+
+  const username = user.username;
+
+  const convos = await Conversation.find({ participants: username });
+
+  res.json(convos);
 });
 
 //POSTS
@@ -109,34 +119,58 @@ router.post("/conversations", authTokenMiddleware, async (req, res) => {
   // plocka ut participants kolla efter convo
   const participants = req.body.participants;
 
-  const convo = await Conversation.find(
-    { participants: participants[0] },
-    { participants: participants[1] }
-  );
+  const convo = await Conversation.find({
+    participants: [participants[0], participants[1]],
+  });
+
+  const convo2 = await Conversation.find({
+    participants: [participants[1], participants[0]],
+  });
 
   //är där ingen, skapa ny konvo
   let conv;
-  if (convo.length < 1) {
+  if (convo.length < 1 && convo2.length < 1) {
     console.log("reached this 🐶");
     conv = await Conversation.create(req.body);
   } else {
     // om den finns, lägg till i db-array
-
     const filter = {
-      participants: participants[0],
-      participants: participants[1],
+      participants: [participants[0], participants[1]],
     };
 
-    await Conversation.updateOne(filter, { $push: { messages: req.body.messages } });
+    const filter2 = {
+      participants: [participants[1], participants[0]],
+    };
+
+    await Conversation.findOneAndUpdate(filter, {
+      $push: { messages: req.body.messages[0] },
+    });
+
+    await Conversation.findOneAndUpdate(filter2, {
+      $push: { messages: req.body.messages[0] },
+    });
   }
 
   await User.updateOne(
     { username: participants[1] },
-    { $set: { alert: true } },
+    { $push: { alert: { new: true, sender: participants[0] } } },
     { upsert: true }
   );
 
-  res.send(conv);
+  res.json(req.body);
+});
+
+// PATCH
+router.patch("/users", authTokenMiddleware, async (req, res) => {
+  const user = await User.findOneAndUpdate(
+    { _id: req.user.id },
+    { $pull: { alert: { new: true, sender: req.body.sender } } },
+    { new: true }
+  );
+  console.log(req.body.sender);
+  console.log(user);
+
+  res.json(user);
 });
 
 // router.get('/AimGaim', (req, res) => {
