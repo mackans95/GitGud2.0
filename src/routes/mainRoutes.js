@@ -127,9 +127,6 @@ router.post("/conversations", authTokenMiddleware, async (req, res) => {
     participants: [participants[1], participants[0]],
   });
 
-  console.log(convo);
-  console.log(convo2);
-
   //är där ingen, skapa ny konvo
   let conv;
   if (convo.length < 1 && convo2.length < 1) {
@@ -137,30 +134,41 @@ router.post("/conversations", authTokenMiddleware, async (req, res) => {
     conv = await Conversation.create(req.body);
   } else {
     // om den finns, lägg till i db-array
-
     const filter = {
-      participants: participants[0],
-      participants: participants[1],
+      participants: [participants[0], participants[1]],
     };
 
-    await Conversation.updateOne(filter, { $push: { messages: req.body.messages } });
+    const filter2 = {
+      participants: [participants[1], participants[0]],
+    };
+
+    await Conversation.findOneAndUpdate(filter, {
+      $push: { messages: req.body.messages[0] },
+    });
+
+    await Conversation.findOneAndUpdate(filter2, {
+      $push: { messages: req.body.messages[0] },
+    });
   }
 
   await User.updateOne(
     { username: participants[1] },
-    { $set: { alert: true } },
+    { $push: { alert: { new: true, sender: participants[0] } } },
     { upsert: true }
   );
 
   res.json(req.body);
 });
 
+// PATCH
 router.patch("/users", authTokenMiddleware, async (req, res) => {
   const user = await User.findOneAndUpdate(
     { _id: req.user.id },
-    { $set: { alert: false } },
+    { $pull: { alert: { new: true, sender: req.body.sender } } },
     { new: true }
   );
+  console.log(req.body.sender);
+  console.log(user);
 
   res.json(user);
 });

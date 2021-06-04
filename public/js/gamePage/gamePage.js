@@ -27,46 +27,19 @@ const gamesArray = [
 ];
 
 // ---- INITIALIZATION ----
-const setLoggedInName = () => {
-  return document.cookie
-    .split(";")
-    .filter((S) => S.includes("username"))
-    .toString()
-    .split("=")[1];
-};
 let currentUser;
-async function init() {
-  userSpan.textContent = setLoggedInName();
-  currentUser = await getCurrentUser();
-  getUsersAndDisplay();
-  loadMessagers();
-  displayNewMessageToUser();
-  loadGameCards();
-}
 init();
 
-// scan to see if a new request for conversations is needed
+// Scan to see if a new request for conversations is needed
 let currentConvos = getConversations();
-setInterval(async () => {
-  const response = await fetch("http://localhost:3000/alert", {
-    method: "GET",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-  });
-
-  const JsonResponse = await response.json();
-
-  if (JsonResponse) {
-    currentConvos = await getConversations();
-  }
-}, 1000);
+setInterval(getAlertResponses, 1000);
 
 // ---- EVENT HANDLERS ----
+// Make JSrendered-elements clickable
 document.addEventListener("click", MakeLiBlocksClickable, false);
 document.addEventListener("click", makeAddUserButtonsClickable, false);
 
+// Sending new messages
 messageInput.addEventListener("keypress", async function (e) {
   if (e.key === "Enter") {
     await updateUsersMessage();
@@ -75,6 +48,7 @@ messageInput.addEventListener("keypress", async function (e) {
   }
 });
 
+//Logging out
 logoutBtn.addEventListener("click", function (e) {
   document.cookie = "username=; path=/;";
   document.cookie = "jwt=; path=/;";
@@ -152,6 +126,43 @@ function displayNewlyMadeMessage(liElement) {
   }
 }
 
+function setLoggedInName() {
+  return document.cookie
+    .split(";")
+    .filter((S) => S.includes("username"))
+    .toString()
+    .split("=")[1];
+}
+
+async function init() {
+  userSpan.textContent = setLoggedInName();
+  currentUser = await getCurrentUser();
+  getUsersAndDisplay();
+  loadMessagers();
+  displayNewMessageToUser();
+  loadGameCards();
+}
+
+async function getAlertResponses() {
+  const response = await fetch("http://localhost:3000/alert", {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  });
+
+  const JsonResponse = await response.json();
+
+  JsonResponse?.forEach(async (response) => {
+    if (response.new) {
+      currentConvos = await getConversations();
+    }
+  });
+
+  return JsonResponse;
+}
+
 async function getConversations() {
   const convoRes = await fetch("http://localhost:3000/conversations", {
     method: "GET",
@@ -163,9 +174,9 @@ async function getConversations() {
 
   const JsonConvoRes = await convoRes.json();
   const convoArr = Object.values(JsonConvoRes);
-  let convo;
+  const convo = [];
   convoArr.forEach((el) => {
-    convo = el;
+    convo.push(el);
   });
 
   return convo;
@@ -248,7 +259,7 @@ async function getUsersAndDisplay() {
 async function MakeLiBlocksClickable(e) {
   if (hasClass(e.target, "user")) {
     await getConversations();
-    await setUserAlertBackToFalse();
+    await setUserAlertBackToFalse(e.target);
     removeNewMessageSpan(e.target);
     showMessagesAndAddButton(e.target);
   }
@@ -274,31 +285,30 @@ async function makeAddUserButtonsClickable(e) {
   }
 }
 
-async function setUserAlertBackToFalse() {
+async function setUserAlertBackToFalse(target) {
+  const data = {
+    sender: target.innerText.split("\n")[0],
+  };
+
   await fetch("http://localhost:3000/users", {
     method: "PATCH",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
     },
+    body: JSON.stringify(data),
   });
 }
 
 async function displayNewMessageToUser() {
-  const friends = currentUser.friends;
+  const alerts = await getAlertResponses();
 
-  const messagesCorrected = friends
-    .filter((user) => user.conversation)
-    .flatMap((m) => m.conversation);
-
-  const msgsUnread = messagesCorrected.filter((msg) => msg.read === false);
-
-  msgsUnread.forEach((msg) => {
-    if (msg.read === false && msg.recipient === currentUser.username) {
+  alerts.forEach((alert) => {
+    if (alert.new === true) {
       const msgLiBox = [...document.querySelectorAll("li.user")];
 
       msgLiBox.forEach((li) => {
-        if (li.textContent.trim() === msg.sender) {
+        if (li.textContent.trim() === alert.sender) {
           li.style.backgroundColor = "yellow";
           const test = document.createElement("span");
           test.textContent = "NEW!";
@@ -345,6 +355,7 @@ async function updateUsersMessage() {
   });
 
   const JsonConvoRes = await response.json();
+  console.log(JsonConvoRes);
   const convoArr = Object.values(JsonConvoRes);
   let conv;
   convoArr.forEach((el) => {
@@ -378,7 +389,11 @@ async function getAllMessages() {
   const conversations = await currentConvos;
 
   if (conversations) {
-    const messagesCorrected = conversations.messages
+    const filteredConvo = conversations.filter((conversation) =>
+      conversation.participants.includes(messageHeadSpan.textContent.trim())
+    );
+
+    const messagesCorrected = filteredConvo[0]?.messages
       .filter(
         (message) =>
           (message.sender === messageHeadSpan.textContent.trim() &&
@@ -397,7 +412,7 @@ async function getAllMessages() {
       }
     }
 
-    const finalMessages = messagesCorrected.map((conv) => {
+    const finalMessages = messagesCorrected?.map((conv) => {
       if (conv.sender !== currentUser.username) {
         return `<li>${conv.message}</li>`.trim();
       } else {
