@@ -263,6 +263,8 @@ const dateStartElem = document.querySelector('.dateStart');
 const dateEndElem = document.querySelector('.dateEnd');
 const gameSelect = document.querySelector('.gameName');
 const finishInvitationBtn = document.querySelector('.invitationButton');
+const contestFriendList = document.querySelector('.contestFriendList');
+const contestPlayersList = document.querySelector('.contestPlayers');
 
 //populate select game
 gamesArray.forEach(game => {
@@ -273,11 +275,107 @@ gamesArray.forEach(game => {
   gameSelect.appendChild(option);
 })
 
+
 createContestBtn.addEventListener('click', () => {
+  //populate friend list
+  //first clear it
+  contestFriendList.innerHTML = "";
+  contestPlayersList.innerHTML = "";
+  if(currentUser.friends.length < 1){
+    const friendElem = document.createElement('div');
+    friendElem.textContent = "No friends...";
+    friendElem.classList.add('friendInList');
+
+    contestFriendList.appendChild(friendElem);
+  }
+
+  currentUser.friends.forEach(friend => {
+    const friendElem = document.createElement('div');
+    friendElem.textContent = friend.username;
+    friendElem.classList.add('friendInList');
+
+    friendElem.addEventListener('click', ()=>{
+      addEventListenersToFriends(friendElem);
+    })
+    friendElem.addEventListener('mouseenter', ()=>{
+      friendElem.querySelector('div').style.visibility = 'visible';
+    })
+    friendElem.addEventListener('mouseleave', ()=>{
+      friendElem.querySelector('div').style.visibility = 'hidden';
+    })
+
+    const plusSign = document.createElement('div');
+    plusSign.textContent = '+';
+    plusSign.style.color = 'green';
+    plusSign.classList.add('pSigns');
+    friendElem.appendChild(plusSign);
+
+    contestFriendList.appendChild(friendElem);
+  });
+
+  function addEventListenersToFriends(elem){
+    if(elem.classList.contains('friendInList')){
+      const contestPlayer = document.createElement('div');
+      if(elem.querySelector('div')){
+        elem.querySelector('div').remove();
+      }
+      contestPlayer.textContent = elem.textContent;
+      contestPlayer.classList.add('contestPlayer');
+
+      contestPlayer.addEventListener('click', ()=>{
+        addEventListenersToFriends(contestPlayer);
+      })
+      contestPlayer.addEventListener('mouseenter', ()=>{
+        contestPlayer.querySelector('div').style.visibility = 'visible';
+      })
+      contestPlayer.addEventListener('mouseleave', ()=>{
+        contestPlayer.querySelector('div').style.visibility = 'hidden';
+      })
+
+      const minusSign = document.createElement('div');
+      minusSign.style.color = 'red';
+      minusSign.textContent = '-';
+      minusSign.classList.add('pSigns');
+      contestPlayer.appendChild(minusSign);
+
+      contestPlayersList.appendChild(contestPlayer);
+
+
+      elem.remove();
+    }
+    else if(elem.classList.contains('contestPlayer')){
+      const friendElem = document.createElement('div');
+      if(elem.querySelector('div')){
+        elem.querySelector('div').remove();
+      }
+      friendElem.textContent = elem.textContent;
+      friendElem.classList.add('friendInList');
+
+      friendElem.addEventListener('click', ()=>{
+        addEventListenersToFriends(friendElem);
+      })
+      friendElem.addEventListener('mouseenter', ()=>{
+        friendElem.querySelector('div').style.visibility = 'visible';
+      })
+      friendElem.addEventListener('mouseleave', ()=>{
+        friendElem.querySelector('div').style.visibility = 'hidden';
+      })
+
+      const plusSign = document.createElement('div');
+      plusSign.textContent = '+';
+      plusSign.style.color = 'green';
+      plusSign.classList.add('pSigns');
+      friendElem.appendChild(plusSign);
+
+      contestFriendList.appendChild(friendElem);
+      elem.remove();
+    }
+  }
+
   //open create contest popup
   popupWindowContest.classList.add('active');
   overlay.classList.add('active');
-  
+
   //settings starting date. By default an Hour from now
   let dateStart = new Date();
   dateStart.setHours(dateStart.getHours() + 1);
@@ -327,14 +425,25 @@ finishInvitationBtn.addEventListener('click', async () => {
   // const participant1 = new Participant('hejsan', 'hejda');
   // console.log("participant1: " + JSON.stringify(participant1));
   const score1 = new Score("AimGaim", 'hejda', 1001, new Date());
-  const nameArray = ["david1", "jacob2"];
+
+  const contestParticipants = document.querySelectorAll('.contestPlayer');
+  const nameArray2 = [];
+  nameArray2.push(userSpan.textContent);
+  if(contestParticipants.length > 0){
+    contestParticipants.forEach(part =>{
+      part.querySelector('div').remove();
+      nameArray2.push(part.textContent);
+    })
+  }
+
+  // const nameArray = ["david1", "jacob2"];
 
   let startingDate = new Date(dateStartElem.textContent);
   let endingDate = new Date(dateEndElem.textContent);
 
   const data = { gamename: gameSelect.value,
     creator: userSpan.textContent,
-    participants: nameArray,
+    participants: nameArray2,
     scores: score1,
     startDate : new Date(startingDate.getTime() - (startingDate.getTimezoneOffset() * 60000)), //dateStartPicker.value dateStartElem.textContent
     endDate : new Date(endingDate.getTime() - (endingDate.getTimezoneOffset() * 60000)),
@@ -350,12 +459,6 @@ finishInvitationBtn.addEventListener('click', async () => {
     },
     body: JSON.stringify(data)
   });
-
-  console.log("sent!");
-
-  // response.json().then(data => {
-  //   console.log(data);
-  // });
 
   popupWindowContest.classList.remove('active');
   overlay.classList.remove('active');
