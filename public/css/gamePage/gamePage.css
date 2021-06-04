@@ -80,13 +80,15 @@ div.card-holder {
   width: 250px;
 }
 
-.message-holder button {
+.message-holder button:not(.remove-btn) {
   height: 30px;
   position: absolute;
   left: 0;
   top: 0;
   background-color: cadetblue;
   border: none;
+  cursor: pointer;
+  border-top-left-radius: 5px;
 }
 
 .active-messager,
@@ -97,6 +99,11 @@ div.card-holder {
   text-align: center;
   line-height: 30px;
   color: white;
+}
+
+.messager-head {
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 }
 
 ::-webkit-scrollbar {
@@ -373,4 +380,15 @@ ol.messagers {
 .add-friend-btn:hover {
   cursor: pointer;
   background-color: #097536;
+}
+
+.remove-btn {
+  height: 30px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  background-color: rgb(187, 51, 51);
+  border: none;
+  cursor: pointer;
+  border-top-right-radius: 5px;
 }
