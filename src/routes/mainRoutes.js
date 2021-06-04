@@ -16,7 +16,6 @@ router.use(express.static(publicDirectoryPath));
 
 // AUTH
 router.post("/", async (req, res) => {
-  console.log("reached this");
   if (req.body.IndexForm === "Login") {
     await login(req, res);
   }
@@ -94,7 +93,6 @@ router.get("/conversations", authTokenMiddleware, async (req, res) => {
 
 //POSTS
 router.post("/addFriend", authTokenMiddleware, async (req, res) => {
-  console.log("---- Hi from post server ----");
   const friendName = req.body.username;
 
   await User.updateOne(
@@ -122,16 +120,13 @@ router.post("/conversations", authTokenMiddleware, async (req, res) => {
   const convo = await Conversation.find({
     participants: [participants[0], participants[1]],
   });
-
   const convo2 = await Conversation.find({
     participants: [participants[1], participants[0]],
   });
 
   //är där ingen, skapa ny konvo
-  let conv;
   if (convo.length < 1 && convo2.length < 1) {
-    console.log("reached this 🐶");
-    conv = await Conversation.create(req.body);
+    await Conversation.create(req.body);
   } else {
     // om den finns, lägg till i db-array
     const filter = {
@@ -167,10 +162,26 @@ router.patch("/users", authTokenMiddleware, async (req, res) => {
     { $pull: { alert: { new: true, sender: req.body.sender } } },
     { new: true }
   );
-  console.log(req.body.sender);
-  console.log(user);
 
   res.json(user);
+});
+
+router.patch("/users/:username", authTokenMiddleware, async (req, res) => {
+  const user = await User.findOneAndUpdate(
+    { _id: req.user.id },
+    { $pull: { friends: { username: req.body.friend } } },
+    { new: true }
+  );
+
+  await User.findOneAndUpdate(
+    { username: req.body.friend },
+    { $pull: { friends: { username: user.username } } },
+    { new: true }
+  );
+
+  res.json({
+    status: "successful",
+  });
 });
 
 // router.get('/AimGaim', (req, res) => {

@@ -76,18 +76,39 @@ function showMessagesAndAddButton(target) {
   olMessagers.classList.add("hide");
   olMessages.classList.remove("hide");
 
-  const button = document.createElement("button");
+  const backButton = document.createElement("button");
+  const removeButton = document.createElement("button");
 
-  button.textContent = "Back";
-  messageHead.appendChild(button);
+  // go back-btn
+  backButton.textContent = "Back";
+  messageHead.appendChild(backButton);
 
-  button.addEventListener("click", function () {
+  backButton.addEventListener("click", async () => {
     olMessages.classList.add("hide");
     olMessagers.classList.remove("hide");
-    button.classList.add("hide");
+    backButton.classList.add("hide");
+    removeButton.classList.add("hide");
     messageHeadSpan.textContent = "Chat";
     const liElements = document.querySelectorAll(".messages li");
     liElements.forEach((l) => l.remove());
+    currentConvos = await getConversations();
+  });
+
+  // remove friend-btn
+  removeButton.classList.add("remove-btn");
+  removeButton.textContent = "Remove";
+  messageHead.appendChild(removeButton);
+
+  removeButton.addEventListener("click", async () => {
+    olMessages.classList.add("hide");
+    olMessagers.classList.remove("hide");
+    removeButton.classList.add("hide");
+    backButton.classList.add("hide");
+    messageHeadSpan.textContent = "Chat";
+    const liElements = document.querySelectorAll(".messages li");
+    liElements.forEach((l) => l.remove());
+    await removeFriend(target.textContent.trim());
+    location.reload();
   });
 
   messageHeadSpan.textContent = target.textContent;
@@ -141,6 +162,21 @@ async function init() {
   loadMessagers();
   displayNewMessageToUser();
   loadGameCards();
+}
+
+async function removeFriend(friendName) {
+  const data = {
+    friend: friendName,
+  };
+
+  await fetch(`http://localhost:3000/users/${currentUser.username}`, {
+    method: "PATCH",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
 }
 
 async function getAlertResponses() {
@@ -248,7 +284,7 @@ async function getUsersAndDisplay() {
   userListFilterFriends.forEach((user) => {
     const html = `
       <li class="db-user">${user.username}
-      <button class="add-friend-btn">Add</button>
+      <backButton class="add-friend-btn">Add</backButton>
       </li>
       `;
 
@@ -428,7 +464,7 @@ async function getAllMessages() {
 //Create Contest section
 //****************************** */
 const createContestBtn = document.querySelector(".createContest");
-const closeWindowContestBtn = document.querySelector("[data-close-button]");
+const closeWindowContestBtn = document.querySelector("[data-close-backButton]");
 const popupWindowContest = document.querySelector(".popupWindow");
 const overlay = document.querySelector("#overlay");
 const dateStartPicker = document.querySelector("#dateStartInput");
@@ -473,10 +509,11 @@ createContestBtn.addEventListener("click", () => {
     ("0" + dateEnd.getMinutes()).slice(-2);
 });
 
-closeWindowContestBtn.addEventListener("click", () => {
-  popupWindowContest.classList.remove("active");
-  overlay.classList.remove("active");
-});
+// ---- fick error på denna i konsoll ----
+// closeWindowContestBtn.addEventListener("click", () => {
+//   popupWindowContest.classList.remove("active");
+//   overlay.classList.remove("active");
+// });
 
 dateStartPicker.addEventListener("change", () => {
   let date = new Date(dateStartPicker.value);
