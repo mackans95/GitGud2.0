@@ -7,12 +7,21 @@ require("dotenv/config");
 const bodyParser = require("body-parser");
 const app = express();
 const publicDirectoryPath = path.join(__dirname, "../public");
+const hbs = require('hbs')
+
 //import Routes
 const mainRoutes = require('./routes/mainRoutes');
 const aimGaimRoutes = require('./routes/aimGaimRoutes');
 const reactionGameRoute = require('./routes/reactionGameRoutes')
-
+const adminRoutes = require('./routes/adminRoutes')
 //END IMPORTS
+
+// Setup handlebars engine and views location
+const viewsPath = path.join(__dirname, '../templates/views');
+const partialsPath = path.join(__dirname, '../templates/partials')
+hbs.registerPartials(partialsPath)
+app.set('view engine', 'hbs');
+app.set('views', viewsPath);
 
 app.use(express.static(publicDirectoryPath));
 
@@ -33,6 +42,7 @@ app.use(express.json());
 app.use("/", mainRoutes);
 app.use("/", aimGaimRoutes);
 app.use(reactionGameRoute);
+app.use(adminRoutes);
 
 //Connect to DB
 // mongodb+srv://gitgudadmin:skollosenord@cluster0.k5q5v.mongodb.net/myFirstDatabase?retryWrites=true&w=majority

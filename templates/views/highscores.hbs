@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Highscores</title>
+    <link rel="stylesheet" href="/css/admin/admin.css">
+    <script src="/js/admin/highscores.js" defer ></script>
+    <script src="https://kit.fontawesome.com/33a0c4cc3a.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="main-content">
+        {{>header}}
+
+   <div class="leaderboards-container">
+
+      <div>
+        <table class="highscore-table global">
+          <caption>All GitGud Highscores</caption>
+          <tbody>
+              <tr>
+                  <th>Name</th>
+                  <th>Game</th>
+                  <th>Score</th>
+                  <th>Date</th>
+                  <th>Delete</th>
+              </tr>
+        <!-- global data could optionally be included here -->
+         </tbody>
+       </table>
+      </div>
+    
+    </div>
+    
+
+<template id="highscore-row">
+    <tr>
+    <td class="name"></td>
+    <td class="game"></td>
+    <td class="score"></td>
+    <td class="date"></td>
+    <td class="delete">
+        <i class="fas fa-trash-alt delete-button"></i>
+    </td>
+    </tr>
+</template>
+
+
+    </div>
+
+
+    {{>footer}}
+</body>
+</html>
