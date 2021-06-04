@@ -45,23 +45,6 @@ router.get('/AimGaim/globalHighscores', authTokenMiddleware, async (req, res) =>
 
 //post routes
 router.post('/AimGaim', authTokenMiddleware, async (req, res)=>{
-    // console.log(req.body);
-
-    // const highscore = new Highscore({
-    //     gamename: req.body.gamename,
-    //     username: req.body.username,
-    //     score: req.body.score,
-    //     date: Date.now()
-    // })
-
-    // highscore.save()
-    //     .then(data => {
-    //         console.log('saved object to db');
-    //         res.status(201).json(data);
-    //     })
-    //     .catch(err => {
-    //         res.status(404);
-    //     });
 
     if(!req.user){
       return res.status(400).send('No logged in user');

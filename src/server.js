@@ -1,7 +1,7 @@
 //IMPORTS
 const path = require("path");
 const express = require("express");
-const cookieParser = require('cookie-parser');
+const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 require("dotenv/config");
 const bodyParser = require("body-parser");
@@ -10,10 +10,12 @@ const publicDirectoryPath = path.join(__dirname, "../public");
 const hbs = require('hbs')
 
 //import Routes
+
 const mainRoutes = require('./routes/mainRoutes');
 const aimGaimRoutes = require('./routes/aimGaimRoutes');
 const reactionGameRoute = require('./routes/reactionGameRoutes')
 const adminRoutes = require('./routes/adminRoutes')
+
 //END IMPORTS
 
 // Setup handlebars engine and views location
@@ -24,7 +26,6 @@ app.set('view engine', 'hbs');
 app.set('views', viewsPath);
 
 app.use(express.static(publicDirectoryPath));
-
 
 // Middlewares
 app.use(cookieParser());
@@ -37,7 +38,6 @@ app.use(
 );
 app.use(express.json());
 //END Middleware
-
 
 app.use("/", mainRoutes);
 app.use("/", aimGaimRoutes);
@@ -57,7 +57,6 @@ mongoose.connect(
     console.log("connected to db!");
   }
 );
-
 
 app.listen(3000, () => {
   console.log("Server is up on port 3000.");

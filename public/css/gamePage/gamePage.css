@@ -26,25 +26,25 @@ div.card-holder {
   transform: translate(-50%, -50%);
   width: 40%;
   height: 60%;
-  min-width: 550px;
-  min-height: 300px;
-  display: flex;
   justify-items: center;
   align-items: center;
-  justify-content: space-evenly;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   text-align: center;
   background-color: rgba(52, 73, 94, 0.9);
   border-radius: 7px;
 }
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 1120px) {
   div.card-holder {
-    flex-direction: column;
-    width: 50%;
-    min-width: 200px;
-    min-height: 600px;
-    top: 450px;
-    left: 250px;
+    position: fixed;
+    grid-template-rows: repeat(auto-fit, minmax(300px, 1fr));
+    min-width: 250px;
+    max-height: 800px;
+    overflow-y: scroll;
+    top: 550px;
+    left: 200px;
   }
 }
 
@@ -80,22 +80,30 @@ div.card-holder {
   width: 250px;
 }
 
-.message-holder button {
+.message-holder button:not(.remove-btn) {
   height: 30px;
   position: absolute;
   left: 0;
   top: 0;
   background-color: cadetblue;
   border: none;
+  cursor: pointer;
+  border-top-left-radius: 5px;
 }
 
 .active-messager,
-.messager-head {
+.messager-head,
+.user-head {
   background-color: #34495e;
   height: 30px;
   text-align: center;
   line-height: 30px;
   color: white;
+}
+
+.messager-head {
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 }
 
 ::-webkit-scrollbar {
@@ -147,7 +155,8 @@ ol.messagers {
   overflow-x: hidden;
 }
 
-.user {
+.user,
+.db-user {
   width: 100%;
   background-color: cadetblue;
   border: 1px solid black;
@@ -181,4 +190,205 @@ ol.messagers {
   position: absolute;
   right: 20px;
   bottom: 20px;
+}
+
+/* Contest styling */
+.createContest {
+  background-color: #34495e;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: center;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.popupWindow {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+
+  background-color: #34495e;
+  color: white;
+  border-radius: 10px;
+  z-index: 10;
+  padding: 10px;
+  width: 800px;
+  max-width: 80%;
+  height: 500px;
+  max-height: 80%;
+  overflow: hidden;
+}
+.popupWindow.active {
+  transform: translate(-50%, -50%) scale(1);
+  transition: 120ms ease-in;
+}
+
+.popupHeader {
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid black;
+}
+.popupHeader .popupTitle {
+  font-size: 1.25rem;
+  /* font-weight: bold; */
+}
+.popupHeader .closeButton {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background: none;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: white;
+}
+.popupBody {
+  padding: 10px 15px;
+}
+.popupBody .popupBodyHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed black;
+}
+.popupBody .invitationButton {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  bottom: 10px;
+  left: 50%;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.popupBody .popupBodyHeader .dateEnd,
+.popupBody .popupBodyHeader .dateStart,
+.popupBody .popupBodyHeader .gameName {
+  margin: 10px;
+}
+.popupBody .popupBodyBody {
+  display: flex;
+  justify-content: space-between;
+  height: 200px;
+  overflow-y: hidden;
+}
+.popupBody .contestFriendList {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  min-width: 150px;
+  overflow-y: auto;
+  height: 150px;
+  /* max-height: 40%; */
+}
+.popupBody .contestFriendList .friendInList {
+  margin: 5px;
+}
+*::-webkit-scrollbar-track {
+  /* background: orange; */
+}
+*::-webkit-scrollbar-thumb {
+  /* background-color: #34495e; */
+  background-color: white;
+  /* border-radius: 20px;
+  border: 3px solid orange; */
+}
+.popupBody .contestGame {
+  width: 200px;
+  padding: 10px;
+  /* border: 1px solid black; */
+}
+.popupBody .contestDateStart {
+  width: 200px;
+  /* text-align: center; */
+  padding: 10px;
+  /* border: 1px solid black; */
+}
+.popupBody #dateStartInput,
+.popupBody #dateEndInput {
+  max-width: 170px;
+}
+.popupBody .contestDateEnd {
+  width: 200px;
+  padding: 10px;
+  /* border: 1px solid black; */
+}
+.popupBody .contestPlayers {
+  padding: 10px;
+  /* border: 1px solid black; */
+}
+
+#overlay {
+  position: fixed;
+  opacity: 0;
+  transition: 150ms ease-in-out;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  z-index: 9;
+}
+#overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* show users styling */
+.show-users {
+  position: absolute;
+  right: 30px;
+  top: 550px;
+  background-color: rgba(52, 73, 94, 0.9);
+  border-radius: 7px;
+  width: 250px;
+  max-height: 500px;
+  /* overflow-y: scroll; */
+  overflow-x: hidden;
+}
+
+.user-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font: 16px/1.3 sans-serif;
+  list-style-type: none;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 250px;
+}
+
+.add-friend-btn {
+  width: 40px;
+  height: 25px;
+  margin: 0 auto;
+  text-align: center;
+  border-radius: 7px;
+  background-color: #0f9b4a;
+  border: 1px solid black;
+}
+
+.add-friend-btn:hover {
+  cursor: pointer;
+  background-color: #097536;
+}
+
+.remove-btn {
+  height: 30px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  background-color: rgb(187, 51, 51);
+  border: none;
+  cursor: pointer;
+  border-top-right-radius: 5px;
 }
