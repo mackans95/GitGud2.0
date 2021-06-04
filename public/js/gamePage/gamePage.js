@@ -193,6 +193,7 @@ async function getAlertResponses() {
   JsonResponse?.forEach(async (response) => {
     if (response.new) {
       currentConvos = await getConversations();
+      await displayNewMessageToUser();
     }
   });
 
