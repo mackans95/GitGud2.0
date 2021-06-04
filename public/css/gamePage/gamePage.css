@@ -130,8 +130,9 @@ div.card-holder {
   list-style-type: none;
   margin: 0 auto;
   padding: 8px;
-  overflow: auto;
   max-width: 250px;
+
+  overflow: auto;
 }
 
 .messages li {

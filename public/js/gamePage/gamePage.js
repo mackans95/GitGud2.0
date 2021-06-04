@@ -144,6 +144,7 @@ function hasClass(elem, className) {
 function displayNewlyMadeMessage(liElement) {
   if (liElement) {
     olMessages.insertAdjacentHTML("beforeend", liElement);
+    updateScroll();
   }
 }
 
@@ -153,6 +154,11 @@ function setLoggedInName() {
     .filter((S) => S.includes("username"))
     .toString()
     .split("=")[1];
+}
+
+function updateScroll() {
+  const element = document.querySelector(".messages");
+  element.scrollTop = element.scrollHeight;
 }
 
 async function init() {
@@ -409,6 +415,7 @@ async function displayMessages() {
 
   if (messages) {
     olMessages.insertAdjacentHTML("beforeend", messages.join(""));
+    updateScroll();
   }
 }
 
