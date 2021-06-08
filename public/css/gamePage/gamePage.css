@@ -26,6 +26,8 @@ div.card-holder {
   transform: translate(-50%, -50%);
   width: 40%;
   height: 60%;
+  max-height: 550px;
+  max-width: 700px;
   justify-items: center;
   align-items: center;
   display: grid;
@@ -34,17 +36,18 @@ div.card-holder {
   text-align: center;
   background-color: rgba(52, 73, 94, 0.9);
   border-radius: 7px;
+  overflow-y: scroll;
 }
 
-@media screen and (max-width: 1120px) {
+@media screen and (max-width: 1030px) {
   div.card-holder {
     position: fixed;
     grid-template-rows: repeat(auto-fit, minmax(300px, 1fr));
-    min-width: 250px;
+    width: 250px;
     max-height: 800px;
     overflow-y: scroll;
-    top: 550px;
-    left: 200px;
+    top: 468px;
+    left: 140px;
   }
 }
 
