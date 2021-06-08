@@ -187,12 +187,9 @@ function alertUserToChangeInFriendList() {
 async function scanCurrentUserForUpdates() {
   const currentUserDB = await getCurrentUser();
 
-  // console.log(currentUserDB.friends.length);
-  // console.log(currentUser.friends.length);
-
-  // if (currentUserDB.friends.length !== currentUser.friends.length) {
-  //   alertUserToChangeInFriendList();
-  // }
+  if (currentUserDB.friends.length !== currentUser.friends.length) {
+    alertUserToChangeInFriendList();
+  }
 }
 
 async function init() {
@@ -432,7 +429,6 @@ async function updateUsersMessage() {
   });
 
   const JsonConvoRes = await response.json();
-  console.log(JsonConvoRes);
   const convoArr = Object.values(JsonConvoRes);
   let conv;
   convoArr.forEach((el) => {
