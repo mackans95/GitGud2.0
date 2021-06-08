@@ -223,6 +223,7 @@ ol.messagers {
   max-height: 80%;
   overflow: hidden;
 }
+
 .popupWindow.active {
   transform: translate(-50%, -50%) scale(1);
   transition: 120ms ease-in;
@@ -392,4 +393,43 @@ ol.messagers {
   border: none;
   cursor: pointer;
   border-top-right-radius: 5px;
+}
+
+/* ---- Overlay for Friendlist update ----*/
+.friend-overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #34495e;
+  color: white;
+  border-radius: 10px;
+  z-index: 10;
+  padding: 10px;
+  width: 400px;
+  height: 300px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.friend-overlay h1 {
+  font-size: 1.5rem;
+  padding: 10px;
+}
+
+.friend-overlay button {
+  width: 60%;
+  height: 2rem;
+  cursor: pointer;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.9);
+}
+
+.friend-overlay button:hover {
+  box-shadow: 4px 4px 2px rgba(0, 0, 0, 0.9);
+  background-color: #dbd8d8;
 }

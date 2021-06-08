@@ -30,9 +30,11 @@ const gamesArray = [
 let currentUser;
 init();
 
-// Scan to see if a new request for conversations is needed
 let currentConvos = getConversations();
+// Scan to see if a new request for conversations is needed
 setInterval(getAlertResponses, 1000);
+// Scan to see if friendlist has changed
+setInterval(scanCurrentUserForUpdates, 5000);
 
 // ---- EVENT HANDLERS ----
 // Make JSrendered-elements clickable
@@ -159,6 +161,35 @@ function setLoggedInName() {
 function updateScroll() {
   const element = document.querySelector(".messages");
   element.scrollTop = element.scrollHeight;
+}
+
+function alertUserToChangeInFriendList() {
+  const html = `
+  <div class="friend-overlay">
+    <h1>Your friendlist has changed! Please reload the page to update.</h1>
+    <button data-reload-btn>Reload</button>
+  </div>
+  `;
+
+  cardHolder.insertAdjacentHTML("afterend", html);
+
+  // kanske ska lägga längst upp, då både jag och christian använder den
+  const overlay = document.querySelector("#overlay");
+  overlay.classList.add("active");
+
+  const reloadBtn = document.querySelector("[data-reload-btn]");
+
+  reloadBtn.addEventListener("click", () => {
+    location.reload();
+  });
+}
+
+async function scanCurrentUserForUpdates() {
+  const currentUserDB = await getCurrentUser();
+
+  if (currentUserDB.friends.length !== currentUser.friends.length) {
+    alertUserToChangeInFriendList();
+  }
 }
 
 async function init() {
@@ -398,7 +429,6 @@ async function updateUsersMessage() {
   });
 
   const JsonConvoRes = await response.json();
-  console.log(JsonConvoRes);
   const convoArr = Object.values(JsonConvoRes);
   let conv;
   convoArr.forEach((el) => {
@@ -472,7 +502,7 @@ async function getAllMessages() {
 //Create Contest section
 //****************************** */
 const createContestBtn = document.querySelector(".createContest");
-const closeWindowContestBtn = document.querySelector("[data-close-backButton]");
+const closeWindowContestBtn = document.querySelector("[data-close-button]");
 const popupWindowContest = document.querySelector(".popupWindow");
 const overlay = document.querySelector("#overlay");
 const dateStartPicker = document.querySelector("#dateStartInput");
@@ -517,11 +547,10 @@ createContestBtn.addEventListener("click", () => {
     ("0" + dateEnd.getMinutes()).slice(-2);
 });
 
-// ---- fick error på denna i konsoll ----
-// closeWindowContestBtn.addEventListener("click", () => {
-//   popupWindowContest.classList.remove("active");
-//   overlay.classList.remove("active");
-// });
+closeWindowContestBtn.addEventListener("click", () => {
+  popupWindowContest.classList.remove("active");
+  overlay.classList.remove("active");
+});
 
 dateStartPicker.addEventListener("change", () => {
   let date = new Date(dateStartPicker.value);
