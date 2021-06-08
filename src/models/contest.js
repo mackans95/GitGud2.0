@@ -12,7 +12,7 @@ const contestSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    participants: [ String ] ,
+    participants: [ {username: String, state: String} ] ,
     scores: [ Highscore.schema ],
     startDate: {
         type: Date,

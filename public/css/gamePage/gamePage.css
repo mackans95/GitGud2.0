@@ -183,9 +183,14 @@ ol.messagers {
   right: 20px;
   bottom: 20px;
 }
-
+/******************************/
 /* Contest styling */
-.createContest {
+/******************************/
+.contestOpenContainer{
+  display: flex;
+  gap: 10px;
+}
+.createContest, .contestsBtn {
   background-color: #34495e;
   padding-left: 20px;
   padding-right: 20px;
@@ -351,6 +356,57 @@ ol.messagers {
   opacity: 1;
   pointer-events: all;
 }
+.contestTemplate{
+  height: 60px;
+}
+.popupBodyList {
+  overflow-y: auto;
+}
+.popupBodyList div {
+  margin: 3px;
+}
+.popupBodyList .contestTemplate{
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid black;
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, .5);
+  margin-top: 4px;
+  margin-bottom: 4px;
+  padding: 10px;
+}
+.popupBodyList .contestButtonAccept {
+  border: 1px solid black;
+  border-radius: 3px;
+  background-color: green;
+  margin: 2px;
+  padding: 3px;
+  cursor: pointer;
+}
+.popupBodyList .contestButtonDecline, .popupBodyList .contestButtonResign {
+  border: 1px solid black;
+  border-radius: 3px;
+  background-color: red;
+  margin: 2px;
+  padding: 3px;
+  cursor: pointer;
+}
+.popupBodyList .pending{
+  animation-name: backgroundAnim;
+  animation-duration: 1.5s;
+}
+@keyframes backgroundAnim {
+  0% {background-color: yellow;}
+  50% {background-color: yellow;}
+  100% {background-color: none;}
+}
+.popupBodyContest{
+  visibility: hidden;
+}
+
+
+/******************************/
+/* END Contest styling */
+/******************************/
 
 /* show users styling */
 .show-users {

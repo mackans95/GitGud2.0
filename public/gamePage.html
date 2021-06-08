@@ -12,7 +12,10 @@
     <header>
       <span class="logo">GitGud</span>
 
-      <div data-popup-target="#popupWindow" class="createContest">Create a contest</div>
+      <div class="contestOpenContainer">
+        <div data-popup-target="#popupWindow" class="createContest">Create a contest</div>
+        <div class="contestsBtn">Contests</div>
+      </div>
 
       <div class="log-out-section">
         <span class="user-log-info"
@@ -35,6 +38,75 @@
     <main>
       <div class="card-holder"></div>
 
+      <div class="popupWindow" id="popupContests">
+        <div class="popupHeader">
+          <div class="popupTitle">Contests</div>
+          <button class="closeButton" id="closeContests">&times;</button>
+        </div>
+        <div class="popupBodyList">
+
+          <div class="contestTemplate">
+            <div class="contestTemplateFlex">
+              <div>Game:</div>
+              <div>The game</div>
+            </div>
+            <!-- <div class="contestTemplateFlex">
+              <div>Date from:</div>
+              <div>This date</div>
+            </div> -->
+            <div class="contestTemplateFlex">
+              <div>Date to:</div>
+              <div>This date</div>
+            </div>
+            <div class="contestTemplateFlex">
+              <div>Status:</div>
+              <div>Active</div>
+            </div>
+            <div class="contestTemplateFlex">
+              <div>Leader:</div>
+              <div>The player</div>
+            </div>
+            <div class="contestTemplateFlex">
+              <div>Highscore:</div>
+              <div>The score</div>
+            </div>
+            <div class="contestTemplateFlex">
+              <div class="contestButtonResign">Resign</div>
+            </div>
+          </div>
+
+          <div class="contestTemplate pending">
+            <div class="contestTemplateFlex">
+              <div>Game:</div>
+              <div>The game</div>
+            </div>
+            <div class="contestTemplateFlex">
+              <div>Host:</div>
+              <div>The host</div>
+            </div>
+            <div class="contestTemplateFlex">
+              <div>Date from:</div>
+              <div>This date</div>
+            </div>
+            <div class="contestTemplateFlex">
+              <div>Date to:</div>
+              <div>This date</div>
+            </div>
+            <div class="contestTemplateFlex">
+              <div>Status:</div>
+              <div>Pending...</div>
+            </div>
+            <div class="contestTemplateFlex">
+              <div class="contestButtonAccept">Accept</div>
+              <div class="contestButtonDecline">Decline</div>
+            </div>
+          </div>
+
+        </div>
+        <div class="popupBodyContest">
+          Display a contest with all the info here
+        </div>
+      </div>
       <div class="popupWindow" id="popupWindow">
         <div class="popupHeader">
           <div class="popupTitle">Create contest</div>

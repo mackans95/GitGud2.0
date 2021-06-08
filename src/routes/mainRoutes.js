@@ -67,15 +67,23 @@ router.get("/GamePage", authTokenMiddleware, (req, res) => {
   console.log("GamePage route");
 });
 
-//contest route
+//contest routes
 router.post('/contests', authTokenMiddleware, async (req, res) => {
-  console.log('contests posted to!');
-  console.log(req.body);
-
   const contest = await Contest.create(req.body);
   console.log(contest);
   res.status(200).send('OK');
 });
+router.get('/contests', authTokenMiddleware, async (req, res) => {
+  console.log('GET contests posted to!');
+
+  const user = await User.findOne({ _id: req.user.id });
+  const userName = user.username;
+  const contests = await Contest.find({'participants.username': userName } );
+  console.log(contests[0].participants);
+
+  res.status(200).json(contests);
+});
+//END contest routes
 
 router.get("/alert", authTokenMiddleware, async (req, res) => {
   const user = await User.findOne({ _id: req.user.id });
