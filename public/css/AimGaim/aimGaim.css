@@ -4,6 +4,41 @@ body {
   font-family: "Lato", sans-serif;
 }
 
+/* Back-button start */
+button[data-name="back-btn"] {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid gray;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+}
+
+button[data-name="back-btn"]:hover {
+  background-color: #3498db;
+  cursor: pointer;
+}
+
+.btn-tooltip {
+  visibility: hidden;
+  width: 100px;
+  background-color: #2980b9;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 1;
+  top: -2px;
+  left: 110%;
+}
+
+button[data-name="back-btn"]:hover .btn-tooltip {
+  visibility: visible;
+}
+/* Back-button end */
+
 .aimGaimMainWindow {
   position: relative;
   background-color: #3498db;
