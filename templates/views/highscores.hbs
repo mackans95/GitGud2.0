@@ -15,7 +15,7 @@
 
    <div class="leaderboards-container">
 
-      <div>
+      <div class="table-content">
         <table class="highscore-table global">
           <caption>All GitGud Highscores</caption>
           <tbody>
@@ -32,10 +32,20 @@
       </div>
     
     </div>
+    <div class="pagination">
+        <div>
+            <p>Previous</p>
+            <a class="prev-btn">❮</a>
+        </div>
+        <div>
+            <p>Next</p>
+            <a class="next-btn">❯</a>
+        </div>
+    </div>
     
 
 <template id="highscore-row">
-    <tr>
+    <tr class="loadedItems">
     <td class="name"></td>
     <td class="game"></td>
     <td class="score"></td>
