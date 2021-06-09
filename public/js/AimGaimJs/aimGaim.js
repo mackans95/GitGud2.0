@@ -619,6 +619,7 @@ submitScoreBtn.addEventListener("click", async function (e) {
 
   // location.reload();
   if(gameRunning){return;}
+  if(currentHighScore < 1) return;
   //SEND POST USING FETCH
   const response = await fetch("http://localhost:3000/aimgaim", {
     method: 'POST',

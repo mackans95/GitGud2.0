@@ -62,7 +62,7 @@ button {
 .highscore-table {
     width: 600px;
     border-collapse: collapse;
-    margin: 50px auto;
+    margin: 20px auto 10px auto;
     font-size: 1.2em;
   
     border-radius: 5px 5px 0 0;
@@ -172,3 +172,48 @@ button {
 .pagination a:hover:not(.active) {background-color: #ddd;}
 
 /* PAGINATION END */
+
+/* DROPDOWN START */
+
+.dropbtn {
+  background-color: #474787;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown {
+  position: relative;
+  left: 25px;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {background-color: #f1f1f1}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown:hover .dropbtn {
+  background-color: #38386b;
+}
+
+/* DROPDOWN END*/
