@@ -279,6 +279,41 @@ gamesArray.forEach(game => {
   gameSelect.appendChild(option);
 })
 
+async function addEventListenerToChoiceButtons(button){
+  //send to server
+  const parent = button.parentNode.parentNode;
+  const contestId = parent.querySelector('.contestId');
+  console.log(contestId.textContent);
+  let choiceAnswer = '';
+  if(button.textContent == 'Accept'){
+    choiceAnswer = 'accepted';
+  }
+  else if(button.textContent == 'Decline'){
+    choiceAnswer = 'declined';
+  }
+  else if(button.textContent == 'Resign'){
+    choiceAnswer = 'resigned';
+  }
+  console.log(choiceAnswer);
+
+  //send to 'contests/choice'
+  const data = {
+    contestId : contestId.textContent,
+    choice : choiceAnswer
+  }
+  const response = await fetch("http://localhost:3000/contests/choice", {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+  console.log('sent answer to db!');
+
+  window.location.reload();
+}
+
 contestsBtn.addEventListener('click', async ()=>{
   //load contests for current user
   const response = await fetch(`http://localhost:3000/contests`, {
@@ -299,26 +334,6 @@ contestsBtn.addEventListener('click', async ()=>{
   data.forEach(contest => {
     if(contest.state == 'finished'){return;}
 
-    //check if contest finished, then change state to finished and don't display here (return)
-    const endDate = new Date(contest.endDate).toISOString();
-    if(endDate < new Date().toISOString()){
-      console.log('contest has ended');
-      //set state to finished (dont display finished contests, if not specifically chosen)
-      contest.state = 'finished';
-      return;
-    }
-    //check if it started, and not yet set to active (just hasnt been updated)
-    //they have to be updated when users send highscores too, to check for ongoing contests
-    const date = new Date(contest.startDate).toISOString();
-    if(date < new Date().toISOString() && contest.state == 'invitation'){
-      //set state on contest to active
-      contest.state = 'active';
-
-      //remove participants that didn't accept (send to db)
-      //maybe check on serverside instead? everytime a get is made, check the contests for date etc on serverside?
-      //TODO: every get request to contests, cleans up paticipants and sets state depending on time on the serverside
-    }
-
     addContestTemplate(contest);
 
   })
@@ -327,10 +342,14 @@ contestsBtn.addEventListener('click', async ()=>{
   popupContests.classList.add('active');
   overlay.classList.add('active');
 })
-
+//contestButtonAccept, contestButtonDecline, contestButtonResign
 async function addContestTemplate(contest){
   const template = document.createElement('div');
   template.classList.add('contestTemplate');
+  const invisId = document.createElement('div');
+  invisId.textContent = contest._id;
+  invisId.classList.add('contestId');
+  invisId.style.display = 'none';
   const gameDiv = document.createElement('div');
   gameDiv.classList.add('contestTemplateFlex');
   const gameDiv1 = document.createElement('div');
@@ -340,6 +359,7 @@ async function addContestTemplate(contest){
   gameDiv.append(gameDiv1, gameDiv2);
 
   template.append(gameDiv);
+  template.append(invisId);
   popupContestsBodyList.append(template);
 
   if(contest.state == 'invitation'){
@@ -386,16 +406,22 @@ async function addContestTemplate(contest){
     if(thisParticipant.state == 'pending'){
       const choiceDiv1 = document.createElement('div'); choiceDiv1.classList.add('contestButtonAccept'); choiceDiv1.textContent = 'Accept';
       choiceDiv.appendChild(choiceDiv1);
+      
       const choiceDiv2 = document.createElement('div'); choiceDiv2.classList.add('contestButtonDecline');  choiceDiv2.textContent = 'Decline';
       choiceDiv.appendChild(choiceDiv2);
+
+      template.append(choiceDiv);
+
+      choiceDiv1.addEventListener('click', () =>{ addEventListenerToChoiceButtons(choiceDiv1) } );
+      choiceDiv2.addEventListener('click', () =>{ addEventListenerToChoiceButtons(choiceDiv2) });
     }
     else if(thisParticipant.state == 'accepted'){
       const choiceDiv1 = document.createElement('div'); choiceDiv1.classList.add('contestButtonResign'); choiceDiv1.textContent = 'Resign';
       choiceDiv.appendChild(choiceDiv1);
-    }
 
-    //-------------------------
-    template.append(choiceDiv);
+      template.append(choiceDiv);
+      choiceDiv1.addEventListener('click', () => { addEventListenerToChoiceButtons(choiceDiv1)} );
+    }
 
   }
   else if(contest.state == 'active'){
@@ -453,6 +479,8 @@ async function addContestTemplate(contest){
     const choiceDiv1 = document.createElement('div'); choiceDiv1.classList.add('contestButtonResign'); choiceDiv1.textContent = 'Resign';
     choiceDiv.appendChild(choiceDiv1);
     template.appendChild(choiceDiv);
+    choiceDiv1.addEventListener('click', () => { addEventListenerToChoiceButtons(choiceDiv1)});
+
   }
 }
 
@@ -606,9 +634,9 @@ finishInvitationBtn.addEventListener('click', async () => {
   // const participant1 = new Participant('hejsan', 'hejda');
   // console.log("participant1: " + JSON.stringify(participant1));
   const arrayOfScores = [];
-  const score1 = new Score("AimGaim", 'hejda', 1001, new Date());
-  const score2 = new Score("AimGaim", 'bojo', 2100, new Date());
-  arrayOfScores.push(score1); arrayOfScores.push(score2); 
+  // const score1 = new Score("AimGaim", 'hejda', 1001, new Date());
+  // const score2 = new Score("AimGaim", 'bojo', 2100, new Date());
+  // arrayOfScores.push(score1); arrayOfScores.push(score2); 
 
   const contestParticipants = document.querySelectorAll('.contestPlayer');
   const nameArray2 = [];
@@ -636,7 +664,7 @@ finishInvitationBtn.addEventListener('click', async () => {
     scores: arrayOfScores,
     startDate : new Date(startingDate.getTime() - (startingDate.getTimezoneOffset() * 60000)), //dateStartPicker.value dateStartElem.textContent
     endDate : new Date(endingDate.getTime() - (endingDate.getTimezoneOffset() * 60000)),
-    state : "active" }
+    state : "invitation" }
 
   // console.log(JSON.stringify(data)); 'invitation'
 

@@ -14,7 +14,7 @@ function authTokenMiddleware(req, res, next) {
         if(!isUserInDb(req.user)){
           return res.status(400).send('Invalid user');
         }
-        console.log('user validated');
+        // console.log('user validated');
       }
       catch(err){
         return res.status(400).send('Invalid token' + err);
