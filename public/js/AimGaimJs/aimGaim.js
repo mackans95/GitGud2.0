@@ -1,5 +1,12 @@
-import leaderboardHandler from '../general/LeaderboardHandler.js';
+import leaderboardHandler from "../general/LeaderboardHandler.js";
 // import '/js/general/leaderboardHandler.js';
+
+// ---- Add listener to back button ----
+const backBtn = document.querySelector(`[data-name="back-btn"]`);
+backBtn.addEventListener("click", () => {
+  window.location.href = "/GamePage";
+});
+//--------------------------------------
 
 /*************************************/
 /* INITIALIZE AIM GAIM */
@@ -12,8 +19,8 @@ let respawnTimer = 0;
 let currentHighScore = -1;
 let gameSettings = {
   gameDifficulty: "easy",
-  enemyDisplay: "img"
-}
+  enemyDisplay: "img",
+};
 
 let mainBody = document.querySelector("#aimGaimMainWindow");
 
@@ -30,9 +37,12 @@ const buttonRestart = document.querySelector("#buttonRestart");
 const buttonReturn = document.querySelector("#buttonReturn");
 let gameSettingBox = document.querySelector(".gameSettings");
 let countDownText = document.querySelector(".countDown");
-const gameSettingSettingsScreen = document.querySelector(".gameSettings .settingsScreen");
-const gameSettingResultScreen = document.querySelector(".gameSettings .resultScreen");
-
+const gameSettingSettingsScreen = document.querySelector(
+  ".gameSettings .settingsScreen"
+);
+const gameSettingResultScreen = document.querySelector(
+  ".gameSettings .resultScreen"
+);
 
 let currentlyOnTarget = {};
 let counterOnTarget = 0;
@@ -50,7 +60,6 @@ let enemyStepLengthBase = 1;
 /*************************************/
 /* INITIALIZE AIM GAIM END */
 /*************************************/
-
 
 //-----------------------
 //Dynamic multiple enemies
@@ -87,13 +96,9 @@ function enemyObject() {
     this.enemyBody.style.height =
       enemyDefaultSize * 2 + enemyDefaultSize * 2 * this.enemyDistance + "px";
     this.enemyHead.style.width =
-      enemyDefaultSize * 0.8 +
-      enemyDefaultSize * 0.8 * this.enemyDistance +
-      "px";
+      enemyDefaultSize * 0.8 + enemyDefaultSize * 0.8 * this.enemyDistance + "px";
     this.enemyHead.style.height =
-      enemyDefaultSize * 0.8 +
-      enemyDefaultSize * 0.8 * this.enemyDistance +
-      "px";
+      enemyDefaultSize * 0.8 + enemyDefaultSize * 0.8 * this.enemyDistance + "px";
 
     this.enemyBody.style.top =
       this.enemyPosition.y - this.enemyBody.offsetHeight / 2 + "px";
@@ -108,18 +113,16 @@ function enemyObject() {
       (this.enemyBody.offsetWidth - this.enemyHead.offsetWidth) / 2 +
       "px";
 
-      if(gameSettings.enemyDisplay == "img"){
-        applyImg("headDefault.png", this.enemyHead);
-        applyImg("bodyDefault.png", this.enemyBody);
-      }
-      else if(gameSettings.enemyDisplay == "color"){
+    if (gameSettings.enemyDisplay == "img") {
+      applyImg("headDefault.png", this.enemyHead);
+      applyImg("bodyDefault.png", this.enemyBody);
+    } else if (gameSettings.enemyDisplay == "color") {
+    }
 
-      }
-    
     // this.enemyHead.style.backgroundImage = 'url(./images/head1.png)';
     // this.enemyHead.style.backgroundPosition = "0px 0px";
     // this.enemyHead.style.backgroundSize = `${this.enemyHead.offsetWidth}px ${this.enemyHead.offsetWidth}px`;
-    
+
     let newEnemy = new enemyObject(this);
 
     return newEnemy;
@@ -202,7 +205,6 @@ function SpawnEnemy() {
 }
 
 function applyImg(thisImg, parentObject) {
-
   parentObject.style.backgroundImage = `url(./images/${thisImg})`;
   parentObject.style.backgroundPosition = "0px 0px";
   parentObject.style.backgroundSize = `${parentObject.offsetWidth}px ${parentObject.offsetHeight}px`;
@@ -270,17 +272,17 @@ function calcAndDisplayInfo() {
   //Enemies killed * 1000, penalty for missing the targets: %-missed / 2, and remove from total score. display under game screen
   currentHighScore = enemiesKilled * 1000;
   calcNumber = counterShotsMissed / (counterOnTarget + counterShotsMissed);
-  calcNumber = 1 - (calcNumber/2);
+  calcNumber = 1 - calcNumber / 2;
   currentHighScore = currentHighScore * calcNumber;
   currentHighScore = Math.floor(currentHighScore);
   let topscoreDiv = document.querySelector(".top-score");
-  if(currentHighScore == -1){
+  if (currentHighScore == -1) {
     document.querySelector(".top-score").textContent = "Current highscore: 0";
+  } else {
+    document.querySelector(".top-score").textContent =
+      "Current highscore: " + currentHighScore;
   }
-  else{
-    document.querySelector(".top-score").textContent = "Current highscore: " + currentHighScore;
-  }
-  
+
   //CALCULATE FINAL SCORE END:::::::::::::::::
 
   //update enemy timer
@@ -340,8 +342,7 @@ function getRandomInt(min, max) {
 
 function findEnemyTarget(thisEnemyDistance) {
   const bodyWidth = enemyDefaultSize + enemyDefaultSize * thisEnemyDistance;
-  const bodyHeight =
-    enemyDefaultSize * 2 + enemyDefaultSize * 2 * thisEnemyDistance;
+  const bodyHeight = enemyDefaultSize * 2 + enemyDefaultSize * 2 * thisEnemyDistance;
   // const headWidth = enemyDefaultSize * 0.8 + enemyDefaultSize * 0.8 * thisEnemyDistance;
   const headHeight =
     enemyDefaultSize * 0.8 + enemyDefaultSize * 0.8 * thisEnemyDistance;
@@ -394,8 +395,7 @@ function isMouseOnEnemyManual() {
   });
 
   if (trueOrFalse == true && trueOrFalseHead == false && mouseHeldDown) {
-
-    if(gameSettings.enemyDisplay == "img"){
+    if (gameSettings.enemyDisplay == "img") {
       currentlyOnTarget.enemyHead.style.border = null;
 
       currentlyOnTarget.enemyBody.style.border = null;
@@ -403,8 +403,7 @@ function isMouseOnEnemyManual() {
 
       applyImg("headHit.png", currentlyOnTarget.enemyHead);
       applyImg("bodyHit.png", currentlyOnTarget.enemyBody);
-    }
-    else if(gameSettings.enemyDisplay == "color"){
+    } else if (gameSettings.enemyDisplay == "color") {
       currentlyOnTarget.enemyHead.style.border = "1px solid black";
 
       currentlyOnTarget.enemyBody.style.border = "1px solid black"; //green
@@ -415,8 +414,7 @@ function isMouseOnEnemyManual() {
     onTarget = true;
     onTargetHead = false;
   } else if (trueOrFalse == false && trueOrFalseHead == true && mouseHeldDown) {
-
-    if(gameSettings.enemyDisplay == "img"){
+    if (gameSettings.enemyDisplay == "img") {
       currentlyOnTarget.enemyHead.style.border = null;
       currentlyOnTarget.enemyHead.style.backgroundColor = null;
 
@@ -425,8 +423,7 @@ function isMouseOnEnemyManual() {
 
       applyImg("headHit.png", currentlyOnTarget.enemyHead);
       applyImg("bodyDefault.png", currentlyOnTarget.enemyBody);
-    }
-    else if(gameSettings.enemyDisplay == "color"){
+    } else if (gameSettings.enemyDisplay == "color") {
       currentlyOnTarget.enemyHead.style.border = "1px solid black"; //green
       currentlyOnTarget.enemyHead.style.backgroundColor = "black"; //green
 
@@ -438,20 +435,18 @@ function isMouseOnEnemyManual() {
     onTargetHead = true;
   } else {
     enemyArray.forEach(function (enemy) {
-      if(gameSettings.enemyDisplay == "img"){
+      if (gameSettings.enemyDisplay == "img") {
         enemy.enemyHead.style.border = null;
 
         applyImg("headDefault.png", enemy.enemyHead);
         applyImg("bodyDefault.png", enemy.enemyBody);
-      }
-      else if(gameSettings.enemyDisplay == "color"){
+      } else if (gameSettings.enemyDisplay == "color") {
         enemy.enemyHead.style.border = "1px solid black";
         enemy.enemyBody.style.border = "1px solid black";
       }
-      
+
       enemy.enemyBody.style.backgroundColor = null;
       enemy.enemyHead.style.backgroundColor = null;
-
     });
     onTarget = false;
     onTargetHead = false;
@@ -559,8 +554,12 @@ function startGame() {
 }
 
 buttonStart.onclick = function () {
-  gameSettings.gameDifficulty = document.querySelector("#gameDifficultySetting").value;
-  gameSettings.enemyDisplay = document.querySelector("#gameEnemyDisplaySetting").value;
+  gameSettings.gameDifficulty = document.querySelector(
+    "#gameDifficultySetting"
+  ).value;
+  gameSettings.enemyDisplay = document.querySelector(
+    "#gameEnemyDisplaySetting"
+  ).value;
 
   countDown = 3000;
   countDownText.textContent = "3";
@@ -581,7 +580,7 @@ buttonRestart.onclick = function () {
 buttonReturn.onclick = function () {
   gameSettingResultScreen.style.display = "none";
   gameSettingSettingsScreen.style.display = "flex";
-}
+};
 
 document.addEventListener("mousedown", function (e) {
   mouseHeldDown = true;
@@ -610,7 +609,6 @@ const submitScoreBtn = document.querySelector(".postHighscores");
 
 // submit highscore
 submitScoreBtn.addEventListener("click", async function (e) {
-
   // let updatedHighscoreOnLoggedInUser = leaderBoardHandler1.setHighscoreToLoggedInUser("highscoreaimgaim", currentHighScore, true);
 
   // let serializedUsers = JSON.stringify(updatedHighscoreOnLoggedInUser);
@@ -618,22 +616,24 @@ submitScoreBtn.addEventListener("click", async function (e) {
   // localStorage.setItem("users", serializedUsers);
 
   // location.reload();
-  if(gameRunning){return;}
+  if (gameRunning) {
+    return;
+  }
   //SEND POST USING FETCH
   const response = await fetch("http://localhost:3000/aimgaim", {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
     body: `{
       "gamename": "AimGaim",
       "username": "temporary",
       "score": ${currentHighScore}
-      }`
+      }`,
   });
 
-  response.json().then(data => {
+  response.json().then((data) => {
     console.log(data);
   });
 
@@ -646,21 +646,21 @@ submitScoreBtn.addEventListener("click", async function (e) {
 
 getLeaderboards();
 
-async function getLeaderboards(){
+async function getLeaderboards() {
   const response = await fetch("http://localhost:3000/aimgaim/personalHighscores", {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
   });
   const personalLeaderboard = await response.json();
 
   const response2 = await fetch("http://localhost:3000/aimgaim/globalHighscores", {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
   });
   const globalLeaderboard = await response2.json();
@@ -669,8 +669,7 @@ async function getLeaderboards(){
   // console.log(response);
 }
 
-function showLeaderboards(personalHighscores, globalHighscores){
-
+function showLeaderboards(personalHighscores, globalHighscores) {
   const tbodyPersonal = document.querySelector(".personal tbody");
   const tbodyGlobal = document.querySelector(".global tbody");
   const template = document.querySelector("#highscore-row");
@@ -679,52 +678,53 @@ function showLeaderboards(personalHighscores, globalHighscores){
   personalHighscores = Object.values(personalHighscores); //makes objects into an array, so it can be sorted
   //Personal leaderboard
   //change sort() if lower hs is better than higher
-  personalHighscores.sort((a, b) => {return a - b;});
+  personalHighscores.sort((a, b) => {
+    return a - b;
+  });
 
-  personalHighscores.forEach(highscore => {
+  personalHighscores.forEach((highscore) => {
     let tr = template.content.cloneNode(true);
 
     let tdName = tr.querySelector("td.name");
     let tdScore = tr.querySelector("td.score");
 
     tdName.textContent = highscore.username;
-    if(highscore.gamename == 'reactiongame'){
+    if (highscore.gamename == "reactiongame") {
       tdScore.textContent = highscore.score + "ms";
-    }
-    else{
+    } else {
       tdScore.textContent = highscore.score;
     }
 
     tbodyPersonal.appendChild(tr);
-  }) 
+  });
   //END Personal leaderboard
 
-  if(!globalHighscores){
+  if (!globalHighscores) {
     return;
   }
   globalHighscores = Object.values(globalHighscores);
   //Global leaderboard
   //change sort() if lower hs is better than higher
-  globalHighscores.sort((a, b) => {return a - b;});
-  globalHighscores.forEach(highscore => {
+  globalHighscores.sort((a, b) => {
+    return a - b;
+  });
+  globalHighscores.forEach((highscore) => {
     let tr = template.content.cloneNode(true);
 
     let tdName = tr.querySelector("td.name");
     let tdScore = tr.querySelector("td.score");
 
     tdName.textContent = highscore.username;
-      if(highscore.gamename == "reactiongame"){
-        tdScore.textContent = highscore.score + "ms";
-      }
-      else{
-        tdScore.textContent = highscore.score;
-      }
+    if (highscore.gamename == "reactiongame") {
+      tdScore.textContent = highscore.score + "ms";
+    } else {
+      tdScore.textContent = highscore.score;
+    }
 
-      tbodyGlobal.appendChild(tr);
-  })
+    tbodyGlobal.appendChild(tr);
+  });
   //END Global leaderboard
 }
-
 
 //TESTING AREA
 

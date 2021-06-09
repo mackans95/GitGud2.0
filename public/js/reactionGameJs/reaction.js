@@ -2,6 +2,13 @@
 
 // let leaderboardHandlerOne = new leaderboardHandler;
 
+// ---- Add listener to back button ----
+const backBtn = document.querySelector(`[data-name="back-btn"]`);
+backBtn.addEventListener("click", () => {
+  window.location.href = "/GamePage";
+});
+//--------------------------------------
+
 // Get elemtens
 let canvasEl = document.querySelector(".canvas");
 let startBtn = document.querySelector(".start");
@@ -46,7 +53,7 @@ function measureReaction(time) {
     }
   });
 
-    startMeasuringTime = setTimeout(function () {
+  startMeasuringTime = setTimeout(function () {
     toEarlyBoolean = false;
     canvasEl.style.backgroundColor = "#2ecc71";
     gameTextOne.innerText = "CLICK!";
@@ -103,18 +110,18 @@ function endGame() {
 function checkIfTopScore(yourScore) {
   if (yourScore < currentHighScore || currentHighScore === -1) {
     currentHighScore = yourScore;
-    score.innerText ="Current highscore: " + yourScore + "ms";
+    score.innerText = "Current highscore: " + yourScore + "ms";
   }
 }
 
 function displayYourScore(timeTotal) {
   canvasEl.style.backgroundColor = "#3498db";
   gameTextOne.innerText = timeTotal + " ms";
-  if(timeTotal <= 300){
+  if (timeTotal <= 300) {
     gameTextTwo.innerText = "Damn you're quick!";
-  }else if(timeTotal <= 400){
+  } else if (timeTotal <= 400) {
     gameTextTwo.innerText = "Decent I guess";
-  }else{
+  } else {
     gameTextTwo.innerText = "Embarrassing!";
   }
   status = GameStatus.STOP;
@@ -129,31 +136,30 @@ const submitScoreBtn = document.querySelector(".postHighscores");
 
 // submit highscore
 submitScoreBtn.addEventListener("click", function (e) {
-
   // let updatedHighscoreOnLoggedInUser = leaderboardHandlerOne.setHighscoreToLoggedInUser("highscorereactiongame", currentHighScore, false);
 
   // let serializedUsers = JSON.stringify(updatedHighscoreOnLoggedInUser);
 
   // localStorage.setItem("users", serializedUsers);
-  
-  if(currentHighScore < 1) return;
 
-  fetch('http://localhost:3000/ReactionGame', {
-    method: 'POST',
+  if (currentHighScore < 1) return;
+
+  fetch("http://localhost:3000/ReactionGame", {
+    method: "POST",
     headers: {
-      'Accept': 'application/json',
-      'Content-type': 'application/json; charset=UTF-8',
+      Accept: "application/json",
+      "Content-type": "application/json; charset=UTF-8",
     },
     body: JSON.stringify({
       // gamename: "ReactionGame",
       // username: "Mr. Postfrom Clint",
       score: currentHighScore,
+    }),
   })
-  }).then(response => response.json())
-    .then(data => console.log(data))
+    .then((response) => response.json())
+    .then((data) => console.log(data));
 
   location.reload();
-  
 });
 
 // function setHighscoreToLoggedInUser() {
@@ -161,7 +167,7 @@ submitScoreBtn.addEventListener("click", function (e) {
 //   const theGuyThatIsLoggedIn = sessionStorage.getItem("loggedInUser");
 //   users.forEach(function (user) {
 //     if (user.username === theGuyThatIsLoggedIn) {
-     
+
 //       if(!user.highscorereactiongame && currentHighScore !== -1){
 //         user.highscorereactiongame = [currentHighScore];
 //       }else if(currentHighScore === -1){
@@ -169,12 +175,12 @@ submitScoreBtn.addEventListener("click", function (e) {
 //       }else if(user.highscorereactiongame.includes(currentHighScore)){
 //         return;
 //       }else{
-        
+
 //         user.highscorereactiongame.sort(function(a, b){return a - b});
 
 //         if (currentHighScore !== -1 && user.highscorereactiongame[4] > currentHighScore){
 //           user.highscorereactiongame[4] = currentHighScore;
-          
+
 //         }else if(user.highscorereactiongame.length < 5 ) {
 //           user.highscorereactiongame.push(currentHighScore);
 //         }
@@ -184,7 +190,7 @@ submitScoreBtn.addEventListener("click", function (e) {
 //         user.highscorereactiongame = topFive;
 
 //       }
-      
+
 //     }
 //   });
 //   return users;
@@ -196,7 +202,6 @@ submitScoreBtn.addEventListener("click", function (e) {
 // }
 
 // SUBMIT PERSONAL LEADERBOARD END -----------------------------------------------
-
 
 // LOAD LEADERBOARDS-----------------------------------------------
 
@@ -212,15 +217,15 @@ submitScoreBtn.addEventListener("click", function (e) {
 //     if (user.username === theGuyThatIsLoggedIn && user.highscorereactiongame) {
 
 //       for (let i = 0; i < user.highscorereactiongame.length; i++) {
-        
+
 //         let tr = template.content.cloneNode(true);
 
 //         let tdName = tr.querySelector("td.name");
 //         let tdScore = tr.querySelector("td.score");
-  
+
 //         tdName.textContent = user.username;
 //         tdScore.textContent = user.highscorereactiongame[i] + "ms";
-  
+
 //         tbodyPersonal.appendChild(tr);
 //       }
 //     };
@@ -232,17 +237,17 @@ submitScoreBtn.addEventListener("click", function (e) {
 
 //     if(user.highscorereactiongame){
 //       user.highscorereactiongame.forEach(function (score){
-      
+
 //         let best = {
 //           name: user.username,
 //           hs: score
 //         }
 //         globalHighscoreArray.push(best)
-        
+
 //       })
 //     }
 //   });
- 
+
 //   let sortedHighscores = globalHighscoreArray.sort((a, b) => a.hs - b.hs).slice(0,5);
 
 //   sortedHighscores.forEach(function (user) {
@@ -256,19 +261,18 @@ submitScoreBtn.addEventListener("click", function (e) {
 //     tdScore.textContent = user.hs + "ms";
 
 //     tbodyGlobal.appendChild(tr);
-  
-//   })  
+
+//   })
 
 // }
 
 // LoadPersonalLeaderboard();
 
-
 const response = await fetch("http://localhost:3000/ReactionGame/Leaderboards", {
-  method: 'GET',
+  method: "GET",
   headers: {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json'
+    Accept: "application/json",
+    "Content-Type": "application/json",
   },
 });
 const personalLeaderboard = await response.json();
@@ -276,16 +280,15 @@ const personalLeaderboard = await response.json();
 function getCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
+  if (parts.length === 2) return parts.pop().split(";").shift();
 }
-var c = getCookie('username');
+var c = getCookie("username");
 
-let LoggedInUserHighscores = personalLeaderboard.filter(hs => hs.username == c)
+let LoggedInUserHighscores = personalLeaderboard.filter((hs) => hs.username == c);
 
-showLeaderboards(LoggedInUserHighscores, personalLeaderboard)
+showLeaderboards(LoggedInUserHighscores, personalLeaderboard);
 
-function showLeaderboards(personalHighscores, globalHighscores){
-
+function showLeaderboards(personalHighscores, globalHighscores) {
   const tbodyPersonal = document.querySelector(".personal tbody");
   const tbodyGlobal = document.querySelector(".global tbody");
   const template = document.querySelector("#highscore-row");
@@ -293,49 +296,51 @@ function showLeaderboards(personalHighscores, globalHighscores){
   // personalHighscores = [].slice.call(personalHighscores);
   //Personal leaderboard
   //change sort() if lower hs is better than higher
-  personalHighscores.sort((a, b) => {return a.score - b.score;});
+  personalHighscores.sort((a, b) => {
+    return a.score - b.score;
+  });
 
-  personalHighscores.forEach(highscore => {
+  personalHighscores.forEach((highscore) => {
     let tr = template.content.cloneNode(true);
 
     let tdName = tr.querySelector("td.name");
     let tdScore = tr.querySelector("td.score");
 
     tdName.textContent = highscore.username;
-    if(highscore.gamename == 'reactiongame'){
+    if (highscore.gamename == "reactiongame") {
       tdScore.textContent = highscore.score + "ms";
-    }
-    else{
+    } else {
       tdScore.textContent = highscore.score;
     }
 
     tbodyPersonal.appendChild(tr);
-  }) 
+  });
   //END Personal leaderboard
 
-  if(!globalHighscores){
+  if (!globalHighscores) {
     return;
   }
   //Global leaderboard
   //change sort() if lower hs is better than higher
-  globalHighscores.sort((a, b) => {return a.score - b.score;});
-  const topFive = globalHighscores.slice(0,5);
-  topFive.forEach(highscore => {
+  globalHighscores.sort((a, b) => {
+    return a.score - b.score;
+  });
+  const topFive = globalHighscores.slice(0, 5);
+  topFive.forEach((highscore) => {
     let tr = template.content.cloneNode(true);
 
     let tdName = tr.querySelector("td.name");
     let tdScore = tr.querySelector("td.score");
 
     tdName.textContent = highscore.username;
-      if(highscore.gamename == "reactiongame"){
-        tdScore.textContent = highscore.score + "ms";
-      }
-      else{
-        tdScore.textContent = highscore.score;
-      }
+    if (highscore.gamename == "reactiongame") {
+      tdScore.textContent = highscore.score + "ms";
+    } else {
+      tdScore.textContent = highscore.score;
+    }
 
-      tbodyGlobal.appendChild(tr);
-  })
+    tbodyGlobal.appendChild(tr);
+  });
   //END Global leaderboard
 }
 

@@ -8,9 +8,24 @@
     <script defer src="./js/reactionGameJs/reaction.js" type="module"></script>
   </head>
   <body>
-    <header></header>
+    <header>
+      <button data-name="back-btn">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="30"
+          height="30"
+          viewBox="0 0 24 24"
+          style="fill: rgba(0, 0, 0, 1)"
+        >
+          <path
+            d="M12.707 17.293L8.414 13 18 13 18 11 8.414 11 12.707 6.707 11.293 5.293 4.586 12 11.293 18.707z"
+          ></path>
+        </svg>
+        <span class="btn-tooltip">Back to games</span>
+      </button>
+    </header>
+
     <div class="game-container">
-      
       <div class="canvas">
         <span class="ingame-text-one">Reaction Game</span>
 
@@ -20,11 +35,9 @@
       </div>
     </div>
 
-
     <div class="scores">
       <span class="top-score">Current highscore: 0 ms</span>
     </div>
-
 
     <div class="bottom">
       <button class="start btn" type="button">Start Game</button>
@@ -34,8 +47,8 @@
       <div class="instructions">
         <h2>Instructions</h2>
         <p>
-          1. Press start game to begin.<br />2. When the box turns green, click
-          on the box.
+          1. Press start game to begin.<br />2. When the box turns green, click on
+          the box.
         </p>
       </div>
       <div class="game-info">
@@ -45,29 +58,29 @@
       </div>
     </div>
 
-  
     <div class="leaderboards-container">
-
       <div>
         <table class="highscore-table global">
-          <caption>Global leaderboard</caption>
+          <caption>
+            Global leaderboard
+          </caption>
           <tbody>
-        <!-- global data could optionally be included here -->
-         </tbody>
-       </table>
+            <!-- global data could optionally be included here -->
+          </tbody>
+        </table>
       </div>
-         
+
       <div>
         <table class="highscore-table personal">
-          <caption>Personal leaderboard</caption>
-        <tbody>
-          <!-- personal data could optionally be included here -->
-        </tbody>
-      </table>
+          <caption>
+            Personal leaderboard
+          </caption>
+          <tbody>
+            <!-- personal data could optionally be included here -->
+          </tbody>
+        </table>
       </div>
-      
     </div>
-    
 
     <template id="highscore-row">
       <tr>
