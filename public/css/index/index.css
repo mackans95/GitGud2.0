@@ -20,6 +20,7 @@ body {
 .form-holder {
   width: 50%;
   height: 70%;
+  max-height: 550px;
   display: grid;
   justify-items: center;
   align-items: center;

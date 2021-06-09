@@ -25,25 +25,29 @@ div.card-holder {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 40%;
-  height: 50%;
-  min-width: 550px;
+  height: 60%;
+  max-height: 550px;
+  max-width: 700px;
   justify-items: center;
   align-items: center;
   display: grid;
+  gap: 10px;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   text-align: center;
   background-color: rgba(52, 73, 94, 0.9);
   border-radius: 7px;
+  overflow-y: scroll;
 }
 
-@media screen and (max-width: 1120px) {
+@media screen and (max-width: 1030px) {
   div.card-holder {
-    grid-template-columns: none;
-    grid-template-rows: repeat(auto-fit, minmax(200px, 1fr));
-    min-width: 200px;
-    min-height: 600px;
-    top: 480px;
-    left: 250px;
+    position: fixed;
+    grid-template-rows: repeat(auto-fit, minmax(300px, 1fr));
+    width: 250px;
+    max-height: 800px;
+    overflow-y: scroll;
+    top: 468px;
+    left: 140px;
   }
 }
 
@@ -79,13 +83,15 @@ div.card-holder {
   width: 250px;
 }
 
-.message-holder button {
+.message-holder button:not(.remove-btn) {
   height: 30px;
   position: absolute;
   left: 0;
   top: 0;
   background-color: cadetblue;
   border: none;
+  cursor: pointer;
+  border-top-left-radius: 5px;
 }
 
 .active-messager,
@@ -96,6 +102,11 @@ div.card-holder {
   text-align: center;
   line-height: 30px;
   color: white;
+}
+
+.messager-head {
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 }
 
 ::-webkit-scrollbar {
@@ -122,8 +133,9 @@ div.card-holder {
   list-style-type: none;
   margin: 0 auto;
   padding: 8px;
-  overflow: auto;
   max-width: 250px;
+
+  overflow: auto;
 }
 
 .messages li {
@@ -207,7 +219,7 @@ ol.messagers {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) scale(0);
-  
+
   background-color: #34495e;
   color: white;
   border-radius: 10px;
@@ -219,7 +231,8 @@ ol.messagers {
   max-height: 80%;
   overflow: hidden;
 }
-.popupWindow.active{
+
+.popupWindow.active {
   transform: translate(-50%, -50%) scale(1);
   transition: 120ms ease-in;
 }
@@ -247,7 +260,7 @@ ol.messagers {
 .popupBody {
   padding: 10px 15px;
 }
-.popupBody .popupBodyHeader{
+.popupBody .popupBodyHeader {
   display: flex;
   justify-content: space-between;
   margin-bottom: 15px;
@@ -266,7 +279,9 @@ ol.messagers {
   border-radius: 5px;
   cursor: pointer;
 }
-.popupBody .popupBodyHeader .dateEnd, .popupBody .popupBodyHeader .dateStart,  .popupBody .popupBodyHeader .gameName{
+.popupBody .popupBodyHeader .dateEnd,
+.popupBody .popupBodyHeader .dateStart,
+.popupBody .popupBodyHeader .gameName {
   margin: 10px;
 }
 .popupBody .popupBodyBody {
@@ -284,21 +299,22 @@ ol.messagers {
   /* border-radius: 20px;
   border: 3px solid orange; */
 }
-.popupBody .contestGame{
+.popupBody .contestGame {
   width: 200px;
   padding: 10px;
   /* border: 1px solid black; */
 }
-.popupBody .contestDateStart{
+.popupBody .contestDateStart {
   width: 200px;
   /* text-align: center; */
   padding: 10px;
   /* border: 1px solid black; */
 }
-.popupBody #dateStartInput, .popupBody #dateEndInput {
+.popupBody #dateStartInput,
+.popupBody #dateEndInput {
   max-width: 170px;
 }
-.popupBody .contestDateEnd{
+.popupBody .contestDateEnd {
   width: 200px;
   padding: 10px;
   /* border: 1px solid black; */
@@ -348,7 +364,7 @@ ol.messagers {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, .5);
+  background-color: rgba(0, 0, 0, 0.5);
   pointer-events: none;
   z-index: 9;
 }
@@ -445,4 +461,54 @@ ol.messagers {
 .add-friend-btn:hover {
   cursor: pointer;
   background-color: #097536;
+}
+
+.remove-btn {
+  height: 30px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  background-color: rgb(187, 51, 51);
+  border: none;
+  cursor: pointer;
+  border-top-right-radius: 5px;
+}
+
+/* ---- Overlay for Friendlist update ----*/
+.friend-overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #34495e;
+  color: white;
+  border-radius: 10px;
+  z-index: 10;
+  padding: 10px;
+  width: 400px;
+  height: 300px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.friend-overlay h1 {
+  font-size: 1.5rem;
+  padding: 10px;
+}
+
+.friend-overlay button {
+  width: 60%;
+  height: 2rem;
+  cursor: pointer;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.9);
+}
+
+.friend-overlay button:hover {
+  box-shadow: 4px 4px 2px rgba(0, 0, 0, 0.9);
+  background-color: #dbd8d8;
 }

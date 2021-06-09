@@ -5,6 +5,7 @@ const conversationSchema = mongoose.Schema({
   messages: [
     {
       sender: String,
+      recipient: String,
       message: String,
       timestamp: {
         type: Date,

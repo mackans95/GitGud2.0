@@ -11,10 +11,18 @@ const userSchema = mongoose.Schema({
     required: true,
   },
   friends: [{ username: String }],
-  alert: {
+  alert: [
+    {
+      new: {
+        type: Boolean,
+      },
+      sender: String,
+    },
+  ],
+  isAdmin: {
     type: Boolean,
     default: false,
-  },
+  }
 });
 
 const User = mongoose.model("User", userSchema);

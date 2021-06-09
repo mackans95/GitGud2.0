@@ -16,7 +16,6 @@ router.use(express.static(publicDirectoryPath));
 
 // AUTH
 router.post("/", async (req, res) => {
-  console.log("reached this");
   if (req.body.IndexForm === "Login") {
     await login(req, res);
   }
@@ -196,9 +195,18 @@ router.get("/alert", authTokenMiddleware, async (req, res) => {
   res.json(user.alert);
 });
 
+router.get("/conversations", authTokenMiddleware, async (req, res) => {
+  const user = await User.findOne({ _id: req.user.id });
+
+  const username = user.username;
+
+  const convos = await Conversation.find({ participants: username });
+
+  res.json(convos);
+});
+
 //POSTS
 router.post("/addFriend", authTokenMiddleware, async (req, res) => {
-  console.log("---- Hi from post server ----");
   const friendName = req.body.username;
 
   await User.updateOne(
@@ -223,34 +231,71 @@ router.post("/conversations", authTokenMiddleware, async (req, res) => {
   // plocka ut participants kolla efter convo
   const participants = req.body.participants;
 
-  const convo = await Conversation.find(
-    { participants: participants[0] },
-    { participants: participants[1] }
-  );
+  const convo = await Conversation.find({
+    participants: [participants[0], participants[1]],
+  });
+  const convo2 = await Conversation.find({
+    participants: [participants[1], participants[0]],
+  });
 
   //är där ingen, skapa ny konvo
-  let conv;
-  if (convo.length < 1) {
-    console.log("reached this 🐶");
-    conv = await Conversation.create(req.body);
+  if (convo.length < 1 && convo2.length < 1) {
+    await Conversation.create(req.body);
   } else {
     // om den finns, lägg till i db-array
-
     const filter = {
-      participants: participants[0],
-      participants: participants[1],
+      participants: [participants[0], participants[1]],
     };
 
-    await Conversation.updateOne(filter, { $push: { messages: req.body.messages } });
+    const filter2 = {
+      participants: [participants[1], participants[0]],
+    };
+
+    await Conversation.findOneAndUpdate(filter, {
+      $push: { messages: req.body.messages[0] },
+    });
+
+    await Conversation.findOneAndUpdate(filter2, {
+      $push: { messages: req.body.messages[0] },
+    });
   }
 
   await User.updateOne(
     { username: participants[1] },
-    { $set: { alert: true } },
+    { $push: { alert: { new: true, sender: participants[0] } } },
     { upsert: true }
   );
 
-  res.send(conv);
+  res.json(req.body);
+});
+
+// PATCH
+router.patch("/users", authTokenMiddleware, async (req, res) => {
+  const user = await User.findOneAndUpdate(
+    { _id: req.user.id },
+    { $pull: { alert: { new: true, sender: req.body.sender } } },
+    { new: true }
+  );
+
+  res.json(user);
+});
+
+router.patch("/users/:username", authTokenMiddleware, async (req, res) => {
+  const user = await User.findOneAndUpdate(
+    { _id: req.user.id },
+    { $pull: { friends: { username: req.body.friend } } },
+    { new: true }
+  );
+
+  await User.findOneAndUpdate(
+    { username: req.body.friend },
+    { $pull: { friends: { username: user.username } } },
+    { new: true }
+  );
+
+  res.json({
+    status: "successful",
+  });
 });
 
 // router.get('/AimGaim', (req, res) => {
