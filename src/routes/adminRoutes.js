@@ -10,34 +10,44 @@ const publicDirectoryPath = path.join(__dirname, '../../views');
 router.use(express.static(publicDirectoryPath));
 
 router.get('/admin/highscores', adminAuth, (req, res) => {
+    
     res.render('highscores', {
         title: 'Highscores',
-        name: 'Balle'
     });
 })
 
 router.get('/admin/users', adminAuth, (req, res) => {
     res.render('users', {
         title: 'Users',
-        name: 'Calle'
     });
 })
 
-router.get('/admin/Leaderboards', adminAuth, async (req, res) => {
+router.get('/admin/GetHighscores', adminAuth, async (req, res) => {
 
-    try{
-        const highscores = await Highscore.find({ }).sort({date: -1});
-
-        res.send(highscores)
-    }catch(e){
-        res.status(404).send();
+    if(req.query.GameName) {
+        try{
+            const highscores = await Highscore.find({ gamename: req.query.GameName }).sort({date: -1}).limit(parseInt(req.query.limit)).skip(parseInt(req.query.skip));
+    
+            res.send(highscores)
+        }catch(e){
+            res.status(404).send();
+        }
+    }else{
+        try{
+            const highscores = await Highscore.find({  }).sort({date: -1}).limit(parseInt(req.query.limit)).skip(parseInt(req.query.skip));
+    
+            res.send(highscores)
+        }catch(e){
+            res.status(404).send();
+        }
     }
 })
 
-router.get('/admin/Userboard', adminAuth, async (req, res) => {
+
+router.get('/admin/GetUsers', adminAuth, async (req, res) => {
 
     try{
-        const users = await User.find({ });
+        const users = await User.find({ }).collation({locale:'en',strength: 2}).sort({username: 1}).limit(parseInt(req.query.limit)).skip(parseInt(req.query.skip));
 
         res.send(users)
     }catch(e){
