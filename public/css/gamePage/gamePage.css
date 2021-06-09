@@ -36,7 +36,7 @@ div.card-holder {
   text-align: center;
   background-color: rgba(52, 73, 94, 0.9);
   border-radius: 7px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 @media screen and (max-width: 1030px) {
@@ -198,11 +198,12 @@ ol.messagers {
 /******************************/
 /* Contest styling */
 /******************************/
-.contestOpenContainer{
+.contestOpenContainer {
   display: flex;
   gap: 10px;
 }
-.createContest, .contestsBtn {
+.createContest,
+.contestsBtn {
   background-color: #34495e;
   padding-left: 20px;
   padding-right: 20px;
@@ -319,8 +320,7 @@ ol.messagers {
   padding: 10px;
   /* border: 1px solid black; */
 }
-.popupBody .contestPlayers{
-
+.popupBody .contestPlayers {
 }
 .popupBody .contestPlayer {
   margin: 5px;
@@ -346,12 +346,12 @@ ol.messagers {
 
 .pSigns {
   margin: 0;
-  display : block;
-  background : rgba(0, 0, 0, 0.2);
-  height : 20px;
-  width : 20px;
-  align-self : center;
-  text-align : center;
+  display: block;
+  background: rgba(0, 0, 0, 0.2);
+  height: 20px;
+  width: 20px;
+  align-self: center;
+  text-align: center;
   border-radius: 3px;
   visibility: hidden;
 }
@@ -372,7 +372,7 @@ ol.messagers {
   opacity: 1;
   pointer-events: all;
 }
-.contestTemplate{
+.contestTemplate {
   height: 60px;
 }
 .popupBodyList {
@@ -381,11 +381,11 @@ ol.messagers {
 .popupBodyList div {
   margin: 3px;
 }
-.popupBodyList .contestTemplate{
+.popupBodyList .contestTemplate {
   display: flex;
   justify-content: space-between;
   border: 1px solid black;
-  box-shadow: 3px 3px 3px rgba(0, 0, 0, .5);
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.5);
   margin-top: 4px;
   margin-bottom: 4px;
   padding: 10px;
@@ -398,7 +398,8 @@ ol.messagers {
   padding: 3px;
   cursor: pointer;
 }
-.popupBodyList .contestButtonDecline, .popupBodyList .contestButtonResign {
+.popupBodyList .contestButtonDecline,
+.popupBodyList .contestButtonResign {
   border: 1px solid black;
   border-radius: 3px;
   background-color: red;
@@ -406,19 +407,24 @@ ol.messagers {
   padding: 3px;
   cursor: pointer;
 }
-.popupBodyList .pending{
+.popupBodyList .pending {
   animation-name: backgroundAnim;
   animation-duration: 1.5s;
 }
 @keyframes backgroundAnim {
-  0% {background-color: yellow;}
-  50% {background-color: yellow;}
-  100% {background-color: none;}
+  0% {
+    background-color: yellow;
+  }
+  50% {
+    background-color: yellow;
+  }
+  100% {
+    background-color: none;
+  }
 }
-.popupBodyContest{
+.popupBodyContest {
   visibility: hidden;
 }
-
 
 /******************************/
 /* END Contest styling */
