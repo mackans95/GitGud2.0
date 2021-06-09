@@ -36,7 +36,7 @@ div.card-holder {
   text-align: center;
   background-color: rgba(52, 73, 94, 0.9);
   border-radius: 7px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 @media screen and (max-width: 1030px) {
@@ -195,9 +195,15 @@ ol.messagers {
   right: 20px;
   bottom: 20px;
 }
-
+/******************************/
 /* Contest styling */
-.createContest {
+/******************************/
+.contestOpenContainer {
+  display: flex;
+  gap: 10px;
+}
+.createContest,
+.contestsBtn {
   background-color: #34495e;
   padding-left: 20px;
   padding-right: 20px;
@@ -285,18 +291,6 @@ ol.messagers {
   height: 200px;
   overflow-y: hidden;
 }
-.popupBody .contestFriendList {
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  min-width: 150px;
-  overflow-y: auto;
-  height: 150px;
-  /* max-height: 40%; */
-}
-.popupBody .contestFriendList .friendInList {
-  margin: 5px;
-}
 *::-webkit-scrollbar-track {
   /* background: orange; */
 }
@@ -327,8 +321,39 @@ ol.messagers {
   /* border: 1px solid black; */
 }
 .popupBody .contestPlayers {
-  padding: 10px;
-  /* border: 1px solid black; */
+}
+.popupBody .contestPlayer {
+  margin: 5px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+}
+.popupBody .contestFriendList {
+  /* padding: 10px; */
+  display: flex;
+  flex-direction: column;
+  min-width: 150px;
+  overflow-y: auto;
+  height: 150px;
+  /* max-height: 40%; */
+}
+.popupBody .contestFriendList .friendInList {
+  margin: 5px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+}
+
+.pSigns {
+  margin: 0;
+  display: block;
+  background: rgba(0, 0, 0, 0.2);
+  height: 20px;
+  width: 20px;
+  align-self: center;
+  text-align: center;
+  border-radius: 3px;
+  visibility: hidden;
 }
 
 #overlay {
@@ -347,6 +372,63 @@ ol.messagers {
   opacity: 1;
   pointer-events: all;
 }
+.contestTemplate {
+  height: 60px;
+}
+.popupBodyList {
+  overflow-y: auto;
+}
+.popupBodyList div {
+  margin: 3px;
+}
+.popupBodyList .contestTemplate {
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid black;
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.5);
+  margin-top: 4px;
+  margin-bottom: 4px;
+  padding: 10px;
+}
+.popupBodyList .contestButtonAccept {
+  border: 1px solid black;
+  border-radius: 3px;
+  background-color: green;
+  margin: 2px;
+  padding: 3px;
+  cursor: pointer;
+}
+.popupBodyList .contestButtonDecline,
+.popupBodyList .contestButtonResign {
+  border: 1px solid black;
+  border-radius: 3px;
+  background-color: red;
+  margin: 2px;
+  padding: 3px;
+  cursor: pointer;
+}
+.popupBodyList .pending {
+  animation-name: backgroundAnim;
+  animation-duration: 1.5s;
+}
+@keyframes backgroundAnim {
+  0% {
+    background-color: yellow;
+  }
+  50% {
+    background-color: yellow;
+  }
+  100% {
+    background-color: none;
+  }
+}
+.popupBodyContest {
+  visibility: hidden;
+}
+
+/******************************/
+/* END Contest styling */
+/******************************/
 
 /* show users styling */
 .show-users {

@@ -66,15 +66,129 @@ router.get("/GamePage", authTokenMiddleware, (req, res) => {
   console.log("GamePage route");
 });
 
-//contest route
-router.post("/contests", authTokenMiddleware, async (req, res) => {
-  console.log("contests posted to!");
-  console.log(req.body);
+//contest routes
+router.post('/contests/choice', authTokenMiddleware, async (req, res) => {
+  // console.log(req.body);
+  // console.log(req.body.contestId);
+  const contest = await Contest.findOne({ _id: req.body.contestId });
+  // console.log(contest);
+  const user = await User.findOne({ _id: req.user.id });
+  const userName = user.username;
 
+  const foundParticipant = contest.participants.find(x => {
+    return x.username == userName;
+  })
+  console.log(req.body.choice);
+  foundParticipant.state = req.body.choice;
+
+  await contest.save();
+
+  //if all but one declined, remove the contest
+  res.status(200).send('OK');
+
+})
+router.post('/contests', authTokenMiddleware, async (req, res) => {
   const contest = await Contest.create(req.body);
-  console.log(contest);
-  res.status(200).send("OK");
+  // console.log(contest);
+  res.status(200).send('OK');
 });
+router.get('/contests', authTokenMiddleware, async (req, res) => {
+  console.log('GET contests posted to!');
+
+  const user = await User.findOne({ _id: req.user.id });
+  const userName = user.username;
+  const contests = await Contest.find({'participants.username': userName } );
+  // console.log(contests[0].participants);
+
+  //update contests before sending them to client
+  let listToDeleteContest = [];
+  let listToDeleteParticipant = [];
+  contests.forEach(async contest => {
+
+    //check if enough people declined the invitation, then delete the contest
+    if(contest.state == 'invitation'){
+      const declinedParticipants = contest.participants.filter(x => {
+        return x.state == 'declined' || x.state == 'resigned';
+      })
+      if(declinedParticipants.length >= contest.participants.length - 1){
+        listToDeleteContest.push(contest);
+        return;
+      }
+    }
+    //check if creator resigned, then delete contest
+    const creatorParticipant = contest.participants.find(x => {
+      return x.username == contest.creator;
+    })
+    if(creatorParticipant.state == 'resigned'){
+      listToDeleteContest.push(contest);
+      return;
+    }
+    //check if contest ended:
+    const endDate = new Date(contest.endDate).toISOString();
+    if(contest.state == 'active' || contest.state == 'invitation'){
+      if(endDate < new Date().toISOString()){
+        console.log('contest has ended');
+        //if contest didnt reach out of invitationstage, just delete it
+        if(contest.state == 'invitation'){
+          listToDeleteContest.push(contest);
+          return;
+        }
+        else {
+          //set state to finished (dont display finished contests, if not specifically chosen)
+          contest.state = 'finished';
+          console.log('set to finished');
+          await contest.save();
+        }
+
+        return;
+      }
+    }
+
+    //check if a new contest is going active (from invitation to active):
+    //in that case delete the participants that didn't accept the invitation, or
+    //delete the contest, if there is only one player who accepted
+    const date = new Date(contest.startDate).toISOString();
+
+    let today = new Date();
+    let hours = today.getHours();
+    today.setHours(hours + 2);
+    if(date < today.toISOString() && endDate > today.toISOString() && contest.state == 'invitation'){
+      //set state on contest to active
+      contest.state = 'active';
+      console.log('set to active');
+      //remove participants that didn't accept invitations in time
+      listToDeleteParticipant = contest.participants.filter(x => {
+        return x.state == 'pending';
+      })
+      listToDeleteParticipant.forEach(deleteThis => {
+        contest.participants.remove(deleteThis);
+      })
+      await contest.save();
+      //remove contest if not enough players accepted
+      const listAccepted = contest.participants.filter(x =>{
+        return x.state == 'accepted';
+      })
+      if(listAccepted.length < 2){
+        listToDeleteContest.push(contest);
+      }
+    }
+
+  });
+
+  //delete contests that didnt make it out of invitationstage before the end time, or
+  //contests that didn't reach more than 1 participant
+  if(listToDeleteContest.length > 0){
+    listToDeleteContest.forEach(async deleteThis => {
+
+      const index = contests.indexOf(deleteThis);
+      contests.splice(index, 1);
+      await deleteThis.remove();
+    })
+  }
+
+  res.status(200).json(contests);
+});
+//END contest routes
 
 router.get("/alert", authTokenMiddleware, async (req, res) => {
   const user = await User.findOne({ _id: req.user.id });

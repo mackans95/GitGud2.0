@@ -502,8 +502,14 @@ async function getAllMessages() {
 //Create Contest section
 //****************************** */
 const createContestBtn = document.querySelector(".createContest");
+const contestsBtn = document.querySelector(".contestsBtn");
 const closeWindowContestBtn = document.querySelector("[data-close-button]");
-const popupWindowContest = document.querySelector(".popupWindow");
+const closeContestsBtn = document.querySelector("#closeContests");
+const popupWindowContest = document.querySelector("#popupWindow");
+const popupContests = document.querySelector("#popupContests");
+const popupContestsBodyList = document.querySelector(
+  "#popupContests .popupBodyList"
+);
 const overlay = document.querySelector("#overlay");
 const dateStartPicker = document.querySelector("#dateStartInput");
 const dateEndPicker = document.querySelector("#dateEndInput");
@@ -511,6 +517,8 @@ const dateStartElem = document.querySelector(".dateStart");
 const dateEndElem = document.querySelector(".dateEnd");
 const gameSelect = document.querySelector(".gameName");
 const finishInvitationBtn = document.querySelector(".invitationButton");
+const contestFriendList = document.querySelector(".contestFriendList");
+const contestPlayersList = document.querySelector(".contestPlayers");
 
 //populate select game
 gamesArray.forEach((game) => {
@@ -521,7 +529,335 @@ gamesArray.forEach((game) => {
   gameSelect.appendChild(option);
 });
 
+async function addEventListenerToChoiceButtons(button) {
+  //send to server
+  const parent = button.parentNode.parentNode;
+  const contestId = parent.querySelector(".contestId");
+  console.log(contestId.textContent);
+  let choiceAnswer = "";
+  if (button.textContent == "Accept") {
+    choiceAnswer = "accepted";
+  } else if (button.textContent == "Decline") {
+    choiceAnswer = "declined";
+  } else if (button.textContent == "Resign") {
+    choiceAnswer = "resigned";
+  }
+  console.log(choiceAnswer);
+
+  //send to 'contests/choice'
+  const data = {
+    contestId: contestId.textContent,
+    choice: choiceAnswer,
+  };
+  const response = await fetch("http://localhost:3000/contests/choice", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  console.log("sent answer to db!");
+
+  window.location.reload();
+}
+
+contestsBtn.addEventListener("click", async () => {
+  //load contests for current user
+  const response = await fetch(`http://localhost:3000/contests`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  });
+
+  const data = await response.json();
+  // console.log(data);
+  // const userArr = Object.values(data);
+
+  //populate contests
+  popupContestsBodyList.innerHTML = "";
+
+  data.forEach((contest) => {
+    if (contest.state == "finished") {
+      return;
+    }
+
+    addContestTemplate(contest);
+  });
+
+  //open contests popup
+  popupContests.classList.add("active");
+  overlay.classList.add("active");
+});
+//contestButtonAccept, contestButtonDecline, contestButtonResign
+async function addContestTemplate(contest) {
+  const template = document.createElement("div");
+  template.classList.add("contestTemplate");
+  const invisId = document.createElement("div");
+  invisId.textContent = contest._id;
+  invisId.classList.add("contestId");
+  invisId.style.display = "none";
+  const gameDiv = document.createElement("div");
+  gameDiv.classList.add("contestTemplateFlex");
+  const gameDiv1 = document.createElement("div");
+  gameDiv1.textContent = "Game:";
+  const gameDiv2 = document.createElement("div");
+  gameDiv2.textContent = contest.gamename;
+  gameDiv.append(gameDiv1, gameDiv2);
+
+  template.append(gameDiv);
+  template.append(invisId);
+  popupContestsBodyList.append(template);
+
+  if (contest.state == "invitation") {
+    //display as invitation. with or without accept options depending on participantstate
+    const hostDiv = document.createElement("div");
+    hostDiv.classList.add("contestTemplateFlex");
+    const hostDiv1 = document.createElement("div");
+    hostDiv1.textContent = "Host:";
+    hostDiv.appendChild(hostDiv1);
+    const hostDiv2 = document.createElement("div");
+    hostDiv2.textContent = contest.creator;
+    hostDiv.appendChild(hostDiv2);
+    template.appendChild(hostDiv);
+
+    const datefromDiv = document.createElement("div");
+    datefromDiv.classList.add("contestTemplateFlex");
+    const datefromDiv1 = document.createElement("div");
+    datefromDiv1.textContent = "Date from:";
+    datefromDiv.appendChild(datefromDiv1);
+    const datefromDiv2 = document.createElement("div");
+    datefromDiv2.textContent = contest.startDate.slice(0, 10);
+    datefromDiv.appendChild(datefromDiv2);
+    template.appendChild(datefromDiv);
+
+    const dateToDiv = document.createElement("div");
+    dateToDiv.classList.add("contestTemplateFlex");
+    const dateToDiv1 = document.createElement("div");
+    dateToDiv1.textContent = "Date to:";
+    dateToDiv.appendChild(dateToDiv1);
+    const dateToDiv2 = document.createElement("div");
+    dateToDiv2.textContent = contest.endDate.slice(0, 10);
+    dateToDiv.appendChild(dateToDiv2);
+    template.appendChild(dateToDiv);
+
+    const statusDiv = document.createElement("div");
+    statusDiv.classList.add("contestTemplateFlex");
+    const statusDiv1 = document.createElement("div");
+    statusDiv1.textContent = "Status:";
+    statusDiv.appendChild(statusDiv1);
+    const statusDiv2 = document.createElement("div");
+    statusDiv2.textContent = contest.state;
+    statusDiv.appendChild(statusDiv2);
+    template.appendChild(statusDiv);
+
+    const choiceDiv = document.createElement("div");
+    choiceDiv.classList.add("contestTemplateFlex");
+
+    //check if player accepted already
+    const thisParticipant = contest.participants.find((x) => {
+      return x.username == currentUser.username;
+    });
+
+    // console.log('participant: ' + participantsListt.state);
+    if (thisParticipant.state == "pending") {
+      const choiceDiv1 = document.createElement("div");
+      choiceDiv1.classList.add("contestButtonAccept");
+      choiceDiv1.textContent = "Accept";
+      choiceDiv.appendChild(choiceDiv1);
+
+      const choiceDiv2 = document.createElement("div");
+      choiceDiv2.classList.add("contestButtonDecline");
+      choiceDiv2.textContent = "Decline";
+      choiceDiv.appendChild(choiceDiv2);
+
+      template.append(choiceDiv);
+
+      choiceDiv1.addEventListener("click", () => {
+        addEventListenerToChoiceButtons(choiceDiv1);
+      });
+      choiceDiv2.addEventListener("click", () => {
+        addEventListenerToChoiceButtons(choiceDiv2);
+      });
+    } else if (thisParticipant.state == "accepted") {
+      const choiceDiv1 = document.createElement("div");
+      choiceDiv1.classList.add("contestButtonResign");
+      choiceDiv1.textContent = "Resign";
+      choiceDiv.appendChild(choiceDiv1);
+
+      template.append(choiceDiv);
+      choiceDiv1.addEventListener("click", () => {
+        addEventListenerToChoiceButtons(choiceDiv1);
+      });
+    }
+  } else if (contest.state == "active") {
+    //display as active.
+    const dateToDiv = document.createElement("div");
+    dateToDiv.classList.add("contestTemplateFlex");
+    const dateToDiv1 = document.createElement("div");
+    dateToDiv1.textContent = "Date to:";
+    dateToDiv.appendChild(dateToDiv1);
+    const dateToDiv2 = document.createElement("div");
+    dateToDiv2.textContent = contest.endDate.slice(0, 10);
+    dateToDiv.appendChild(dateToDiv2);
+    template.appendChild(dateToDiv);
+
+    const statusDiv = document.createElement("div");
+    statusDiv.classList.add("contestTemplateFlex");
+    const statusDiv1 = document.createElement("div");
+    statusDiv1.textContent = "Status:";
+    statusDiv.appendChild(statusDiv1);
+    const statusDiv2 = document.createElement("div");
+    statusDiv2.textContent = contest.state;
+    statusDiv.appendChild(statusDiv2);
+    template.appendChild(statusDiv);
+
+    const leaderDiv = document.createElement("div");
+    leaderDiv.classList.add("contestTemplateFlex");
+    const leaderDiv1 = document.createElement("div");
+    leaderDiv1.textContent = "Leader:";
+    leaderDiv.appendChild(leaderDiv1);
+    //find out who is leading in highscore:
+    //sort differently if it is reactiongame
+    let scoresList = [];
+    if (contest.gamename == "ReactionGame") {
+      scoresList = contest.scores.sort((a, b) => {
+        return a.score - b.score;
+      });
+    } else {
+      scoresList = contest.scores.sort((a, b) => {
+        return b.score - a.score;
+      });
+    }
+
+    if (scoresList.length > 0) {
+      const leaderDiv2 = document.createElement("div");
+      leaderDiv2.textContent = scoresList[0].username;
+      leaderDiv.appendChild(leaderDiv2);
+    }
+    template.appendChild(leaderDiv);
+
+    const hsDiv = document.createElement("div");
+    hsDiv.classList.add("contestTemplateFlex");
+    const hsDiv1 = document.createElement("div");
+    hsDiv1.textContent = "Highscore:";
+    hsDiv.appendChild(hsDiv1);
+    if (scoresList.length > 0) {
+      const hsDiv2 = document.createElement("div");
+      hsDiv2.textContent = scoresList[0].score;
+      hsDiv.appendChild(hsDiv2);
+    }
+    template.appendChild(hsDiv);
+
+    const choiceDiv = document.createElement("div");
+    choiceDiv.classList.add("contestTemplateFlex");
+    const choiceDiv1 = document.createElement("div");
+    choiceDiv1.classList.add("contestButtonResign");
+    choiceDiv1.textContent = "Resign";
+    choiceDiv.appendChild(choiceDiv1);
+    template.appendChild(choiceDiv);
+    choiceDiv1.addEventListener("click", () => {
+      addEventListenerToChoiceButtons(choiceDiv1);
+    });
+  }
+}
+
 createContestBtn.addEventListener("click", () => {
+  //populate friend list
+  //first clear it
+  contestFriendList.innerHTML = "";
+  contestPlayersList.innerHTML = "";
+  if (currentUser.friends.length < 1) {
+    const friendElem = document.createElement("div");
+    friendElem.textContent = "No friends...";
+    friendElem.classList.add("friendInList");
+
+    contestFriendList.appendChild(friendElem);
+  }
+
+  currentUser.friends.forEach((friend) => {
+    const friendElem = document.createElement("div");
+    friendElem.textContent = friend.username;
+    friendElem.classList.add("friendInList");
+
+    friendElem.addEventListener("click", () => {
+      addEventListenersToFriends(friendElem);
+    });
+    friendElem.addEventListener("mouseenter", () => {
+      friendElem.querySelector("div").style.visibility = "visible";
+    });
+    friendElem.addEventListener("mouseleave", () => {
+      friendElem.querySelector("div").style.visibility = "hidden";
+    });
+
+    const plusSign = document.createElement("div");
+    plusSign.textContent = "+";
+    plusSign.style.color = "green";
+    plusSign.classList.add("pSigns");
+    friendElem.appendChild(plusSign);
+
+    contestFriendList.appendChild(friendElem);
+  });
+
+  function addEventListenersToFriends(elem) {
+    if (elem.classList.contains("friendInList")) {
+      const contestPlayer = document.createElement("div");
+      if (elem.querySelector("div")) {
+        elem.querySelector("div").remove();
+      }
+      contestPlayer.textContent = elem.textContent;
+      contestPlayer.classList.add("contestPlayer");
+
+      contestPlayer.addEventListener("click", () => {
+        addEventListenersToFriends(contestPlayer);
+      });
+      contestPlayer.addEventListener("mouseenter", () => {
+        contestPlayer.querySelector("div").style.visibility = "visible";
+      });
+      contestPlayer.addEventListener("mouseleave", () => {
+        contestPlayer.querySelector("div").style.visibility = "hidden";
+      });
+
+      const minusSign = document.createElement("div");
+      minusSign.style.color = "red";
+      minusSign.textContent = "-";
+      minusSign.classList.add("pSigns");
+      contestPlayer.appendChild(minusSign);
+
+      contestPlayersList.appendChild(contestPlayer);
+
+      elem.remove();
+    } else if (elem.classList.contains("contestPlayer")) {
+      const friendElem = document.createElement("div");
+      if (elem.querySelector("div")) {
+        elem.querySelector("div").remove();
+      }
+      friendElem.textContent = elem.textContent;
+      friendElem.classList.add("friendInList");
+
+      friendElem.addEventListener("click", () => {
+        addEventListenersToFriends(friendElem);
+      });
+      friendElem.addEventListener("mouseenter", () => {
+        friendElem.querySelector("div").style.visibility = "visible";
+      });
+      friendElem.addEventListener("mouseleave", () => {
+        friendElem.querySelector("div").style.visibility = "hidden";
+      });
+
+      const plusSign = document.createElement("div");
+      plusSign.textContent = "+";
+      plusSign.style.color = "green";
+      plusSign.classList.add("pSigns");
+      friendElem.appendChild(plusSign);
+
+      contestFriendList.appendChild(friendElem);
+      elem.remove();
+    }
+  }
+
   //open create contest popup
   popupWindowContest.classList.add("active");
   overlay.classList.add("active");
@@ -547,6 +883,10 @@ createContestBtn.addEventListener("click", () => {
     ("0" + dateEnd.getMinutes()).slice(-2);
 });
 
+closeContestsBtn.addEventListener("click", () => {
+  popupContests.classList.remove("active");
+  overlay.classList.remove("active");
+});
 closeWindowContestBtn.addEventListener("click", () => {
   popupWindowContest.classList.remove("active");
   overlay.classList.remove("active");
@@ -573,16 +913,6 @@ dateEndPicker.addEventListener("change", () => {
 
 finishInvitationBtn.addEventListener("click", async () => {
   //send invitation info to DB
-  const emptyArray = []; //${emptyArray}    ${new Date(dateStartElem.textContent)}    ${new Date(dateEndElem.textContent)}
-  //[{"gamename":"someGame""username":"someName","score":"100"}]
-  // console.log(jsonScoreArray);
-
-  // class Participant{
-  //   constructor(username,password){
-  //     this.username = username,
-  //     this.password = password
-  //   }
-  // }
   class Score {
     constructor(gamename, username, score, date) {
       (this.gamename = gamename),
@@ -591,11 +921,35 @@ finishInvitationBtn.addEventListener("click", async () => {
         (this.date = date);
     }
   }
+  class Participant {
+    constructor(username, state = "pending") {
+      (this.username = username), (this.state = state);
+    }
+  }
 
   // const participant1 = new Participant('hejsan', 'hejda');
   // console.log("participant1: " + JSON.stringify(participant1));
-  const score1 = new Score("AimGaim", "hejda", 1001, new Date());
-  const nameArray = ["david1", "jacob2"];
+  const arrayOfScores = [];
+  // const score1 = new Score("AimGaim", 'hejda', 1001, new Date());
+  // const score2 = new Score("AimGaim", 'bojo', 2100, new Date());
+  // arrayOfScores.push(score1); arrayOfScores.push(score2);
+
+  const contestParticipants = document.querySelectorAll(".contestPlayer");
+  const nameArray2 = [];
+  const creatorObject = new Participant(userSpan.textContent, "accepted");
+  nameArray2.push(creatorObject);
+  // nameArray2.push(userSpan.textContent);
+  if (contestParticipants.length > 0) {
+    contestParticipants.forEach((part) => {
+      part.querySelector("div").remove();
+
+      const participantObject = new Participant(part.textContent);
+      nameArray2.push(participantObject);
+      // nameArray2.push(part.textContent);
+    });
+  }
+
+  // const nameArray = ["david1", "jacob2"];
 
   let startingDate = new Date(dateStartElem.textContent);
   let endingDate = new Date(dateEndElem.textContent);
@@ -603,8 +957,8 @@ finishInvitationBtn.addEventListener("click", async () => {
   const data = {
     gamename: gameSelect.value,
     creator: userSpan.textContent,
-    participants: nameArray,
-    scores: score1,
+    participants: nameArray2,
+    scores: arrayOfScores,
     startDate: new Date(
       startingDate.getTime() - startingDate.getTimezoneOffset() * 60000
     ), //dateStartPicker.value dateStartElem.textContent
@@ -612,7 +966,7 @@ finishInvitationBtn.addEventListener("click", async () => {
     state: "invitation",
   };
 
-  // console.log(JSON.stringify(data));
+  // console.log(JSON.stringify(data)); 'invitation'
 
   const response = await fetch("http://localhost:3000/contests", {
     method: "POST",
@@ -622,12 +976,6 @@ finishInvitationBtn.addEventListener("click", async () => {
     },
     body: JSON.stringify(data),
   });
-
-  console.log("sent!");
-
-  // response.json().then(data => {
-  //   console.log(data);
-  // });
 
   popupWindowContest.classList.remove("active");
   overlay.classList.remove("active");

@@ -7,7 +7,22 @@
     <link rel="stylesheet" type="text/css" href="./css/AimGaim/aimGaim.css" />
   </head>
   <body>
-    <header></header>
+    <header>
+      <button data-name="back-btn">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="30"
+          height="30"
+          viewBox="0 0 24 24"
+          style="fill: rgba(0, 0, 0, 1)"
+        >
+          <path
+            d="M12.707 17.293L8.414 13 18 13 18 11 8.414 11 12.707 6.707 11.293 5.293 4.586 12 11.293 18.707z"
+          ></path>
+        </svg>
+        <span class="btn-tooltip">Back to games</span>
+      </button>
+    </header>
 
     <main>
       <div class="gameContainer">
@@ -31,10 +46,7 @@
                 <option value="hard">Hard</option>
               </select>
               <label for="gameEnemyDisplaySetting">Display enemy</label>
-              <select
-                name="gameEnemyDisplaySetting"
-                id="gameEnemyDisplaySetting"
-              >
+              <select name="gameEnemyDisplaySetting" id="gameEnemyDisplaySetting">
                 <option value="color" selected="selected">Colored</option>
                 <option value="img">Image</option>
               </select>
@@ -71,25 +83,22 @@
 
       <div class="bottom">
         <!-- <button class="start btn" type="button">Start Game</button> -->
-        <button class="postHighscores btn" type="button">
-          Submit Highscore
-        </button>
+        <button class="postHighscores btn" type="button">Submit Highscore</button>
       </div>
       <div class="about-game">
         <div class="instructions">
           <h2>Instructions</h2>
           <p>
             1. Select settings and press start. Higher difficulties are more
-            difficult, but have potential for higher score.<br />2. Shoot
-            down enemies by holding down the left mouse button and follow them
-            around.
+            difficult, but have potential for higher score.<br />2. Shoot down
+            enemies by holding down the left mouse button and follow them around.
           </p>
         </div>
         <div class="game-info">
           <h2>Game info</h2>
           <p>
-            The goal of this game is to work on your aim. Practice makes
-            perfect, so start on easy and work yourself up.
+            The goal of this game is to work on your aim. Practice makes perfect, so
+            start on easy and work yourself up.
           </p>
         </div>
       </div>
@@ -131,7 +140,10 @@
       <!-- <script src="./js/AimGaimJs/vector2D.js"></script> -->
       <!-- <script src="./js/AimGaimJs/aimGaim.js"></script> -->
       <!-- ./public/js/AimGaimJs/jsCollection.js -->
-      <script type="application/x-javascript" src="./js/AimGaimJs/jsCollection.js"></script> 
+      <script
+        type="application/x-javascript"
+        src="./js/AimGaimJs/jsCollection.js"
+      ></script>
     </div>
   </body>
 </html>
