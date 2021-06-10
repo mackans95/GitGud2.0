@@ -617,11 +617,13 @@ submitScoreBtn.addEventListener("click", async function (e) {
 
   // location.reload();
 
-  if(gameRunning){return;}
-  if(currentHighScore < 1) return;
+  if (gameRunning) {
+    return;
+  }
+  if (currentHighScore < 1) return;
 
   //SEND POST USING FETCH
-  const response = await fetch("http://localhost:3000/aimgaim", {
+  const response = await fetch("https://gitgudgaming.herokuapp.com/aimgaim", {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -648,22 +650,28 @@ submitScoreBtn.addEventListener("click", async function (e) {
 getLeaderboards();
 
 async function getLeaderboards() {
-  const response = await fetch("http://localhost:3000/aimgaim/personalHighscores", {
-    method: "GET",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-  });
+  const response = await fetch(
+    "https://gitgudgaming.herokuapp.com/aimgaim/personalHighscores",
+    {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    }
+  );
   const personalLeaderboard = await response.json();
 
-  const response2 = await fetch("http://localhost:3000/aimgaim/globalHighscores", {
-    method: "GET",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-  });
+  const response2 = await fetch(
+    "https://gitgudgaming.herokuapp.com/aimgaim/globalHighscores",
+    {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    }
+  );
   const globalLeaderboard = await response2.json();
 
   showLeaderboards(personalLeaderboard, globalLeaderboard);

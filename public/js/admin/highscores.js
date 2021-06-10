@@ -16,7 +16,7 @@ let gameNameQuery = "unset";
 
 
 
-fetch('http://localhost:3000/admin/GetHighscores?limit=10&skip=0', {
+fetch('https://gitgudgaming.herokuapp.com/admin/GetHighscores?limit=10&skip=0', {
 method: 'GET',
 headers: {
   'Accept': 'application/json',
@@ -75,7 +75,7 @@ const deleteHighscore = function(id) {
   result = window.confirm('Are you sure you want to delete this Highscore?')
 
   if(result){
-    fetch('http://localhost:3000/admin/deleteHighscore', {
+    fetch('https://gitgudgaming.herokuapp.com/admin/deleteHighscore', {
     method: 'DELETE',
     headers: {
       'Accept': 'application/json',
@@ -97,10 +97,10 @@ const nextPage = function() {
 
   skip = skip + 10;
 
-  let url = `http://localhost:3000/admin/GetHighscores?limit=${limit}&skip=${skip}`
+  let url = `https://gitgudgaming.herokuapp.com/admin/GetHighscores?limit=${limit}&skip=${skip}`
 
   if(gameNameQuery !== 'unset'){
-    url = `http://localhost:3000/admin/GetHighscores?limit=${limit}&skip=${skip}&GameName=${gameNameQuery}`
+    url = `https://gitgudgaming.herokuapp.com/admin/GetHighscores?limit=${limit}&skip=${skip}&GameName=${gameNameQuery}`
   }
 
   fetch(url, {
@@ -125,10 +125,10 @@ const prevPage = function() {
 
   skip = skip - 10;
   
-  let url = `http://localhost:3000/admin/GetHighscores?limit=${limit}&skip=${skip}`
+  let url = `https://gitgudgaming.herokuapp.com/admin/GetHighscores?limit=${limit}&skip=${skip}`
 
   if(gameNameQuery !== 'unset'){
-    url = `http://localhost:3000/admin/GetHighscores?limit=${limit}&skip=${skip}&GameName=${gameNameQuery}`
+    url = `https://gitgudgaming.herokuapp.com/admin/GetHighscores?limit=${limit}&skip=${skip}&GameName=${gameNameQuery}`
   }
 
   fetch(url, {
@@ -172,7 +172,7 @@ function aimGaimFilter(){
   limit = 10;
   skip = 0;
 
-  let aimgaimUrl = `http://localhost:3000/admin/GetHighscores?limit=${limit}&skip=${skip}&GameName=${gameNameQuery}`
+  let aimgaimUrl = `https://gitgudgaming.herokuapp.com/admin/GetHighscores?limit=${limit}&skip=${skip}&GameName=${gameNameQuery}`
 
   fetch(aimgaimUrl, {
   method: 'GET',
@@ -202,7 +202,7 @@ function allFilter(){
   limit = 10;
   skip = 0;
 
-  let allUrl = `http://localhost:3000/admin/GetHighscores?limit=${limit}&skip=${skip}`
+  let allUrl = `https://gitgudgaming.herokuapp.com/admin/GetHighscores?limit=${limit}&skip=${skip}`
 
   fetch(allUrl, {
   method: 'GET',
@@ -233,7 +233,7 @@ function reactionGameFilter(){
   limit = 10;
   skip = 0;
 
-  let aimgaimUrl = `http://localhost:3000/admin/GetHighscores?limit=${limit}&skip=${skip}&GameName=${gameNameQuery}`
+  let aimgaimUrl = `https://gitgudgaming.herokuapp.com/admin/GetHighscores?limit=${limit}&skip=${skip}&GameName=${gameNameQuery}`
 
   fetch(aimgaimUrl, {
   method: 'GET',

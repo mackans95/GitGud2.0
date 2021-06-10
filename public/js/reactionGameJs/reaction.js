@@ -144,7 +144,7 @@ submitScoreBtn.addEventListener("click", function (e) {
 
   if (currentHighScore < 1) return;
 
-  fetch("http://localhost:3000/ReactionGame", {
+  fetch("https://gitgudgaming.herokuapp.com/ReactionGame", {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -268,13 +268,16 @@ submitScoreBtn.addEventListener("click", function (e) {
 
 // LoadPersonalLeaderboard();
 
-const response = await fetch("http://localhost:3000/ReactionGame/Leaderboards", {
-  method: "GET",
-  headers: {
-    Accept: "application/json",
-    "Content-Type": "application/json",
-  },
-});
+const response = await fetch(
+  "https://gitgudgaming.herokuapp.com/ReactionGame/Leaderboards",
+  {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  }
+);
 const personalLeaderboard = await response.json();
 
 function getCookie(name) {

@@ -13,7 +13,7 @@ modalClose.addEventListener("click", function(){
 
 
 
-fetch('http://localhost:3000/admin/GetUsers?limit=10&skip=0', {
+fetch('https://gitgudgaming.herokuapp.com/admin/GetUsers?limit=10&skip=0', {
   method: 'GET',
   headers: {
     'Accept': 'application/json',
@@ -89,7 +89,7 @@ const deleteUser = function(id) {
   result = window.confirm('Are you sure you want to delete this Highscore?')
 
   if(result){
-    fetch('http://localhost:3000/admin/deleteUser', {
+    fetch('https://gitgudgaming.herokuapp.com/admin/deleteUser', {
     method: 'DELETE',
     headers: {
       'Accept': 'application/json',
@@ -129,7 +129,7 @@ const patchUser = function(id) {
     user.isAdmin = document.querySelector('#isAdminFormId').checked;
 
     // make the patch request
-    fetch('http://localhost:3000/admin/updateUser', {
+    fetch('https://gitgudgaming.herokuapp.com/admin/updateUser', {
     method: 'PATCH',
     headers: {
       'Accept': 'application/json',
@@ -162,7 +162,7 @@ const nextPage = function() {
 
   skip = skip + 10;
 
-  fetch(`http://localhost:3000/admin/GetUsers?limit=${limit}&skip=${skip}`, {
+  fetch(`https://gitgudgaming.herokuapp.com/admin/GetUsers?limit=${limit}&skip=${skip}`, {
   method: 'GET',
   headers: {
     'Accept': 'application/json',
@@ -184,7 +184,7 @@ const prevPage = function() {
 
   skip = skip - 10;
 
-  fetch(`http://localhost:3000/admin/GetUsers?limit=${limit}&skip=${skip}`, {
+  fetch(`https://gitgudgaming.herokuapp.com/admin/GetUsers?limit=${limit}&skip=${skip}`, {
   method: 'GET',
   headers: {
     'Accept': 'application/json',
