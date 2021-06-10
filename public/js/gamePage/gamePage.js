@@ -586,6 +586,8 @@ contestsBtn.addEventListener("click", async () => {
   popupContestsBodyListFinished.innerHTML = "";
   popupContestsBodyListFinished.style.display = 'none';
   popupContestsBodyList.style.display = 'block';
+  filterContestsActive.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
+  filterContestsFinished.style.backgroundColor = 'inherit';
 
   data.forEach((contest) => {
     // if (contest.state == "finished") {
