@@ -7,23 +7,23 @@ require("dotenv/config");
 const bodyParser = require("body-parser");
 const app = express();
 const publicDirectoryPath = path.join(__dirname, "../public");
-const hbs = require('hbs')
+const hbs = require("hbs");
 
 //import Routes
 
-const mainRoutes = require('./routes/mainRoutes');
-const aimGaimRoutes = require('./routes/aimGaimRoutes');
-const reactionGameRoute = require('./routes/reactionGameRoutes')
-const adminRoutes = require('./routes/adminRoutes')
+const mainRoutes = require("./routes/mainRoutes");
+const aimGaimRoutes = require("./routes/aimGaimRoutes");
+const reactionGameRoute = require("./routes/reactionGameRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 //END IMPORTS
 
 // Setup handlebars engine and views location
-const viewsPath = path.join(__dirname, '../templates/views');
-const partialsPath = path.join(__dirname, '../templates/partials')
-hbs.registerPartials(partialsPath)
-app.set('view engine', 'hbs');
-app.set('views', viewsPath);
+const viewsPath = path.join(__dirname, "../templates/views");
+const partialsPath = path.join(__dirname, "../templates/partials");
+hbs.registerPartials(partialsPath);
+app.set("view engine", "hbs");
+app.set("views", viewsPath);
 
 app.use(express.static(publicDirectoryPath));
 
@@ -58,6 +58,8 @@ mongoose.connect(
   }
 );
 
-app.listen(3000, () => {
+const port = process.env.PORT || 3000;
+
+app.listen(port, () => {
   console.log("Server is up on port 3000.");
 });
