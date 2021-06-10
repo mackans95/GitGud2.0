@@ -89,11 +89,10 @@ router.post('/contests/choice', authTokenMiddleware, async (req, res) => {
 })
 router.post('/contests', authTokenMiddleware, async (req, res) => {
   const contest = await Contest.create(req.body);
-  // console.log(contest);
+
   res.status(200).send('OK');
 });
 router.get('/contests', authTokenMiddleware, async (req, res) => {
-  console.log('GET contests posted to!');
 
   const user = await User.findOne({ _id: req.user.id });
   const userName = user.username;
@@ -110,7 +109,7 @@ router.get('/contests', authTokenMiddleware, async (req, res) => {
       const declinedParticipants = contest.participants.filter(x => {
         return x.state == 'declined' || x.state == 'resigned';
       })
-      if(declinedParticipants.length >= contest.participants.length - 1){
+      if(declinedParticipants.length >= contest.participants.length - 1 || contest.participants.length < 2){
         listToDeleteContest.push(contest);
         return;
       }
@@ -126,7 +125,10 @@ router.get('/contests', authTokenMiddleware, async (req, res) => {
     //check if contest ended:
     const endDate = new Date(contest.endDate).toISOString();
     if(contest.state == 'active' || contest.state == 'invitation'){
-      if(endDate < new Date().toISOString()){
+      let today = new Date();
+      let hours = today.getHours();
+      today.setHours(hours + 2);
+      if(endDate < today.toISOString()){
         console.log('contest has ended');
         //if contest didnt reach out of invitationstage, just delete it
         if(contest.state == 'invitation'){
@@ -136,7 +138,7 @@ router.get('/contests', authTokenMiddleware, async (req, res) => {
         else {
           //set state to finished (dont display finished contests, if not specifically chosen)
           contest.state = 'finished';
-          console.log('set to finished');
+          // console.log('set to finished');
           await contest.save();
         }
 
@@ -183,6 +185,7 @@ router.get('/contests', authTokenMiddleware, async (req, res) => {
       const index = contests.indexOf(deleteThis);
       contests.splice(index, 1);
       await deleteThis.remove();
+      console.log('contest removed');
     })
   }
 
