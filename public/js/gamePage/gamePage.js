@@ -206,7 +206,7 @@ async function removeFriend(friendName) {
     friend: friendName,
   };
 
-  await fetch(`http://localhost:3000/users/${currentUser.username}`, {
+  await fetch(`http://localhost:${process.env.PORT}/users/${currentUser.username}`, {
     method: "PATCH",
     headers: {
       Accept: "application/json",
@@ -217,7 +217,7 @@ async function removeFriend(friendName) {
 }
 
 async function getAlertResponses() {
-  const response = await fetch("http://localhost:3000/alert", {
+  const response = await fetch(`http://localhost:${process.env.PORT}/alert`, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -238,13 +238,16 @@ async function getAlertResponses() {
 }
 
 async function getConversations() {
-  const convoRes = await fetch("http://localhost:3000/conversations", {
-    method: "GET",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-  });
+  const convoRes = await fetch(
+    `http://localhost:${process.env.PORT}/conversations`,
+    {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    }
+  );
 
   const JsonConvoRes = await convoRes.json();
   const convoArr = Object.values(JsonConvoRes);
@@ -261,13 +264,16 @@ async function getCurrentUser() {
   try {
     const username = setLoggedInName();
 
-    const response = await fetch(`http://localhost:3000/users/${username}`, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await fetch(
+      `http://localhost:${process.env.PORT}/users/${username}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     const data = await response.json();
     const userArr = Object.values(data);
@@ -283,7 +289,7 @@ async function getCurrentUser() {
 async function getAllUsers() {
   let userList;
   try {
-    const response = await fetch("http://localhost:3000/users", {
+    const response = await fetch(`http://localhost:${process.env.PORT}/users`, {
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -347,7 +353,7 @@ async function makeAddUserButtonsClickable(e) {
       username,
     };
 
-    const response = await fetch("http://localhost:3000/addFriend", {
+    const response = await fetch(`http://localhost:${process.env.PORT}/addFriend`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -364,7 +370,7 @@ async function setUserAlertBackToFalse(target) {
     sender: target.innerText.split("\n")[0],
   };
 
-  await fetch("http://localhost:3000/users", {
+  await fetch(`http://localhost:${process.env.PORT}/users`, {
     method: "PATCH",
     headers: {
       Accept: "application/json",
@@ -420,13 +426,16 @@ async function updateUsersMessage() {
     messages: [message],
   };
 
-  const response = await fetch("http://localhost:3000/conversations", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(convo),
-  });
+  const response = await fetch(
+    `http://localhost:${process.env.PORT}/conversations`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(convo),
+    }
+  );
 
   const JsonConvoRes = await response.json();
   const convoArr = Object.values(JsonConvoRes);
@@ -549,14 +558,17 @@ async function addEventListenerToChoiceButtons(button) {
     contestId: contestId.textContent,
     choice: choiceAnswer,
   };
-  const response = await fetch("http://localhost:3000/contests/choice", {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
+  const response = await fetch(
+    `http://localhost:${process.env.PORT}/contests/choice`,
+    {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }
+  );
   console.log("sent answer to db!");
 
   window.location.reload();
@@ -564,7 +576,7 @@ async function addEventListenerToChoiceButtons(button) {
 
 contestsBtn.addEventListener("click", async () => {
   //load contests for current user
-  const response = await fetch(`http://localhost:3000/contests`, {
+  const response = await fetch(`http://localhost:${process.env.PORT}/contests`, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -968,7 +980,7 @@ finishInvitationBtn.addEventListener("click", async () => {
 
   // console.log(JSON.stringify(data)); 'invitation'
 
-  const response = await fetch("http://localhost:3000/contests", {
+  const response = await fetch(`http://localhost:${process.env.PORT}/contests`, {
     method: "POST",
     headers: {
       Accept: "application/json",
