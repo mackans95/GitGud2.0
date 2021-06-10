@@ -7,6 +7,7 @@ const publicDirectoryPath = path.join(__dirname, '../../public');
 router.use(express.static(publicDirectoryPath));
 
 const Highscore = require('../models/highscores');
+const Contest = require("../models/contest");
 const User = require('../models/users');
 const authTokenMiddleware = require("../controllers/userAuth");
 
@@ -57,6 +58,25 @@ router.post('/AimGaim', authTokenMiddleware, async (req, res)=>{
     const userName = user.username;
 
     req.body.username = userName;
+
+    //check if player is participating in any contest in AimGaim
+    const contestsInAim = await Contest.find({'participants.username' : userName});
+    if(contestsInAim.length > 0){
+      contestsInAim.forEach(async contest => {
+
+        const endDate = new Date(contest.endDate).toISOString();
+        let today = new Date();
+        let hours = today.getHours();
+        today.setHours(hours + 2);
+        if(contest.gamename == 'AimGaim' && contest.state == 'active' && endDate > today.toISOString()){
+          //if contest is active and hasn't yet finished, and is AimGaim
+          console.log('saving score to contest!');
+          contest.scores.push(req.body);
+          await contest.save();
+        }
+
+      });
+    }
 
     //compare to other highscores
     let newHsHigher = false;

@@ -375,13 +375,13 @@ ol.messagers {
 .contestTemplate {
   height: 60px;
 }
-.popupBodyList {
+.popupBodyList, .popupBodyListFinished {
   overflow-y: auto;
 }
-.popupBodyList div {
+.popupBodyList div, .popupBodyListFinished div {
   margin: 3px;
 }
-.popupBodyList .contestTemplate {
+.popupBodyList .contestTemplate, .popupBodyListFinished .contestTemplate {
   display: flex;
   justify-content: space-between;
   border: 1px solid black;
@@ -406,6 +406,22 @@ ol.messagers {
   margin: 2px;
   padding: 3px;
   cursor: pointer;
+}
+.popupHeader .filterContests {
+  display: flex;
+  justify-content: space-between;
+}
+.popupHeader .filterActive, .popupHeader .filterFinished {
+  width: 75px;
+  padding: 6px;
+  margin: 5px;
+  border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+}
+.popupHeader .filterActive {
+  background-color: rgba(0, 0, 0, 0.2);
 }
 .popupBodyList .pending {
   animation-name: backgroundAnim;
