@@ -206,7 +206,7 @@ async function removeFriend(friendName) {
     friend: friendName,
   };
 
-  await fetch(`http://localhost:${process.env.PORT}/users/${currentUser.username}`, {
+  await fetch(`https://gitgudgaming.heroku.com/users/${currentUser.username}`, {
     method: "PATCH",
     headers: {
       Accept: "application/json",
@@ -217,7 +217,7 @@ async function removeFriend(friendName) {
 }
 
 async function getAlertResponses() {
-  const response = await fetch(`http://localhost:${process.env.PORT}/alert`, {
+  const response = await fetch(`https://gitgudgaming.heroku.com/alert`, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -238,16 +238,13 @@ async function getAlertResponses() {
 }
 
 async function getConversations() {
-  const convoRes = await fetch(
-    `http://localhost:${process.env.PORT}/conversations`,
-    {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  const convoRes = await fetch(`https://gitgudgaming.heroku.com/conversations`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  });
 
   const JsonConvoRes = await convoRes.json();
   const convoArr = Object.values(JsonConvoRes);
@@ -265,7 +262,7 @@ async function getCurrentUser() {
     const username = setLoggedInName();
 
     const response = await fetch(
-      `http://localhost:${process.env.PORT}/users/${username}`,
+      `https://gitgudgaming.heroku.com/users/${username}`,
       {
         method: "GET",
         headers: {
@@ -289,7 +286,7 @@ async function getCurrentUser() {
 async function getAllUsers() {
   let userList;
   try {
-    const response = await fetch(`http://localhost:${process.env.PORT}/users`, {
+    const response = await fetch(`https://gitgudgaming.heroku.com/users`, {
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -353,7 +350,7 @@ async function makeAddUserButtonsClickable(e) {
       username,
     };
 
-    const response = await fetch(`http://localhost:${process.env.PORT}/addFriend`, {
+    const response = await fetch(`https://gitgudgaming.heroku.com/addFriend`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -370,7 +367,7 @@ async function setUserAlertBackToFalse(target) {
     sender: target.innerText.split("\n")[0],
   };
 
-  await fetch(`http://localhost:${process.env.PORT}/users`, {
+  await fetch(`https://gitgudgaming.heroku.com/users`, {
     method: "PATCH",
     headers: {
       Accept: "application/json",
@@ -426,16 +423,13 @@ async function updateUsersMessage() {
     messages: [message],
   };
 
-  const response = await fetch(
-    `http://localhost:${process.env.PORT}/conversations`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(convo),
-    }
-  );
+  const response = await fetch(`https://gitgudgaming.heroku.com/conversations`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(convo),
+  });
 
   const JsonConvoRes = await response.json();
   const convoArr = Object.values(JsonConvoRes);
@@ -558,17 +552,14 @@ async function addEventListenerToChoiceButtons(button) {
     contestId: contestId.textContent,
     choice: choiceAnswer,
   };
-  const response = await fetch(
-    `http://localhost:${process.env.PORT}/contests/choice`,
-    {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    }
-  );
+  const response = await fetch(`https://gitgudgaming.heroku.com/contests/choice`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
   console.log("sent answer to db!");
 
   window.location.reload();
@@ -576,7 +567,7 @@ async function addEventListenerToChoiceButtons(button) {
 
 contestsBtn.addEventListener("click", async () => {
   //load contests for current user
-  const response = await fetch(`http://localhost:${process.env.PORT}/contests`, {
+  const response = await fetch(`https://gitgudgaming.heroku.com/contests`, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -980,7 +971,7 @@ finishInvitationBtn.addEventListener("click", async () => {
 
   // console.log(JSON.stringify(data)); 'invitation'
 
-  const response = await fetch(`http://localhost:${process.env.PORT}/contests`, {
+  const response = await fetch(`https://gitgudgaming.heroku.com/contests`, {
     method: "POST",
     headers: {
       Accept: "application/json",
