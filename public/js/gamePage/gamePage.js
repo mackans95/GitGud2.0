@@ -510,6 +510,9 @@ const popupContests = document.querySelector("#popupContests");
 const popupContestsBodyList = document.querySelector(
   "#popupContests .popupBodyList"
 );
+const popupContestsBodyListFinished = document.querySelector(
+  "#popupContests .popupBodyListFinished"
+);
 const overlay = document.querySelector("#overlay");
 const dateStartPicker = document.querySelector("#dateStartInput");
 const dateEndPicker = document.querySelector("#dateEndInput");
@@ -519,6 +522,8 @@ const gameSelect = document.querySelector(".gameName");
 const finishInvitationBtn = document.querySelector(".invitationButton");
 const contestFriendList = document.querySelector(".contestFriendList");
 const contestPlayersList = document.querySelector(".contestPlayers");
+const filterContestsActive = document.querySelector(".filterActive");
+const filterContestsFinished = document.querySelector(".filterFinished");
 
 //populate select game
 gamesArray.forEach((game) => {
@@ -578,11 +583,14 @@ contestsBtn.addEventListener("click", async () => {
 
   //populate contests
   popupContestsBodyList.innerHTML = "";
+  popupContestsBodyListFinished.innerHTML = "";
+  popupContestsBodyListFinished.style.display = 'none';
+  popupContestsBodyList.style.display = 'block';
 
   data.forEach((contest) => {
-    if (contest.state == "finished") {
-      return;
-    }
+    // if (contest.state == "finished") {
+    //   return;
+    // }
 
     addContestTemplate(contest);
   });
@@ -591,7 +599,20 @@ contestsBtn.addEventListener("click", async () => {
   popupContests.classList.add("active");
   overlay.classList.add("active");
 });
-//contestButtonAccept, contestButtonDecline, contestButtonResign
+
+filterContestsActive.addEventListener("click", ()=>{
+  popupContestsBodyListFinished.style.display = 'none';
+  popupContestsBodyList.style.display = 'block';
+  filterContestsActive.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
+  filterContestsFinished.style.backgroundColor = 'inherit';
+});
+filterContestsFinished.addEventListener("click", ()=>{
+  popupContestsBodyList.style.display = 'none';
+  popupContestsBodyListFinished.style.display = 'block';
+  filterContestsActive.style.backgroundColor = 'inherit';
+  filterContestsFinished.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
+});
+
 async function addContestTemplate(contest) {
   const template = document.createElement("div");
   template.classList.add("contestTemplate");
@@ -609,8 +630,13 @@ async function addContestTemplate(contest) {
 
   template.append(gameDiv);
   template.append(invisId);
-  popupContestsBodyList.append(template);
-
+  if(contest.state == "finished"){
+    popupContestsBodyListFinished.append(template);
+  }
+  else{
+    popupContestsBodyList.append(template);
+  }
+  
   if (contest.state == "invitation") {
     //display as invitation. with or without accept options depending on participantstate
     const hostDiv = document.createElement("div");
@@ -762,6 +788,53 @@ async function addContestTemplate(contest) {
       addEventListenerToChoiceButtons(choiceDiv1);
     });
   }
+  else if (contest.state == "finished") {
+    const leaderDiv = document.createElement("div");
+    leaderDiv.classList.add("contestTemplateFlex");
+    const leaderDiv1 = document.createElement("div");
+    leaderDiv1.textContent = "Winner:";
+    leaderDiv.appendChild(leaderDiv1);
+    //find out who is leading in highscore:
+    //sort differently if it is reactiongame
+    let scoresList = [];
+    if (contest.gamename == "ReactionGame") {
+      scoresList = contest.scores.sort((a, b) => {
+        return a.score - b.score;
+      });
+    } else {
+      scoresList = contest.scores.sort((a, b) => {
+        return b.score - a.score;
+      });
+    }
+
+    if (scoresList.length > 0) {
+      const leaderDiv2 = document.createElement("div");
+      leaderDiv2.textContent = scoresList[0].username;
+      leaderDiv.appendChild(leaderDiv2);
+
+      //color template depending on won or lost
+      if(currentUser.username == scoresList[0].username){
+        template.style.backgroundColor = 'rgba(204, 255, 204, 0.3)';
+      }
+      else{ //rgb(255, 153, 153)
+        template.style.backgroundColor = 'rgba(255, 153, 153, 0.3)';
+      }
+    }
+    template.appendChild(leaderDiv);
+
+    const hsDiv = document.createElement("div");
+    hsDiv.classList.add("contestTemplateFlex");
+    const hsDiv1 = document.createElement("div");
+    hsDiv1.textContent = "Highscore:";
+    hsDiv.appendChild(hsDiv1);
+    if (scoresList.length > 0) {
+      const hsDiv2 = document.createElement("div");
+      hsDiv2.textContent = scoresList[0].score;
+      hsDiv.appendChild(hsDiv2);
+    }
+    template.appendChild(hsDiv);
+  }
+
 }
 
 createContestBtn.addEventListener("click", () => {
