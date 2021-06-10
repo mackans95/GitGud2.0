@@ -206,7 +206,7 @@ async function removeFriend(friendName) {
     friend: friendName,
   };
 
-  await fetch(`https://gitgudgaming.heroku.com/users/${currentUser.username}`, {
+  await fetch(`https://gitgudgaming.herokuapp.com/users/${currentUser.username}`, {
     method: "PATCH",
     headers: {
       Accept: "application/json",
@@ -217,7 +217,7 @@ async function removeFriend(friendName) {
 }
 
 async function getAlertResponses() {
-  const response = await fetch(`https://gitgudgaming.heroku.com/alert`, {
+  const response = await fetch(`https://gitgudgaming.herokuapp.com/alert`, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -238,7 +238,7 @@ async function getAlertResponses() {
 }
 
 async function getConversations() {
-  const convoRes = await fetch(`https://gitgudgaming.heroku.com/conversations`, {
+  const convoRes = await fetch(`https://gitgudgaming.herokuapp.com/conversations`, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -262,7 +262,7 @@ async function getCurrentUser() {
     const username = setLoggedInName();
 
     const response = await fetch(
-      `https://gitgudgaming.heroku.com/users/${username}`,
+      `https://gitgudgaming.herokuapp.com/users/${username}`,
       {
         method: "GET",
         headers: {
@@ -286,7 +286,7 @@ async function getCurrentUser() {
 async function getAllUsers() {
   let userList;
   try {
-    const response = await fetch(`https://gitgudgaming.heroku.com/users`, {
+    const response = await fetch(`https://gitgudgaming.herokuapp.com/users`, {
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -350,7 +350,7 @@ async function makeAddUserButtonsClickable(e) {
       username,
     };
 
-    const response = await fetch(`https://gitgudgaming.heroku.com/addFriend`, {
+    const response = await fetch(`https://gitgudgaming.herokuapp.com/addFriend`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -367,7 +367,7 @@ async function setUserAlertBackToFalse(target) {
     sender: target.innerText.split("\n")[0],
   };
 
-  await fetch(`https://gitgudgaming.heroku.com/users`, {
+  await fetch(`https://gitgudgaming.herokuapp.com/users`, {
     method: "PATCH",
     headers: {
       Accept: "application/json",
@@ -423,7 +423,7 @@ async function updateUsersMessage() {
     messages: [message],
   };
 
-  const response = await fetch(`https://gitgudgaming.heroku.com/conversations`, {
+  const response = await fetch(`https://gitgudgaming.herokuapp.com/conversations`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -552,14 +552,17 @@ async function addEventListenerToChoiceButtons(button) {
     contestId: contestId.textContent,
     choice: choiceAnswer,
   };
-  const response = await fetch(`https://gitgudgaming.heroku.com/contests/choice`, {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
+  const response = await fetch(
+    `https://gitgudgaming.herokuapp.com/contests/choice`,
+    {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }
+  );
   console.log("sent answer to db!");
 
   window.location.reload();
@@ -567,7 +570,7 @@ async function addEventListenerToChoiceButtons(button) {
 
 contestsBtn.addEventListener("click", async () => {
   //load contests for current user
-  const response = await fetch(`https://gitgudgaming.heroku.com/contests`, {
+  const response = await fetch(`https://gitgudgaming.herokuapp.com/contests`, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -971,7 +974,7 @@ finishInvitationBtn.addEventListener("click", async () => {
 
   // console.log(JSON.stringify(data)); 'invitation'
 
-  const response = await fetch(`https://gitgudgaming.heroku.com/contests`, {
+  const response = await fetch(`https://gitgudgaming.herokuapp.com/contests`, {
     method: "POST",
     headers: {
       Accept: "application/json",
