@@ -2,13 +2,18 @@ let modalBg = document.querySelector('.modal-bg');
 let modalClose = document.querySelector('.modal-close')
 const updateForm = document.querySelector('.update-form');
 
+let limit = 10;
+let skip = 0;
+const nextBtn = document.querySelector('.next-btn');
+const prevBtn = document.querySelector('.prev-btn');
+
 modalClose.addEventListener("click", function(){
   modalBg.classList.remove('bg-active')
 });
 
 
 
-fetch('http://localhost:3000/admin/Userboard', {
+fetch('http://localhost:3000/admin/GetUsers?limit=10&skip=0', {
   method: 'GET',
   headers: {
     'Accept': 'application/json',
@@ -143,3 +148,71 @@ const patchUser = function(id) {
   })
 }
 
+
+
+
+
+
+
+
+
+
+
+const nextPage = function() {
+
+  skip = skip + 10;
+
+  fetch(`http://localhost:3000/admin/GetUsers?limit=${limit}&skip=${skip}`, {
+  method: 'GET',
+  headers: {
+    'Accept': 'application/json',
+    'Content-type': 'application/json; charset=UTF-8',
+  },
+}).then(response => response.json())
+  .then(data => {
+    if(data.length > 0){
+      // om det kommer tbx data så ta bort den gamla o ladda ny, annars "resetta" skip i else
+      clearTable();
+      showLeaderboards(data)
+    }else{
+      skip = skip-10;
+    }
+  })
+}
+
+const prevPage = function() {
+
+  skip = skip - 10;
+
+  fetch(`http://localhost:3000/admin/GetUsers?limit=${limit}&skip=${skip}`, {
+  method: 'GET',
+  headers: {
+    'Accept': 'application/json',
+    'Content-type': 'application/json; charset=UTF-8',
+  },
+}).then(response => {
+  // om det response är ok dvs att det kommer tbx data så gå vidare, annars "resetta" skip i else
+  if(response.ok) {
+    return response.json()
+  }else{
+    skip = skip + 10;
+  }
+})
+.then(data => {
+  // om det kommer tbx data så ta bort den gamla o ladda ny, annars gör ingetting
+    if(data && data.length > 0){
+      clearTable();
+      showLeaderboards(data)
+    }
+  })
+}
+
+function clearTable(){
+  let loadedItems = document.querySelectorAll('.loadedItems');
+  loadedItems.forEach((item)=>{
+    item.innerHTML = ''
+  })
+}
+
+nextBtn.addEventListener(('click'), nextPage)
+prevBtn.addEventListener(('click'), prevPage)
