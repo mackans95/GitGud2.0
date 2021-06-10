@@ -5,10 +5,11 @@ const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 require("dotenv/config");
 const bodyParser = require("body-parser");
-const app = express();
+const cors = require("cors");
 const publicDirectoryPath = path.join(__dirname, "../public");
 const hbs = require("hbs");
 
+const app = express();
 //import Routes
 
 const mainRoutes = require("./routes/mainRoutes");
@@ -26,6 +27,7 @@ app.set("view engine", "hbs");
 app.set("views", viewsPath);
 
 app.use(express.static(publicDirectoryPath));
+app.use(cors());
 
 // Middlewares
 app.use(cookieParser());
